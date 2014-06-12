@@ -1,8 +1,10 @@
 #include <stdio.h>
 
+//#include "lib/include/cnt-common.h"
+
 int main( )
 {
-    printf( "Hello! CNT\n" );
+
     return 0;
 }
 

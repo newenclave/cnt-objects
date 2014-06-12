@@ -3,4 +3,10 @@
 
 struct CntObject;
 
+typedef struct CntType {
+
+    void (*destroy)(struct CntObject);
+
+} CntType;
+
 #endif // CNTOBJECT_H
