@@ -181,7 +181,7 @@ void  *cnt_memblock_begin( CntMemblock *mb )
     assert( mb->impl_ != NULL );
     assert( mb->impl_->data_.ptr_ != NULL );
 
-    mb->impl_->data_.ptr_;
+    return mb->impl_->data_.ptr_;
 }
 
 void  *cnt_memblock_end( CntMemblock *mb )
@@ -209,8 +209,7 @@ const void  *cnt_memblock_const_begin(const CntMemblock *mb)
     assert( mb->impl_ != NULL );
     assert( mb->impl_->data_.ptr_ != NULL );
 
-    mb->impl_->data_.ptr_;
-
+    return mb->impl_->data_.ptr_;
 }
 
 const void  *cnt_memblock_const_end(const CntMemblock *mb)
@@ -285,11 +284,11 @@ void cnt_memblock_clear(CntMemblock *mb)
 
 void cnt_memblock_swap ( CntMemblock *lmb, CntMemblock *rmb )
 {
+    CntMemblockImpl *tmpimpl;
     assert( lmb != NULL );
     assert( rmb != NULL );
 
-    CntMemblockImpl
-    *tmpimpl   = lmb->impl_;
+    tmpimpl    = lmb->impl_;
     lmb->impl_ = rmb->impl_;
     rmb->impl_ = tmpimpl;
 }
@@ -307,6 +306,7 @@ void *cnt_memblock_create_back( CntMemblock *mb, size_t count )
 {
     size_t old_size;
     void *tail = NULL;
+    int res;
 
     assert( mb != NULL );
     assert( mb->impl_ != NULL );
@@ -314,7 +314,7 @@ void *cnt_memblock_create_back( CntMemblock *mb, size_t count )
 
     old_size = mb->impl_->used_;
 
-    int res = cnt_memblock_resize( mb, old_size + count );
+    res = cnt_memblock_resize( mb, old_size + count );
 
     if( 0 != res ) {
         tail = CNT_MBLOCK_AT(mb->impl_->data_.ptr_, old_size);
@@ -350,9 +350,9 @@ void *cnt_memblock_create_insertion( CntMemblock *mb,
 
         if( new_block ) {
 
+            size_t new_tail_shift  = position + count;
             new_block->impl_->used_ = mb->impl_->used_ + count;
 
-            size_t new_tail_shift  = position + count;
             if( position ) {
                 block_memcpy( new_block->impl_->data_.ptr_,
                               mb->impl_->data_.ptr_, position );
