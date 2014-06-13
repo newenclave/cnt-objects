@@ -357,10 +357,11 @@ void *cnt_memblock_create_insertion( CntMemblock *mb,
                 block_memcpy( new_block->impl_->data_.ptr_,
                               mb->impl_->data_.ptr_, position );
             }
-            block_memcpy( CNT_MBLOCK_AT(new_block->impl_->data_.ptr_,
-                                        new_tail_shift),
-                          CNT_MBLOCK_AT(mb->impl_->data_.ptr_, position),
-                          mb->impl_->used_ - position);
+
+            block_memcpy(
+                CNT_MBLOCK_AT(new_block->impl_->data_.ptr_, new_tail_shift),
+                CNT_MBLOCK_AT(mb->impl_->data_.ptr_, position),
+                mb->impl_->used_ - position);
 
             cnt_memblock_swap( mb, new_block );
 
