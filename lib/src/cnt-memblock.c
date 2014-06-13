@@ -7,26 +7,6 @@
 static void destroy( struct CntObject *obj );
 static unsigned int hash( const struct CntObject *obj );
 
-static const size_t void_ptr_size      =   sizeof(void *);
-static const size_t void_ptr_size_mask =   sizeof(void *) - 1;
-
-#define CNT_MBLOCK_AT(ptr, pos) (((char *)ptr) + (pos))
-#define CNT_MBLOCK_DEF_INC(size) (size + (size >> 1))
-
-#define MBLOCK_IMPL( block ) ((block)->impl_)
-
-#define CNT_MBLOCK_AVAILABLE_LOCAL( mb )                            \
-      (MBLOCK_IMPL(mb)->capacity_ - MBLOCK_IMPL(mb)->used_)
-
-#define CNT_MBLOCK_FIX_SIZE( new_size )                             \
-      ((new_size + void_ptr_size_mask) & (~(void_ptr_size_mask)))
-
-#define CNT_MBLOCK_FIX_SIZE0( new_size )                            \
-      ( new_size <= void_ptr_size)                                  \
-      ? void_ptr_size                                               \
-      : CNT_MBLOCK_FIX_SIZE( new_size )
-
-
 #define cnt_this_object_type_id CNT_OBJ_MEMBLOCK
 
 #ifdef _MSC_VER
@@ -47,28 +27,6 @@ static const CntTypeInfo cnt_this_object_type = {
 
 #endif
 
-typedef struct CntMemblockImpl {
-
-    union block_data {
-        void *ptr_;
-        char *str_;
-    }        data_;
-
-    size_t   capacity_;
-    size_t   used_;
-
-} CntMemblockImpl;
-
-static void *block_memset ( void *data, int c, size_t len )
-{
-    return memset( data, c, len );
-}
-
-static void *block_realloc(void *ptr, size_t size)
-{
-    return realloc(ptr, size);
-}
-
 static void *block_malloc(size_t size)
 {
     return malloc(size);
@@ -79,71 +37,28 @@ static void block_free_ptr(void *ptr)
     free(ptr);
 }
 
-static void *block_memcpy(void *dest, const void *src, size_t n)
+static void cnt_memblock_destroy( CntMemblock *container )
 {
-    return memcpy( dest, src, n );
-}
-
-static void *block_memmove(void *dest, const void *src, size_t n)
-{
-    return memmove( dest, src, n );
-}
-
-static size_t block_calc_prefer_size( size_t old_capa, size_t desired_size )
-{
-    size_t new_capa = CNT_MBLOCK_FIX_SIZE( CNT_MBLOCK_DEF_INC( old_capa ) );
-    desired_size = CNT_MBLOCK_FIX_SIZE( desired_size );
-
-    return ( new_capa > desired_size ) ? new_capa : desired_size;
-}
-
-static CntMemblockImpl *create_impl( size_t reserve_size )
-{
-    CntMemblockImpl *new_impl =
-            (CntMemblockImpl *)block_malloc( sizeof(*new_impl) );
-
-    if( new_impl ) {
-
-        const size_t new_size = CNT_MBLOCK_FIX_SIZE0( reserve_size );
-
-        new_impl->data_.ptr_ = block_malloc( new_size );
-
-        if( new_impl->data_.ptr_ ) {
-
-            new_impl->capacity_ = new_size;
-            new_impl->used_     = 0;
-
-        } else {
-            block_free_ptr( new_impl );
-            new_impl = NULL;
-        }
-    }
-
-    return new_impl;
-}
-
-static void memblock_free( CntMemblock *container )
-{
-    block_free_ptr( MBLOCK_IMPL(container)->data_.ptr_ );
-    block_free_ptr( container->impl_ );
+    cnt_memblock_impl_deinit( &container->impl_ );
     block_free_ptr( container );
 }
 
 CntMemblock *cnt_memblock_new( )
 {
-    return cnt_memblock_new_reserved( void_ptr_size );
+    return cnt_memblock_new_reserved( 0 );
 }
 
 CntMemblock *cnt_memblock_new_from( const void *data, size_t length )
 {
     CntMemblock *inst = cnt_memblock_new_reserved( length );
     if( inst ) {
-        MBLOCK_IMPL(inst)->used_ = length;
-        block_memcpy( MBLOCK_IMPL(inst)->data_.ptr_, data, length );
+        if( !cnt_memblock_impl_assign( &inst->impl_, data, length ) ) {
+            cnt_memblock_destroy( inst );
+            inst = NULL;
+        }
     }
     return inst;
 }
-
 
 CntMemblock *cnt_memblock_new_reserved( size_t reserve_size )
 {
@@ -153,189 +68,110 @@ CntMemblock *cnt_memblock_new_reserved( size_t reserve_size )
 
         CNT_OBJECT_INIT( new_inst, &cnt_this_object_type );
 
-        new_inst->impl_ = create_impl(  reserve_size >= void_ptr_size
-                                      ? reserve_size
-                                      : void_ptr_size);
-        if( !new_inst->impl_ ) {
+        if( !cnt_memblock_impl_init( &new_inst->impl_, reserve_size ) ) {
             block_free_ptr( new_inst );
             new_inst = NULL;
         }
+
     }
     return new_inst;
 }
 
-
 size_t cnt_memblock_size( const CntMemblock *mb )
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-
-    return MBLOCK_IMPL(mb)->used_;
+    return cnt_memblock_impl_size( &mb->impl_ );
 }
 
 size_t cnt_memblock_capacity( const CntMemblock *mb )
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-
-    return MBLOCK_IMPL(mb)->capacity_;
+    return cnt_memblock_impl_capacity( &mb->impl_ );
 }
 
 size_t cnt_memblock_available( const CntMemblock *mb )
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-
-    return MBLOCK_IMPL(mb)->capacity_ - MBLOCK_IMPL(mb)->used_;
+    return cnt_memblock_impl_available( &mb->impl_ );
 }
 
 void  *cnt_memblock_begin( CntMemblock *mb )
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-
-    return MBLOCK_IMPL(mb)->data_.ptr_;
+    return cnt_memblock_impl_begin( &mb->impl_ );
 }
 
 void  *cnt_memblock_end( CntMemblock *mb )
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-
-    return CNT_MBLOCK_AT( MBLOCK_IMPL(mb)->data_.ptr_,
-                          MBLOCK_IMPL(mb)->used_);
+    return cnt_memblock_impl_end( &mb->impl_ );
 }
 
 void  *cnt_memblock_at( CntMemblock *mb, size_t position )
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-    assert( MBLOCK_IMPL(mb)->used_ >= position );
-
-    return CNT_MBLOCK_AT( MBLOCK_IMPL(mb)->data_.ptr_, position );
+    return cnt_memblock_impl_at( &mb->impl_, position );
 }
 
 const void  *cnt_memblock_const_begin(const CntMemblock *mb)
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-
-    return MBLOCK_IMPL(mb)->data_.ptr_;
+    return cnt_memblock_impl_const_begin( &mb->impl_ );
 }
 
 const void  *cnt_memblock_const_end(const CntMemblock *mb)
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-
-    return CNT_MBLOCK_AT( MBLOCK_IMPL(mb)->data_.ptr_,
-                          MBLOCK_IMPL(mb)->used_);
-
+    return cnt_memblock_impl_const_end( &mb->impl_ );
 }
 
 const void  *cnt_memblock_const_at(const CntMemblock *mb, size_t position)
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-    assert( MBLOCK_IMPL(mb)->used_ >= position );
-
-    return CNT_MBLOCK_AT( MBLOCK_IMPL(mb)->data_.ptr_, position );
+    return cnt_memblock_impl_const_at( &mb->impl_, position);
 }
 
 int cnt_memblock_reserve ( CntMemblock *mb, size_t new_size )
 {
-    char *new_data;
-
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-
-    new_data = MBLOCK_IMPL(mb)->data_.ptr_;
-
-    assert( new_data != NULL );
-
-    if( new_size > MBLOCK_IMPL(mb)->capacity_ ) {
-
-        new_size = block_calc_prefer_size( MBLOCK_IMPL(mb)->capacity_, new_size );
-        new_data = (char *)block_realloc( new_data, new_size );
-
-        if( new_data ) {
-            MBLOCK_IMPL(mb)->data_.ptr_ = new_data;
-            MBLOCK_IMPL(mb)->capacity_  = new_size;
-        }
-    }
-
-    return (new_data != NULL);
+    return cnt_memblock_impl_reserve ( &mb->impl_, new_size );
 }
 
-int cnt_memblock_resize  (CntMemblock *mb, size_t new_size)
+int cnt_memblock_resize(CntMemblock *mb, size_t new_size)
 {
-    int result = cnt_memblock_reserve( mb, new_size );
-    if( result ) MBLOCK_IMPL(mb)->used_ = new_size;
-
-    return result;
+    assert( mb != NULL );
+    return cnt_memblock_impl_resize( &mb->impl_, new_size);
 }
 
 int cnt_memblock_push_back( CntMemblock *mb, char c)
 {
-    void *tail = cnt_memblock_create_back( mb, 1 );
-    if( tail != NULL ) {
-        *(char *)tail = c;
-    }
-    return tail != 0;
+    assert( mb != NULL );
+    return cnt_memblock_impl_push_back( &mb->impl_, c );
 }
 
 void cnt_memblock_clear(CntMemblock *mb)
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-    MBLOCK_IMPL(mb)->used_ = 0;
+    cnt_memblock_impl_clear( &mb->impl_ );
 }
 
 void cnt_memblock_swap ( CntMemblock *lmb, CntMemblock *rmb )
 {
-    CntMemblockImpl *tmpimpl;
     assert( lmb != NULL );
     assert( rmb != NULL );
-
-    tmpimpl    = lmb->impl_;
-    lmb->impl_ = rmb->impl_;
-    rmb->impl_ = tmpimpl;
+    cnt_memblock_impl_swap ( &lmb->impl_, &rmb->impl_ );
 }
 
 void cnt_memblock_zero( CntMemblock *mb )
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-
-    block_memset( MBLOCK_IMPL(mb)->data_.ptr_, 0, MBLOCK_IMPL(mb)->used_ );
+    cnt_memblock_impl_zero( &mb->impl_ );
 }
 
 void *cnt_memblock_create_back( CntMemblock *mb, size_t count )
 {
-    size_t old_size;
-    void *tail = NULL;
-    int res;
-
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-
-    old_size = MBLOCK_IMPL(mb)->used_;
-
-    res = cnt_memblock_resize( mb, old_size + count );
-
-    if( 0 != res ) {
-        tail = CNT_MBLOCK_AT(MBLOCK_IMPL(mb)->data_.ptr_, old_size);
-    }
-    return tail;
+    return cnt_memblock_impl_create_back( &mb->impl_, count );
 }
 
 void *cnt_memblock_create_front( CntMemblock *mb, size_t count )
@@ -346,106 +182,33 @@ void *cnt_memblock_create_front( CntMemblock *mb, size_t count )
 void *cnt_memblock_create_insert( CntMemblock *mb,
                                      size_t position, size_t count )
 {
-    void *block = NULL;
-
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-
-    if( position == MBLOCK_IMPL(mb)->used_ ) {
-
-        block = cnt_memblock_create_back( mb, count );
-
-    } else if( CNT_MBLOCK_AVAILABLE_LOCAL( mb ) < count ) {
-
-        size_t new_size
-                = block_calc_prefer_size( MBLOCK_IMPL(mb)->capacity_,
-                                          MBLOCK_IMPL(mb)->used_ + count );
-
-        CntMemblock *new_block = cnt_memblock_new_reserved( new_size );
-
-        if( new_block ) {
-
-            size_t new_tail_shift  = position + count;
-            MBLOCK_IMPL(new_block)->used_ = MBLOCK_IMPL(mb)->used_ + count;
-
-            if( position ) {
-                block_memcpy( MBLOCK_IMPL(new_block)->data_.ptr_,
-                              MBLOCK_IMPL(mb)->data_.ptr_, position );
-            }
-
-            block_memcpy(
-                CNT_MBLOCK_AT(MBLOCK_IMPL(new_block)->data_.ptr_,
-                              new_tail_shift),
-                CNT_MBLOCK_AT(MBLOCK_IMPL(mb)->data_.ptr_, position),
-                MBLOCK_IMPL(mb)->used_ - position);
-
-            cnt_memblock_swap( mb, new_block );
-
-            memblock_free( new_block );
-
-            block = CNT_MBLOCK_AT(MBLOCK_IMPL(mb)->data_.ptr_, position);
-        }
-    } else {
-
-        void *from = CNT_MBLOCK_AT(MBLOCK_IMPL(mb)->data_.ptr_ , position);
-
-        block_memmove( CNT_MBLOCK_AT(from, count), from,
-                       MBLOCK_IMPL(mb)->used_ - position);
-
-        MBLOCK_IMPL(mb)->used_ += count;
-        block = from;
-    }
-
-    return block;
+    return cnt_memblock_impl_create_insert( &mb->impl_, position, count );
 }
 
 void *cnt_memblock_delete( CntMemblock *mb, size_t position, size_t count )
 {
-    void    *tail_begin;
-    size_t   tail_len;
-    void    *res;
-
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->data_.ptr_ != NULL );
-    assert( MBLOCK_IMPL(mb)->used_ >= position + count );
-
-    tail_begin  = CNT_MBLOCK_AT( MBLOCK_IMPL(mb)->data_.ptr_, position );
-
-    tail_len    = MBLOCK_IMPL(mb)->used_ - (position + count);
-
-    res         = block_memmove( tail_begin,
-                                 CNT_MBLOCK_AT(tail_begin, count),
-                                 tail_len );
-    MBLOCK_IMPL(mb)->used_ -= count;
-
-    return res;
+    return cnt_memblock_impl_delete( &mb->impl_, position, count );
 }
 
 void cnt_memblock_reduce( CntMemblock *mb, size_t count )
 {
     assert( mb != NULL );
-    assert( MBLOCK_IMPL(mb) != NULL );
-    assert( MBLOCK_IMPL(mb)->used_ >= count );
-
-    MBLOCK_IMPL(mb)->used_ -= count;
+    cnt_memblock_impl_reduce( &mb->impl_, count );
 }
 
 int cnt_memblock_extend( CntMemblock *mb, size_t count )
 {
-    return cnt_memblock_resize( mb, MBLOCK_IMPL(mb)->used_ + count );
+    assert( mb != NULL );
+    return cnt_memblock_impl_resize( &mb->impl_,
+                                cnt_memblock_impl_size( &mb->impl_ ) + count );
 }
 
 int cnt_memblock_append( CntMemblock *mb, const void *data, size_t len )
 {
-    void *tail = cnt_memblock_create_back( mb, len );
-
-    if( tail ) {
-        block_memcpy( tail, data, len );
-    }
-
-    return tail != NULL;
+    assert( mb != NULL );
+    return cnt_memblock_impl_append( &mb->impl_, data, len );
 }
 
 
@@ -455,9 +218,9 @@ static void destroy( struct CntObject *obj )
     CntMemblock *container;
 
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
-    container = CNT_OBJECT_CONTAINER( obj, CntMemblock );
+    container = CNT_OBJECT_CONTAINER( obj, CntMemblock );\
 
-    memblock_free( container );
+    cnt_memblock_destroy( container );
 }
 
 static unsigned int hash( const struct CntObject *obj )
@@ -466,7 +229,7 @@ static unsigned int hash( const struct CntObject *obj )
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
     container = CNT_OBJECT_CONTAINER( obj, CntMemblock );
 
-    return tdb_hash( MBLOCK_IMPL(container)->data_.ptr_,
-                     MBLOCK_IMPL(container)->used_ );
+    return tdb_hash( cnt_memblock_begin( container ),
+                     cnt_memblock_size( container ) );
 }
 

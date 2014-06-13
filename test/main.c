@@ -9,7 +9,7 @@ int main( )
 {
 
     CntInt *n = cnt_int_new_from_int( 1000 );
-    CntMemblock *m = cnt_memblock_new_from( "123456789", 9 );
+    CntMemblock *m = cnt_memblock_new( );
     char *data;
     int i;
 
@@ -45,8 +45,6 @@ int main( )
     data = (char *)cnt_memblock_begin( m );
     printf( "data hash: %lu %s %x\n", cnt_memblock_size(m), data,
             CNT_OBJECT_HASH(m));
-
-    printf( "typename: %s\n", CNT_OBJECT_TYPE_STRING( m ) );
 
     CNT_DECREF( n );
     CNT_DECREF( m );
