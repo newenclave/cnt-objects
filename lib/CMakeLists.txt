@@ -1,6 +1,6 @@
 set(lib_name cnt_objects_s)
 
-list(APPEND src_dirs 
+list(APPEND src_dirs
         .
         src
         include
@@ -13,19 +13,20 @@ foreach( src_dir ${src_dirs} )
 endforeach( )
 
 include_directories( ${PROJECT_SOURCE_DIR} )
-add_library(${lib_name} STATIC ${lib_src})
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
+add_library(${lib_name} STATIC ${lib_src})
 
 message( "-- Seting up dependencies for " ${lib_name} )
 foreach( dep ${dependencies} )
-    
+
     message( "\tAdd dependence: " ${dep} )
-    
+
     add_dependencies(       ${lib_name} ${dep}      )
     add_definitions(        ${${dep}_DEFINITIONS}   )
     include_directories(    ${${dep}_INCLUDE_DIRS}  )
     target_link_libraries(  ${lib_name} ${${dep}_LIBRARIES} )
-    
+
 endforeach(dep)
 
 set_target_properties(${lib_name} PROPERTIES COMPILE_DEFINITIONS "STATIC")
