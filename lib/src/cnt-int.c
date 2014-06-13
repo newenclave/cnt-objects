@@ -45,8 +45,10 @@ static void destroy( struct CntObject *obj )
 
 static unsigned int hash( const CntObject *obj )
 {
+    int64_t value;
     CNT_OBJECT_ASSERT_TYPE( obj, CNT_OBJ_INT );
-    int64_t value = CNT_OBJECT_CONTAINER( obj, CntInt )->value_;
+
+    value = CNT_OBJECT_CONTAINER( obj, CntInt )->value_;
     return tdb_hash(&value, sizeof(value));
 }
 

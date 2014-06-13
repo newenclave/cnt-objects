@@ -147,9 +147,11 @@ CntMemblock *cnt_memblock_new_reserved( size_t reserve_size )
 /// ========================== DESTROY AND HASH ========================== ///
 static void destroy( struct CntObject *obj )
 {
+    CntMemblock *container;
+
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
 
-    CntMemblock *container = CNT_OBJECT_CONTAINER( obj, CntMemblock );
+    container = CNT_OBJECT_CONTAINER( obj, CntMemblock );
 
     block_free_ptr( container->impl_->data_.ptr_ );
     block_free_ptr( container->impl_ );
@@ -159,8 +161,10 @@ static void destroy( struct CntObject *obj )
 
 static unsigned int hash( const struct CntObject *obj )
 {
+    CntMemblock *container;
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
-    CntMemblock *container = CNT_OBJECT_CONTAINER( obj, CntMemblock );
+    container = CNT_OBJECT_CONTAINER( obj, CntMemblock );
+
     return tdb_hash( container->impl_->data_.ptr_, container->impl_->used_ );
 }
 
