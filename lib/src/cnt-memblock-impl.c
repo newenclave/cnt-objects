@@ -226,7 +226,7 @@ const void  *cnt_memblock_impl_const_at(const CntMemblockImpl *mb,
 
 int cnt_memblock_impl_reserve ( CntMemblockImpl *mb, size_t new_size )
 {
-    char *new_data;
+    void *new_data;
 
     assert( mb != NULL );
     assert( mb != NULL );
@@ -238,7 +238,7 @@ int cnt_memblock_impl_reserve ( CntMemblockImpl *mb, size_t new_size )
     if( new_size > mb->capacity_ ) {
 
         new_size = block_calc_prefer_size( mb->capacity_, new_size );
-        new_data = (char *)block_realloc( new_data, new_size );
+        new_data = block_realloc( new_data, new_size );
 
         if( new_data ) {
             mb->data_.ptr_ = new_data;
@@ -287,9 +287,9 @@ void cnt_memblock_impl_swap( CntMemblockImpl *lmb, CntMemblockImpl *rmb )
     lmb->data_.ptr_ = rmb->data_.ptr_;
     rmb->data_.ptr_ = tmp_data;
 
-    tmp_used    = lmb->used_;
-    lmb->used_  = rmb->used_;
-    rmb->used_  = tmp_used;
+    tmp_used        = lmb->used_;
+    lmb->used_      = rmb->used_;
+    rmb->used_      = tmp_used;
 
     tmp_capa        = lmb->capacity_;
     lmb->capacity_  = rmb->capacity_;
