@@ -1,7 +1,6 @@
 #ifndef CNT_INT_H
 #define CNT_INT_H
 
-#include <stdint.h>
 #include "cnt-object.h"
 
 typedef struct CntInt {
