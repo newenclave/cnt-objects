@@ -61,13 +61,17 @@ typedef struct CntObject {
         obj->base_.refcount_  = 1;          \
         obj->base_.type_      = obj_type
 
-void            cnt_object_decref( CntObject *obj );
-void            cnt_object_incref( CntObject *obj );
-unsigned int    cnt_object_hash( const CntObject *obj );
+void         cnt_object_decref( CntObject *obj );
+void         cnt_object_incref( CntObject *obj );
+unsigned int cnt_object_hash( const CntObject *obj );
 
 #define CNT_DECREF( obj ) cnt_object_decref( CNT_OBJECT_BASE(obj) )
 #define CNT_INCREF( obj ) cnt_object_incref( CNT_OBJECT_BASE(obj) )
 
 #define CNT_OBJECT_HASH( obj ) cnt_object_hash( CNT_OBJECT_BASE(obj) )
+#define CNT_OBJECT_TYPE( obj ) ( CNT_OBJECT_BASE(obj)->type_->id_ )
+
+#define CNT_OBJECT_TYPE_STRING( obj ) \
+        cnt_type_id_to_string( CNT_OBJECT_BASE(obj)->type_->id_ )
 
 #endif // CNTOBJECT_H
