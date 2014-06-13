@@ -5,7 +5,7 @@
 #include <memory.h>
 #include <string.h>
 
-#include "include/cnt-memblock-impl.h"
+#include "cnt-memblock-impl.h"
 
 
 static const size_t void_ptr_size      =   sizeof(void *);
@@ -130,7 +130,7 @@ CntMemblockImpl *cnt_memblock_impl_new( )
     return cnt_memblock_impl_new_reserved( void_ptr_size );
 }
 
-void cnt_memblock_free( CntMemblockImpl *mb )
+void cnt_memblock_impl_free( CntMemblockImpl *mb )
 {
     memblock_free( mb );
 }

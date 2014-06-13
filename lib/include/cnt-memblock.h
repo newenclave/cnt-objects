@@ -3,11 +3,11 @@
 
 #include "cnt-object.h"
 
-#include "cnt-memblock-impl.h"
+struct CntMemblockImpl;
 
 typedef struct CntMemblock {
     CntObject_BASE;
-    struct CntMemblockImpl impl_;
+    struct CntMemblockImpl *impl_;
 } CntMemblock;
 
 CntMemblock *cnt_memblock_new( );

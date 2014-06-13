@@ -24,7 +24,7 @@ int  cnt_memblock_impl_assign( CntMemblockImpl *mb,
 void cnt_memblock_impl_deinit( CntMemblockImpl *mb );
 
 CntMemblockImpl *cnt_memblock_impl_new( );
-void cnt_memblock_free( CntMemblockImpl *mb );
+void cnt_memblock_impl_free( CntMemblockImpl *mb );
 
 CntMemblockImpl *cnt_memblock_impl_new_from( const void *data, size_t length );
 CntMemblockImpl *cnt_memblock_impl_new_reserved( size_t reserve_size );
