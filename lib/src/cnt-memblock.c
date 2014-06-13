@@ -324,10 +324,10 @@ void *cnt_memblock_create_back( CntMemblock *mb, size_t count )
 
 void *cnt_memblock_create_front( CntMemblock *mb, size_t count )
 {
-    return cnt_memblock_create_insertion( mb, 0, count );
+    return cnt_memblock_create_insert( mb, 0, count );
 }
 
-void *cnt_memblock_create_insertion( CntMemblock *mb,
+void *cnt_memblock_create_insert( CntMemblock *mb,
                                      size_t position, size_t count )
 {
     void *block = NULL;
@@ -381,6 +381,54 @@ void *cnt_memblock_create_insertion( CntMemblock *mb,
     }
 
     return block;
+}
+
+void *cnt_memblock_delete( CntMemblock *mb, size_t position, size_t count )
+{
+    void    *tail_begin;
+    size_t   tail_len;
+    void    *res;
+
+    assert( mb != NULL );
+    assert( mb->impl_ != NULL );
+    assert( mb->impl_->data_.ptr_ != NULL );
+    assert( mb->impl_->used_ >= position + count );
+
+    tail_begin  = CNT_MBLOCK_AT( mb->impl_->data_.ptr_, position );
+
+    tail_len    = mb->impl_->used_ - (position + count);
+
+    res         = block_memmove( tail_begin,
+                                 CNT_MBLOCK_AT(tail_begin, count),
+                                 tail_len );
+    mb->impl_->used_ -= count;
+
+    return res;
+}
+
+void cnt_memblock_reduce( CntMemblock *mb, size_t count )
+{
+    assert( mb != NULL );
+    assert( mb->impl_ != NULL );
+    assert( mb->impl_->used_ >= count );
+
+    mb->impl_->used_ -= count;
+}
+
+int cnt_memblock_extend( CntMemblock *mb, size_t count )
+{
+    return cnt_memblock_resize( mb, mb->impl_->used_ + count );
+}
+
+int cnt_memblock_append( CntMemblock *mb, const void *data, size_t len )
+{
+    void *tail = cnt_memblock_create_back( mb, len );
+
+    if( tail ) {
+        block_memcpy( tail, data, len );
+    }
+
+    return tail != NULL;
 }
 
 

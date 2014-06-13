@@ -29,20 +29,22 @@ const void  *cnt_memblock_const_at    (const CntMemblock *mb, size_t position);
   * 1 == success
   * 0 == failed
   */
-int  cnt_memblock_reserve (CntMemblock *mb, size_t new_size);
-int  cnt_memblock_resize  (CntMemblock *mb, size_t new_size);
+int  cnt_memblock_reserve  (CntMemblock *mb, size_t new_size);
+int  cnt_memblock_resize   (CntMemblock *mb, size_t new_size);
+int  cnt_memblock_push_back(CntMemblock *mb, char c);
+int  cnt_memblock_extend   (CntMemblock *mb, size_t count);
+int  cnt_memblock_append   (CntMemblock *mb, const void *data, size_t len);
 
 void cnt_memblock_clear   (CntMemblock *mb);
 void cnt_memblock_swap    (CntMemblock *lmb, CntMemblock *rmb);
 void cnt_memblock_zero    (CntMemblock *mb);
 
-
-int    cnt_memblock_push_back( CntMemblock *mb, char c);
-
 void  *cnt_memblock_create_back( CntMemblock *mb, size_t count );
 void  *cnt_memblock_create_front( CntMemblock *mb, size_t count );
-void  *cnt_memblock_create_insertion( CntMemblock *mb,
-                                       size_t position, size_t count );
+void  *cnt_memblock_create_insert( CntMemblock *mb,
+                                   size_t position, size_t count );
 
+void *cnt_memblock_delete( CntMemblock *mb, size_t position, size_t count );
+void  cnt_memblock_reduce( CntMemblock *mb, size_t count );
 
 #endif // CNTMEMBLOCK_H
