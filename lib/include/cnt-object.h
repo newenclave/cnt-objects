@@ -29,6 +29,8 @@ static const char * cnt_type_id_to_string( cnt_object_type_id id )
     case CNT_OBJ_MAX:
         return "__max__";
     }
+
+    return "__unknown__";
 }
 
 struct CntObject;
