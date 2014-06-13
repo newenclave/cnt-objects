@@ -2,6 +2,7 @@
 #include "include/cnt-memblock.h"
 
 #include <memory.h>
+#include <string.h>
 
 static void destroy( struct CntObject *obj );
 static unsigned int hash( const struct CntObject *obj );

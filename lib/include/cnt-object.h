@@ -13,7 +13,7 @@ typedef enum {
     ,CNT_OBJ_MAX
 } cnt_object_type_id;
 
-static inline const char *cnt_type_id_to_string( cnt_object_type_id id )
+static const char * cnt_type_id_to_string( cnt_object_type_id id )
 {
     switch ( id ) {
 
