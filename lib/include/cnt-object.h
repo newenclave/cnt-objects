@@ -11,9 +11,9 @@ typedef enum {
     ,CNT_OBJ_MEMBLOCK
 
     ,CNT_OBJ_MAX
-} object_type_id;
+} cnt_object_type_id;
 
-static inline const char *cnt_type_id_to_string( object_type_id id )
+static inline const char *cnt_type_id_to_string( cnt_object_type_id id )
 {
     switch ( id ) {
 
@@ -34,7 +34,7 @@ static inline const char *cnt_type_id_to_string( object_type_id id )
 struct CntObject;
 
 typedef struct CntTypeInfo {
-    object_type_id id_;
+    cnt_object_type_id id_;
     void (*destroy_)( struct CntObject * );
     unsigned int (*hash_)( const struct CntObject * );
 } CntTypeInfo;
