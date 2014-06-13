@@ -1,4 +1,3 @@
-#include <stdlib.h>
 
 #include "include/cnt-int.h"
 
@@ -47,7 +46,8 @@ static void destroy( struct CntObject *obj )
 static unsigned int hash( const CntObject *obj )
 {
     CNT_OBJECT_ASSERT_TYPE( obj, CNT_OBJ_INT );
-    return (unsigned int)(CNT_OBJECT_CONTAINER( obj, CntInt )->value_);
+    int64_t value = CNT_OBJECT_CONTAINER( obj, CntInt )->value_;
+    return tdb_hash(&value, sizeof(value));
 }
 
 int64_t cnt_int_get_value( const CntInt *obj )

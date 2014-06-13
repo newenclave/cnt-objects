@@ -1,15 +1,35 @@
 #ifndef CNT_OBJECT_H
 #define CNT_OBJECT_H
 
+#include <stdlib.h>
 #include <assert.h>
 #include "cnt-common.h"
 
 typedef enum {
      CNT_OBJ_NONE = 0
     ,CNT_OBJ_INT
+    ,CNT_OBJ_MEMBLOCK
 
     ,CNT_OBJ_MAX
 } object_type_id;
+
+static inline const char *cnt_type_id_to_string( object_type_id id )
+{
+    switch ( id ) {
+
+    case CNT_OBJ_NONE:
+        return "none";
+
+    case CNT_OBJ_INT:
+        return "int";
+
+    case CNT_OBJ_MEMBLOCK:
+        return "memory block";
+
+    case CNT_OBJ_MAX:
+        return "__max__";
+    }
+}
 
 struct CntObject;
 
@@ -21,7 +41,7 @@ typedef struct CntTypeInfo {
 
 typedef struct CntObject {
     const CntTypeInfo *type_;
-    unsigned long      refcount_;
+    unsigned int       refcount_;
 } CntObject;
 
 #define CntObject_BASE  \
@@ -41,9 +61,9 @@ typedef struct CntObject {
         obj->base_.refcount_  = 1;          \
         obj->base_.type_      = obj_type
 
-void cnt_object_decref( CntObject *obj );
-void cnt_object_incref( CntObject *obj );
-unsigned int cnt_object_hash( const CntObject *obj );
+void            cnt_object_decref( CntObject *obj );
+void            cnt_object_incref( CntObject *obj );
+unsigned int    cnt_object_hash( const CntObject *obj );
 
 #define CNT_DECREF( obj ) cnt_object_decref( CNT_OBJECT_BASE(obj) )
 #define CNT_INCREF( obj ) cnt_object_incref( CNT_OBJECT_BASE(obj) )
