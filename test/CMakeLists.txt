@@ -1,6 +1,6 @@
 
 aux_source_directory(
-    . 
+    .
 src_dir)
 
 
@@ -10,7 +10,7 @@ set( exe_name cnt_test )
 add_executable(${exe_name} ${src_dir})
 
 list(APPEND dependencies
-    cnt_objects_s_
+    cnt_objects_s
     )
 
 include_directories(${PROJECT_SOURCE_DIR})

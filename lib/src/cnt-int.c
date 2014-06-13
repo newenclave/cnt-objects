@@ -1,13 +1,29 @@
 #include <stdlib.h>
+
 #include "include/cnt-int.h"
 
-void destroy(struct CntObject *);
+static void destroy( struct CntObject *obj );
+static unsigned int hash( const struct CntObject *obj );
 
-static const CntType cnt_int_type = {
-    CNT_OBJ_INT, destroy
+#ifdef _MSC_VER
+
+static const CntTypeInfo cnt_int_type = {
+    CNT_OBJ_INT, // .id_
+    destroy,     // .destroy_
+    hash         // .hash_
 };
 
-CntInt *cnt_int_new_from_int( int value )
+#else
+
+static const CntTypeInfo cnt_int_type = {
+    .id_        = CNT_OBJ_INT,
+    .destroy_   = destroy,
+    .hash_      = hash
+};
+
+#endif
+
+CntInt *cnt_int_new_from_int( int64_t value )
 {
     CntInt *inst = (CntInt *)malloc( sizeof(*inst) );
     if( inst ) {
@@ -22,3 +38,19 @@ CntInt *cnt_int_new( void )
     return cnt_int_new_from_int( 0 );
 }
 
+static void destroy( struct CntObject *obj )
+{
+    CNT_OBJECT_ASSERT_TYPE( obj, CNT_OBJ_INT );
+    free( CNT_OBJECT_CONTAINER( obj, CntInt ) );
+}
+
+static unsigned int hash( const CntObject *obj )
+{
+    CNT_OBJECT_ASSERT_TYPE( obj, CNT_OBJ_INT );
+    return (unsigned int)(CNT_OBJECT_CONTAINER( obj, CntInt )->value_);
+}
+
+int64_t cnt_int_get_value( const CntInt *obj )
+{
+    return obj->value_;
+}
