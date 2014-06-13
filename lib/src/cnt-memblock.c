@@ -13,8 +13,10 @@ static const size_t void_ptr_size_mask =   sizeof(void *) - 1;
 #define CNT_MBLOCK_AT(ptr, pos) (((char *)ptr) + (pos))
 #define CNT_MBLOCK_DEF_INC(size) (size + (size >> 1))
 
+#define MBLOCK_IMPL( block ) ((block)->impl_)
+
 #define CNT_MBLOCK_AVAILABLE_LOCAL( mb )                            \
-      ((mb)->impl_->capacity_ - (mb)->impl_->used_)
+      (MBLOCK_IMPL(mb)->capacity_ - MBLOCK_IMPL(mb)->used_)
 
 #define CNT_MBLOCK_FIX_SIZE( new_size )                             \
       ((new_size + void_ptr_size_mask) & (~(void_ptr_size_mask)))
@@ -24,7 +26,6 @@ static const size_t void_ptr_size_mask =   sizeof(void *) - 1;
       ? void_ptr_size                                               \
       : CNT_MBLOCK_FIX_SIZE( new_size )
 
-#define MBLOCK_IMPL( block ) (block)->impl_
 
 #define cnt_this_object_type_id CNT_OBJ_MEMBLOCK
 
