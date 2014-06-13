@@ -13,6 +13,8 @@ void cnt_object_decref( CntObject *obj )
 void cnt_object_incref( CntObject *obj )
 {
     assert( obj != NULL );
+    assert( obj->refcount_ > 0 );
+
     ++obj->refcount_;
 }
 
