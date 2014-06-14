@@ -7,11 +7,29 @@
 
 #include "lib/include/cnt-allocator.h"
 
+void *my_alloc_call( size_t len )
+{
+    void *ptr = malloc( len );
+    printf( "Allocate %lu bytes @%llx\n", len, ptr );
+    return ptr;
+}
+
+void *my_realloc_call( void *ptr, size_t len )
+{
+    void *ptr_new = realloc( ptr, len );
+    printf( "Reallocate %lu bytes @%llx->@%llx\n", len, ptr, ptr_new );
+    return ptr_new;
+}
+
+CntAllocator my_alloc = {
+    my_alloc_call, free, my_realloc_call
+};
+
 int main( )
 {
 
     CntInt *n = cnt_int_new_from_int( 1000 );
-    CntMemblock *m = cnt_memblock_new( );
+    CntMemblock *m = cnt_memblock_new_al( &my_alloc );
     char *data;
     int i;
 
@@ -33,6 +51,10 @@ int main( )
 
     for( i=0; i<40; ++i ) {
         data[i] = '!';
+    }
+
+    for( i=0; i<4000; ++i ) {
+        cnt_memblock_push_back( m, (char)i );
     }
 
     data = (char *)cnt_memblock_begin( m );

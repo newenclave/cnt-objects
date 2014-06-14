@@ -27,9 +27,6 @@ static const size_t void_ptr_size_mask =   sizeof(void *) - 1;
       ? void_ptr_size                                               \
       : CNT_MBLOCK_FIX_SIZE( new_size )
 
-
-static const CntAllocator *block_allocator = &cnt_default_allocator;
-
 static void *block_memset ( void *data, int c, size_t len )
 {
     return memset( data, c, len );
@@ -104,7 +101,7 @@ static CntMemblockImpl *create_impl( size_t reserve_size,
     assert( allocator != NULL );
     assert( allocator->allocate != NULL );
     assert( allocator->deallocate != NULL );
-    assert( allocator->deallocate != NULL );
+    assert( allocator->reallocate != NULL );
 
      new_impl = (CntMemblockImpl *)allocator->allocate( sizeof(*new_impl) );
 
