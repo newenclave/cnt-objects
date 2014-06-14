@@ -40,7 +40,7 @@ void  *cnt_memblock_impl_at        (CntMemblockImpl *mb, size_t position);
 const void  *cnt_memblock_impl_const_begin (const CntMemblockImpl *mb);
 const void  *cnt_memblock_impl_const_end   (const CntMemblockImpl *mb);
 const void  *cnt_memblock_impl_const_at    (const CntMemblockImpl *mb,
-                                       size_t position);
+                                            size_t position);
 
 /**
   * 1 == success
