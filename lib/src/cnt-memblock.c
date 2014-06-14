@@ -155,7 +155,7 @@ int cnt_memblock_push_back( CntMemblock *mb, char c)
     return cnt_memblock_impl_push_back( MBIMPL_PTR( mb ), c );
 }
 
-void cnt_memblock_clear(CntMemblock *mb)
+void cnt_memblock_clear( CntMemblock *mb )
 {
     assert( mb != NULL );
     cnt_memblock_impl_clear( MBIMPL_PTR( mb ) );
