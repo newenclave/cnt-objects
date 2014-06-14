@@ -14,7 +14,6 @@ typedef struct CntMemblockImpl {
     const CntAllocator *allocator_;
 } CntMemblockImpl;
 
-
 /**
   * 1 == success
   * 0 == failed
@@ -25,6 +24,9 @@ int  cnt_memblock_impl_init( CntMemblockImpl *mb, size_t length,
 int  cnt_memblock_impl_assign( CntMemblockImpl *mb,
                                const char *data, size_t length );
 
+/**
+ * destroy block data
+ */
 void cnt_memblock_impl_deinit( CntMemblockImpl *mb );
 
 CntMemblockImpl *cnt_memblock_impl_new( const CntAllocator *allocator );

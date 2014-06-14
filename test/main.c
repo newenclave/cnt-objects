@@ -10,8 +10,6 @@
 int main( )
 {
 
-    CntAllocator alloc = cnt_default_allocator;
-
     CntInt *n = cnt_int_new_from_int( 1000 );
     CntMemblock *m = cnt_memblock_new( );
     char *data;
