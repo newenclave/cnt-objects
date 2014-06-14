@@ -53,13 +53,8 @@ static size_t block_calc_prefer_size( size_t old_capa, size_t desired_size )
     return ( new_capa > desired_size ) ? new_capa : desired_size;
 }
 
-int cnt_memblock_impl_init( CntMemblockImpl *mb, size_t length )
-{
-    return cnt_memblock_impl_init_al( mb, length, block_allocator );
-}
-
-int  cnt_memblock_impl_init_al( CntMemblockImpl *mb, size_t length,
-                                const CntAllocator *allocator )
+int  cnt_memblock_impl_init( CntMemblockImpl *mb, size_t length,
+                             const CntAllocator *allocator )
 {
     const size_t new_size = CNT_MBLOCK_FIX_SIZE0( length );
 
@@ -114,7 +109,7 @@ static CntMemblockImpl *create_impl( size_t reserve_size,
      new_impl = (CntMemblockImpl *)allocator->allocate( sizeof(*new_impl) );
 
     if( new_impl ) {
-        if( !cnt_memblock_impl_init_al( new_impl, reserve_size, allocator ) ) {
+        if( !cnt_memblock_impl_init ( new_impl, reserve_size, allocator ) ) {
             allocator->deallocate( new_impl );
             new_impl = NULL;
         }
@@ -131,14 +126,9 @@ static void memblock_free( CntMemblockImpl *container )
     }
 }
 
-CntMemblockImpl *cnt_memblock_impl_new( )
+CntMemblockImpl *cnt_memblock_impl_new( const CntAllocator *allocator )
 {
-    return cnt_memblock_impl_new_reserved( void_ptr_size );
-}
-
-CntMemblockImpl *cnt_memblock_impl_new_al( const CntAllocator *allocator )
-{
-    return cnt_memblock_impl_new_reserved_al( void_ptr_size, allocator );
+    return cnt_memblock_impl_new_reserved( void_ptr_size, allocator );
 }
 
 void cnt_memblock_impl_free( CntMemblockImpl *mb )
@@ -146,16 +136,10 @@ void cnt_memblock_impl_free( CntMemblockImpl *mb )
     memblock_free( mb );
 }
 
-CntMemblockImpl *cnt_memblock_impl_new_from( const void *data, size_t length )
+CntMemblockImpl *cnt_memblock_impl_new_from( const void *data, size_t length,
+                                             const CntAllocator *allocate )
 {
-    return cnt_memblock_impl_new_from_al( data, length, block_allocator );
-}
-
-CntMemblockImpl *cnt_memblock_impl_new_from_al( const void *data,
-                                                size_t length,
-                                          const CntAllocator *allocate )
-{
-    CntMemblockImpl *inst = cnt_memblock_impl_new_reserved_al(length, allocate);
+    CntMemblockImpl *inst = cnt_memblock_impl_new_reserved(length, allocate);
     if( inst ) {
         inst->used_ = length;
         block_memcpy( inst->data_.ptr_, data, length );
@@ -163,13 +147,8 @@ CntMemblockImpl *cnt_memblock_impl_new_from_al( const void *data,
     return inst;
 }
 
-CntMemblockImpl *cnt_memblock_impl_new_reserved( size_t reserve_size )
-{
-    return  cnt_memblock_impl_new_reserved_al( reserve_size, block_allocator );
-}
-
-CntMemblockImpl *cnt_memblock_impl_new_reserved_al( size_t reserve_size,
-                                              const CntAllocator *allocate )
+CntMemblockImpl *cnt_memblock_impl_new_reserved( size_t reserve_size,
+                                                 const CntAllocator *allocate )
 {
     CntMemblockImpl *new_inst = create_impl( reserve_size, allocate );
     return new_inst;
@@ -348,7 +327,7 @@ void *cnt_memblock_impl_create_front( CntMemblockImpl *mb, size_t count )
 }
 
 void *cnt_memblock_impl_create_insert( CntMemblockImpl *mb,
-                                     size_t position, size_t count )
+                                       size_t position, size_t count )
 {
     void *block = NULL;
 
@@ -361,11 +340,11 @@ void *cnt_memblock_impl_create_insert( CntMemblockImpl *mb,
 
     } else if( CNT_MBLOCK_AVAILABLE_LOCAL( mb ) < count ) {
 
-        size_t new_size
-                = block_calc_prefer_size( mb->capacity_,
-                                          mb->used_ + count );
+        size_t new_size =
+                block_calc_prefer_size( mb->capacity_, mb->used_ + count );
 
-        CntMemblockImpl *new_block = cnt_memblock_impl_new_reserved( new_size );
+        CntMemblockImpl *new_block =
+                cnt_memblock_impl_new_reserved( new_size, mb->allocator_);
 
         if( new_block ) {
 

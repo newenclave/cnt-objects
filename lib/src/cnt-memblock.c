@@ -61,7 +61,7 @@ CntMemblock *cnt_memblock_new_from_al( const void *data, size_t length,
 {
     CntMemblock *inst = cnt_memblock_new_reserved_al( length, allocator );
     if( inst ) {
-        inst->impl_ = cnt_memblock_impl_new_from_al( data, length, allocator );
+        inst->impl_ = cnt_memblock_impl_new_from( data, length, allocator );
         if( !inst->impl_ ) {
             cnt_memblock_destroy( inst );
             inst = NULL;
@@ -87,8 +87,8 @@ CntMemblock *cnt_memblock_new_reserved_al( size_t reserve_size,
 
         CNT_OBJECT_INIT_AL( new_inst, &cnt_this_object_type, allocator );
 
-        new_inst->impl_ = cnt_memblock_impl_new_reserved_al( reserve_size,
-                                                             allocator );
+        new_inst->impl_ =
+                cnt_memblock_impl_new_reserved( reserve_size, allocator );
 
         if( NULL == new_inst->impl_ ) {
             allocator->deallocate( new_inst );
