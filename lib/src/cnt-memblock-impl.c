@@ -55,7 +55,7 @@ static size_t block_calc_prefer_size( size_t old_capa, size_t desired_size )
 
 int cnt_memblock_impl_init( CntMemblockImpl *mb, size_t length )
 {
-    cnt_memblock_impl_init_al( mb, length, &block_allocator );
+    return cnt_memblock_impl_init_al( mb, length, &block_allocator );
 }
 
 int  cnt_memblock_impl_init_al( CntMemblockImpl *mb, size_t length,

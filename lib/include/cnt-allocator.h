@@ -15,7 +15,7 @@ typedef struct CntAllocator {
     {                    \
         malloc,          \
         free,            \
-        realloc
+        realloc          \
     }
 
 #else
