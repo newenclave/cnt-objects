@@ -36,7 +36,7 @@ static void cnt_memblock_destroy( CntMemblock *container )
     CNT_CALL_DEALLOCATE( container->base_.allocator_, container );
 }
 
-CntMemblock *cnt_memblock_new( )
+CntMemblock *cnt_memblock_new( void )
 {
     return cnt_memblock_new_reserved( 0 );
 }

@@ -10,13 +10,16 @@ typedef struct CntMemblock {
     struct CntMemblockImpl *impl_;
 } CntMemblock;
 
-CntMemblock *cnt_memblock_new( );
+CntMemblock *cnt_memblock_new( void );
 CntMemblock *cnt_memblock_new_from( const void *data, size_t length );
 CntMemblock *cnt_memblock_new_reserved( size_t reserve_size );
 
-CntMemblock *cnt_memblock_new_al( const CntAllocator *allocator );
-CntMemblock *cnt_memblock_new_from_al( const void *data, size_t length,
-                                       const CntAllocator *allocator );
+/**
+  * Create with allocator
+  */
+CntMemblock *cnt_memblock_new_al        ( const CntAllocator *allocator );
+CntMemblock *cnt_memblock_new_from_al   ( const void *data, size_t length,
+                                          const CntAllocator *allocator );
 CntMemblock *cnt_memblock_new_reserved_al( size_t reserve_size,
                                            const CntAllocator *allocator );
 
