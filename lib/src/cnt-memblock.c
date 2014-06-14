@@ -85,7 +85,7 @@ CntMemblock *cnt_memblock_new_reserved_al( size_t reserve_size,
 
     if( new_inst ) {
 
-        CNT_OBJECT_INIT_AL( new_inst, &cnt_this_object_type, allocator );
+        CNT_OBJECT_INIT( new_inst, &cnt_this_object_type, allocator );
 
         new_inst->impl_ =
                 cnt_memblock_impl_new_reserved( reserve_size, allocator );

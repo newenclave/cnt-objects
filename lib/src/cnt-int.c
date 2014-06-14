@@ -35,7 +35,7 @@ CntInt *cnt_int_new_from_int_al( int64_t value, const CntAllocator *allocator )
 
     inst = (CntInt *)CNT_CALL_ALLOCATE( allocator, sizeof(*inst) );
     if( inst ) {
-        CNT_OBJECT_INIT_AL( inst, &cnt_int_type, allocator );
+        CNT_OBJECT_INIT( inst, &cnt_int_type, allocator );
         inst->value_ = value;
     }
     return inst;

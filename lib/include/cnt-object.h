@@ -62,14 +62,9 @@ typedef struct CntObject {
         assert( obj->type_ != NULL );           \
         assert( obj->type_->id_ == obj_type )
 
-#define CNT_OBJECT_INIT( obj, obj_type )                 \
-        obj->base_.refcount_   = 1;                      \
-        obj->base_.allocator_  = &cnt_default_allocator; \
-        obj->base_.type_       = obj_type
-
-#define CNT_OBJECT_INIT_AL( obj, obj_type, allocator )   \
-        obj->base_.refcount_   = 1;                      \
-        obj->base_.allocator_  = allocator;              \
+#define CNT_OBJECT_INIT( obj, obj_type, allocator )   \
+        obj->base_.refcount_   = 1;                   \
+        obj->base_.allocator_  = allocator;           \
         obj->base_.type_       = obj_type
 
 void         cnt_object_decref( CntObject *obj );
