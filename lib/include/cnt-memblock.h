@@ -14,6 +14,12 @@ CntMemblock *cnt_memblock_new( );
 CntMemblock *cnt_memblock_new_from( const void *data, size_t length );
 CntMemblock *cnt_memblock_new_reserved( size_t reserve_size );
 
+CntMemblock *cnt_memblock_new_al( const CntAllocator *allocator );
+CntMemblock *cnt_memblock_new_from_al( const void *data, size_t length,
+                                       const CntAllocator *allocator );
+CntMemblock *cnt_memblock_new_reserved_al( size_t reserve_size,
+                                           const CntAllocator *allocator );
+
 size_t cnt_memblock_size      (const CntMemblock *mb);
 size_t cnt_memblock_capacity  (const CntMemblock *mb);
 size_t cnt_memblock_available (const CntMemblock *mb);

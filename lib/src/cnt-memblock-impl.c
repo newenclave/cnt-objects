@@ -28,7 +28,7 @@ static const size_t void_ptr_size_mask =   sizeof(void *) - 1;
       : CNT_MBLOCK_FIX_SIZE( new_size )
 
 
-static const CntAllocator block_allocator = DefaultAllocator;
+static const CntAllocator *block_allocator = &cnt_default_allocator;
 
 static void *block_memset ( void *data, int c, size_t len )
 {
@@ -55,7 +55,7 @@ static size_t block_calc_prefer_size( size_t old_capa, size_t desired_size )
 
 int cnt_memblock_impl_init( CntMemblockImpl *mb, size_t length )
 {
-    return cnt_memblock_impl_init_al( mb, length, &block_allocator );
+    return cnt_memblock_impl_init_al( mb, length, block_allocator );
 }
 
 int  cnt_memblock_impl_init_al( CntMemblockImpl *mb, size_t length,
@@ -148,7 +148,7 @@ void cnt_memblock_impl_free( CntMemblockImpl *mb )
 
 CntMemblockImpl *cnt_memblock_impl_new_from( const void *data, size_t length )
 {
-    return cnt_memblock_impl_new_from_al( data, length, &block_allocator );
+    return cnt_memblock_impl_new_from_al( data, length, block_allocator );
 }
 
 CntMemblockImpl *cnt_memblock_impl_new_from_al( const void *data,
@@ -165,7 +165,7 @@ CntMemblockImpl *cnt_memblock_impl_new_from_al( const void *data,
 
 CntMemblockImpl *cnt_memblock_impl_new_reserved( size_t reserve_size )
 {
-    return  cnt_memblock_impl_new_reserved_al( reserve_size, &block_allocator );
+    return  cnt_memblock_impl_new_reserved_al( reserve_size, block_allocator );
 }
 
 CntMemblockImpl *cnt_memblock_impl_new_reserved_al( size_t reserve_size,

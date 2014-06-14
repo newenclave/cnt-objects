@@ -30,20 +30,10 @@ static const CntTypeInfo cnt_this_object_type = {
 
 #endif
 
-static void *block_malloc(size_t size)
-{
-    return malloc(size);
-}
-
-static void block_free_ptr(void *ptr)
-{
-    free(ptr);
-}
-
 static void cnt_memblock_destroy( CntMemblock *container )
 {
     cnt_memblock_impl_free( container->impl_ );
-    block_free_ptr( container );
+    container->base_.allocator_->deallocate( container );
 }
 
 CntMemblock *cnt_memblock_new( )
@@ -53,35 +43,62 @@ CntMemblock *cnt_memblock_new( )
 
 CntMemblock *cnt_memblock_new_from( const void *data, size_t length )
 {
-    CntMemblock *inst = cnt_memblock_new_reserved( length );
+    return cnt_memblock_new_from_al( data, length, &cnt_default_allocator );
+}
+
+CntMemblock *cnt_memblock_new_reserved( size_t reserve_size )
+{
+    return cnt_memblock_new_reserved_al( reserve_size, &cnt_default_allocator );
+}
+
+CntMemblock *cnt_memblock_new_al( const CntAllocator *allocator )
+{
+    return cnt_memblock_new_reserved_al( 0, allocator );
+}
+
+CntMemblock *cnt_memblock_new_from_al( const void *data, size_t length,
+                                       const CntAllocator *allocator )
+{
+    CntMemblock *inst = cnt_memblock_new_reserved_al( length, allocator );
     if( inst ) {
-        inst->impl_ = cnt_memblock_impl_new_from( data, length );
+        inst->impl_ = cnt_memblock_impl_new_from_al( data, length, allocator );
         if( !inst->impl_ ) {
             cnt_memblock_destroy( inst );
             inst = NULL;
         }
     }
     return inst;
+
 }
 
-CntMemblock *cnt_memblock_new_reserved( size_t reserve_size )
+CntMemblock *cnt_memblock_new_reserved_al( size_t reserve_size,
+                                           const CntAllocator *allocator )
 {
-    CntMemblock *new_inst = (CntMemblock *)block_malloc( sizeof(*new_inst) );
+    CntMemblock *new_inst;
+
+    assert( allocator != NULL );
+    assert( allocator->allocate != NULL );
+    assert( allocator->deallocate != NULL );
+    assert( allocator->reallocate != NULL );
+
+    new_inst = (CntMemblock *)allocator->allocate( sizeof(*new_inst) );
 
     if( new_inst ) {
 
-        CNT_OBJECT_INIT( new_inst, &cnt_this_object_type );
+        CNT_OBJECT_INIT_AL( new_inst, &cnt_this_object_type, allocator );
 
-        new_inst->impl_ = cnt_memblock_impl_new_reserved( reserve_size );
+        new_inst->impl_ = cnt_memblock_impl_new_reserved_al( reserve_size,
+                                                             allocator );
 
         if( NULL == new_inst->impl_ ) {
-            block_free_ptr( new_inst );
+            allocator->deallocate( new_inst );
             new_inst = NULL;
         }
 
     }
     return new_inst;
 }
+
 
 size_t cnt_memblock_size( const CntMemblock *mb )
 {

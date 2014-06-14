@@ -26,5 +26,35 @@ unsigned int cnt_object_hash( const CntObject *obj )
     return obj->type_->hash_( obj );
 }
 
-const CntAllocator cnt_default_allocator = DefaultAllocator;
+void * cnt_allocate( size_t size )
+{
+    return malloc( size );
+}
+
+void cnt_deallocate( void *ptr )
+{
+    free( ptr );
+}
+
+void * cnt_reallocate( void *ptr, size_t size)
+{
+    return realloc( ptr, size );
+}
+
+
+#ifdef _MSC_VER
+
+const struct CntAllocator cnt_default_allocator = {
+    cnt_allocate, cnt_deallocate, cnt_reallocate
+};
+
+#else
+
+const CntAllocator cnt_default_allocator = {
+    .allocate   = cnt_allocate,
+    .deallocate = cnt_deallocate,
+    .reallocate = cnt_reallocate,
+};
+
+#endif
 
