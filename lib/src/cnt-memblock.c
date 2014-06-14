@@ -243,7 +243,7 @@ int cnt_memblock_append( CntMemblock *mb, const void *data, size_t len )
 
 
 /// ========================== DESTROY AND HASH ========================== ///
-static void destroy( struct CntObject *obj )
+static void destroy( CntObject *obj )
 {
     CntMemblock *container;
 
@@ -253,7 +253,7 @@ static void destroy( struct CntObject *obj )
     cnt_memblock_destroy( container );
 }
 
-static unsigned int hash( const struct CntObject *obj )
+static unsigned int hash( const CntObject *obj )
 {
     CntMemblock *container;
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
