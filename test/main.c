@@ -25,13 +25,14 @@ int main( )
 {
 
     CntAllocator my_alloc = cnt_default_allocator;
-    my_alloc.allocate   = my_alloc_call;
-    my_alloc.reallocate = my_realloc_call;
-
     CntInt *n = cnt_int_new_from_int( 1000 );
+
     CntMemblock *m = cnt_memblock_new_al( &my_alloc );
     char *data;
     int i;
+
+    my_alloc.allocate   = my_alloc_call;
+    my_alloc.reallocate = my_realloc_call;
 
     printf( "data size: %lu\n", cnt_memblock_size(m));
 
