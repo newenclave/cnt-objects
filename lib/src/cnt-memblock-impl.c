@@ -68,9 +68,9 @@ static size_t block_calc_prefer_size( size_t old_capa, size_t desired_size )
 
 int cnt_memblock_impl_init( CntMemblockImpl *mb, size_t length )
 {
-    assert( mb != NULL );
-
     const size_t new_size = CNT_MBLOCK_FIX_SIZE0( length );
+
+    assert( mb != NULL );
 
     mb->data_.ptr_ = block_malloc( new_size );
 

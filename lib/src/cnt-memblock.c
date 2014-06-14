@@ -163,10 +163,11 @@ void cnt_memblock_clear( CntMemblock *mb )
 
 void cnt_memblock_swap ( CntMemblock *lmb, CntMemblock *rmb )
 {
+    CntMemblockImpl *tmp_impl;
+
     assert( lmb != NULL );
     assert( rmb != NULL );
 
-    CntMemblockImpl *
     tmp_impl   = lmb->impl_;
     lmb->impl_ = rmb->impl_;
     rmb->impl_ = tmp_impl;
