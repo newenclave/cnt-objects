@@ -5,8 +5,12 @@
 #include "lib/include/cnt-int.h"
 #include "lib/include/cnt-memblock.h"
 
+#include "lib/include/cnt-allocator.h"
+
 int main( )
 {
+
+    CntAllocator alloc = DefaultAllocator;
 
     CntInt *n = cnt_int_new_from_int( 1000 );
     CntMemblock *m = cnt_memblock_new( );
