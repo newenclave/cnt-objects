@@ -28,24 +28,11 @@ static const size_t void_ptr_size_mask =   sizeof(void *) - 1;
       : CNT_MBLOCK_FIX_SIZE( new_size )
 
 
+static const CntAllocator block_allocator = DefaultAllocator;
+
 static void *block_memset ( void *data, int c, size_t len )
 {
     return memset( data, c, len );
-}
-
-static void *block_realloc(void *ptr, size_t size)
-{
-    return realloc(ptr, size);
-}
-
-static void *block_malloc(size_t size)
-{
-    return malloc(size);
-}
-
-static void block_free_ptr(void *ptr)
-{
-    free(ptr);
 }
 
 static void *block_memcpy(void *dest, const void *src, size_t n)
@@ -68,11 +55,20 @@ static size_t block_calc_prefer_size( size_t old_capa, size_t desired_size )
 
 int cnt_memblock_impl_init( CntMemblockImpl *mb, size_t length )
 {
+    cnt_memblock_impl_init_al( mb, length, &block_allocator );
+}
+
+int  cnt_memblock_impl_init_al( CntMemblockImpl *mb, size_t length,
+                                const CntAllocator *allocator )
+{
     const size_t new_size = CNT_MBLOCK_FIX_SIZE0( length );
 
     assert( mb != NULL );
+    assert( allocator != NULL );
+    assert( allocator->allocate != NULL );
 
-    mb->data_.ptr_ = block_malloc( new_size );
+    mb->data_.ptr_ = allocator->allocate( new_size );
+    mb->allocator_ = allocator;
 
     if( mb->data_.ptr_ ) {
         mb->capacity_ = new_size;
@@ -85,7 +81,11 @@ int cnt_memblock_impl_init( CntMemblockImpl *mb, size_t length )
 void cnt_memblock_impl_deinit( CntMemblockImpl *mb )
 {
     if( mb && mb->data_.ptr_ ) {
-        block_free_ptr( mb->data_.ptr_ );
+
+        assert( mb->allocator_ != NULL );
+        assert( mb->allocator_->deallocate != NULL );
+
+        mb->allocator_->deallocate( mb->data_.ptr_ );
     }
 }
 
@@ -101,15 +101,21 @@ int  cnt_memblock_impl_assign( CntMemblockImpl *mb,
     return res;
 }
 
-
-static CntMemblockImpl *create_impl( size_t reserve_size )
+static CntMemblockImpl *create_impl( size_t reserve_size,
+                                     const CntAllocator *allocator )
 {
-    CntMemblockImpl *new_impl =
-            (CntMemblockImpl *)block_malloc( sizeof(*new_impl) );
+    CntMemblockImpl *new_impl;
+
+    assert( allocator != NULL );
+    assert( allocator->allocate != NULL );
+    assert( allocator->deallocate != NULL );
+    assert( allocator->deallocate != NULL );
+
+     new_impl = (CntMemblockImpl *)allocator->allocate( sizeof(*new_impl) );
 
     if( new_impl ) {
-        if( !cnt_memblock_impl_init( new_impl, reserve_size ) ) {
-            block_free_ptr( new_impl );
+        if( !cnt_memblock_impl_init_al( new_impl, reserve_size, allocator ) ) {
+            allocator->deallocate( new_impl );
             new_impl = NULL;
         }
     }
@@ -121,13 +127,18 @@ static void memblock_free( CntMemblockImpl *container )
 {
     cnt_memblock_impl_deinit( container );
     if( container ) {
-        block_free_ptr( container );
+        container->allocator_->deallocate( container );
     }
 }
 
 CntMemblockImpl *cnt_memblock_impl_new( )
 {
     return cnt_memblock_impl_new_reserved( void_ptr_size );
+}
+
+CntMemblockImpl *cnt_memblock_impl_new_al( const CntAllocator *allocator )
+{
+    return cnt_memblock_impl_new_reserved_al( void_ptr_size, allocator );
 }
 
 void cnt_memblock_impl_free( CntMemblockImpl *mb )
@@ -137,7 +148,14 @@ void cnt_memblock_impl_free( CntMemblockImpl *mb )
 
 CntMemblockImpl *cnt_memblock_impl_new_from( const void *data, size_t length )
 {
-    CntMemblockImpl *inst = cnt_memblock_impl_new_reserved( length );
+    return cnt_memblock_impl_new_from_al( data, length, &block_allocator );
+}
+
+CntMemblockImpl *cnt_memblock_impl_new_from_al( const void *data,
+                                                size_t length,
+                                          const CntAllocator *allocate )
+{
+    CntMemblockImpl *inst = cnt_memblock_impl_new_reserved_al(length, allocate);
     if( inst ) {
         inst->used_ = length;
         block_memcpy( inst->data_.ptr_, data, length );
@@ -145,13 +163,17 @@ CntMemblockImpl *cnt_memblock_impl_new_from( const void *data, size_t length )
     return inst;
 }
 
-
 CntMemblockImpl *cnt_memblock_impl_new_reserved( size_t reserve_size )
 {
-    CntMemblockImpl *new_inst = create_impl( reserve_size );
-    return new_inst;
+    return  cnt_memblock_impl_new_reserved_al( reserve_size, &block_allocator );
 }
 
+CntMemblockImpl *cnt_memblock_impl_new_reserved_al( size_t reserve_size,
+                                              const CntAllocator *allocate )
+{
+    CntMemblockImpl *new_inst = create_impl( reserve_size, allocate );
+    return new_inst;
+}
 
 size_t cnt_memblock_impl_size( const CntMemblockImpl *mb )
 {
@@ -229,16 +251,13 @@ int cnt_memblock_impl_reserve ( CntMemblockImpl *mb, size_t new_size )
     void *new_data;
 
     assert( mb != NULL );
-    assert( mb != NULL );
 
     new_data = mb->data_.ptr_;
-
-    assert( new_data != NULL );
 
     if( new_size > mb->capacity_ ) {
 
         new_size = block_calc_prefer_size( mb->capacity_, new_size );
-        new_data = block_realloc( new_data, new_size );
+        new_data = mb->allocator_->reallocate( new_data, new_size );
 
         if( new_data ) {
             mb->data_.ptr_ = new_data;

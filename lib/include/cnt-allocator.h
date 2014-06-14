@@ -5,7 +5,8 @@
 
 typedef struct CntAllocator {
     void * (* allocate)( size_t );
-    void (* deallocate)( void * );
+    void   (* deallocate)( void * );
+    void * (* reallocate)(void *, size_t);
 } CntAllocator;
 
 #ifdef _MSC_VER
@@ -13,7 +14,8 @@ typedef struct CntAllocator {
 #define DefaultAllocator \
     {                    \
         malloc,          \
-        free             \
+        free,            \
+        realloc
     }
 
 #else
@@ -21,7 +23,8 @@ typedef struct CntAllocator {
 #define DefaultAllocator        \
     {                           \
         .allocate   = malloc,   \
-        .deallocate = free      \
+        .deallocate = free,     \
+        .reallocate = realloc   \
     }
 
 #endif
