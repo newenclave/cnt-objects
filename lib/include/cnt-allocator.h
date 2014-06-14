@@ -29,4 +29,6 @@ typedef struct CntAllocator {
 
 #endif
 
+extern const CntAllocator cnt_default_allocator;
+
 #endif // CNTALLOCATOR_H

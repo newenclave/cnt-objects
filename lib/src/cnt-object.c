@@ -26,3 +26,5 @@ unsigned int cnt_object_hash( const CntObject *obj )
     return obj->type_->hash_( obj );
 }
 
+const CntAllocator cnt_default_allocator = DefaultAllocator;
+

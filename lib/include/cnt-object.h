@@ -3,7 +3,9 @@
 
 #include <stdlib.h>
 #include <assert.h>
+
 #include "cnt-common.h"
+#include "cnt-allocator.h"
 
 typedef enum {
      CNT_OBJ_NONE = 0
@@ -42,8 +44,9 @@ typedef struct CntTypeInfo {
 } CntTypeInfo;
 
 typedef struct CntObject {
-    const CntTypeInfo *type_;
-    unsigned int       refcount_;
+    const CntTypeInfo  *type_;
+    const CntAllocator *allocator_;
+    unsigned int        refcount_;
 } CntObject;
 
 #define CntObject_BASE  \
@@ -59,9 +62,15 @@ typedef struct CntObject {
         assert( obj->type_ != NULL );           \
         assert( obj->type_->id_ == obj_type )
 
-#define CNT_OBJECT_INIT( obj, obj_type )    \
-        obj->base_.refcount_  = 1;          \
-        obj->base_.type_      = obj_type
+#define CNT_OBJECT_INIT( obj, obj_type )                 \
+        obj->base_.refcount_   = 1;                      \
+        obj->base_.allocator_  = &cnt_default_allocator; \
+        obj->base_.type_       = obj_type
+
+#define CNT_OBJECT_INIT_AL( obj, obj_type, allocator )   \
+        obj->base_.refcount_   = 1;                      \
+        obj->base_.allocator_  = allocator;              \
+        obj->base_.type_       = obj_type
 
 void         cnt_object_decref( CntObject *obj );
 void         cnt_object_incref( CntObject *obj );
