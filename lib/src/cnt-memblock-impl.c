@@ -59,7 +59,7 @@ int  cnt_memblock_impl_init( CntMemblockImpl *mb, size_t length,
     assert( allocator != NULL );
     assert( allocator->allocate != NULL );
 
-    mb->data_.ptr_ = allocator->allocate( new_size );
+    mb->data_.ptr_ = CNT_CALL_ALLOCATE( allocator, new_size );
     mb->allocator_ = allocator;
 
     if( mb->data_.ptr_ ) {
@@ -77,7 +77,7 @@ void cnt_memblock_impl_deinit( CntMemblockImpl *mb )
         assert( mb->allocator_ != NULL );
         assert( mb->allocator_->deallocate != NULL );
 
-        mb->allocator_->deallocate( mb->data_.ptr_ );
+        CNT_CALL_DEALLOCATE( mb->allocator_, mb->data_.ptr_ );
     }
 }
 
@@ -103,11 +103,12 @@ static CntMemblockImpl *create_impl( size_t reserve_size,
     assert( allocator->deallocate != NULL );
     assert( allocator->reallocate != NULL );
 
-     new_impl = (CntMemblockImpl *)allocator->allocate( sizeof(*new_impl) );
+     new_impl =
+           (CntMemblockImpl *)CNT_CALL_ALLOCATE( allocator, sizeof(*new_impl));
 
     if( new_impl ) {
         if( !cnt_memblock_impl_init ( new_impl, reserve_size, allocator ) ) {
-            allocator->deallocate( new_impl );
+            CNT_CALL_DEALLOCATE( allocator, new_impl );
             new_impl = NULL;
         }
     }
@@ -119,7 +120,7 @@ static void memblock_free( CntMemblockImpl *container )
 {
     cnt_memblock_impl_deinit( container );
     if( container ) {
-        container->allocator_->deallocate( container );
+        CNT_CALL_DEALLOCATE( container->allocator_, container );
     }
 }
 
@@ -233,7 +234,7 @@ int cnt_memblock_impl_reserve ( CntMemblockImpl *mb, size_t new_size )
     if( new_size > mb->capacity_ ) {
 
         new_size = block_calc_prefer_size( mb->capacity_, new_size );
-        new_data = mb->allocator_->reallocate( new_data, new_size );
+        new_data = CNT_CALL_REALLOCATE( mb->allocator_, new_data, new_size );
 
         if( new_data ) {
             mb->data_.ptr_ = new_data;

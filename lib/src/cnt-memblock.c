@@ -33,7 +33,7 @@ static const CntTypeInfo cnt_this_object_type = {
 static void cnt_memblock_destroy( CntMemblock *container )
 {
     cnt_memblock_impl_free( container->impl_ );
-    container->base_.allocator_->deallocate( container );
+    CNT_CALL_DEALLOCATE( container->base_.allocator_, container );
 }
 
 CntMemblock *cnt_memblock_new( )
@@ -81,7 +81,7 @@ CntMemblock *cnt_memblock_new_reserved_al( size_t reserve_size,
     assert( allocator->deallocate != NULL );
     assert( allocator->reallocate != NULL );
 
-    new_inst = (CntMemblock *)allocator->allocate( sizeof(*new_inst) );
+    new_inst = (CntMemblock *)CNT_CALL_ALLOCATE( allocator, sizeof(*new_inst) );
 
     if( new_inst ) {
 
@@ -91,7 +91,7 @@ CntMemblock *cnt_memblock_new_reserved_al( size_t reserve_size,
                 cnt_memblock_impl_new_reserved( reserve_size, allocator );
 
         if( NULL == new_inst->impl_ ) {
-            allocator->deallocate( new_inst );
+            CNT_CALL_DEALLOCATE( allocator, new_inst );
             new_inst = NULL;
         }
 

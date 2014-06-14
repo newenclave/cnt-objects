@@ -33,7 +33,7 @@ CntInt *cnt_int_new_from_int_al( int64_t value, const CntAllocator *allocator )
     assert( allocator->deallocate != NULL );
     assert( allocator->reallocate != NULL );
 
-    inst = (CntInt *)allocator->allocate( sizeof(*inst) );
+    inst = (CntInt *)CNT_CALL_ALLOCATE( allocator, sizeof(*inst) );
     if( inst ) {
         CNT_OBJECT_INIT_AL( inst, &cnt_int_type, allocator );
         inst->value_ = value;
@@ -66,7 +66,7 @@ int64_t cnt_int_get_value( const CntInt *obj )
 static void destroy( struct CntObject *obj )
 {
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
-    obj->allocator_->deallocate( CNT_OBJECT_CONTAINER( obj, CntInt ) );
+    CNT_CALL_DEALLOCATE( obj->allocator_, CNT_OBJECT_CONTAINER( obj, CntInt ));
 }
 
 static unsigned int hash( const CntObject *obj )
