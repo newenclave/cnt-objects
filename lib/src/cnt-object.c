@@ -44,7 +44,7 @@ void * cnt_reallocate( void *ptr, size_t size)
 
 #ifdef _MSC_VER
 
-const struct CntAllocator cnt_default_allocator = {
+const CntAllocator cnt_default_allocator = {
     cnt_allocate, cnt_deallocate, cnt_reallocate
 };
 
