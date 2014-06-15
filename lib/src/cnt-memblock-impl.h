@@ -47,10 +47,10 @@ void  *cnt_memblock_impl_begin     (CntMemblockImpl *mb);
 void  *cnt_memblock_impl_end       (CntMemblockImpl *mb);
 void  *cnt_memblock_impl_at        (CntMemblockImpl *mb, size_t position);
 
-const void  *cnt_memblock_impl_const_begin (const CntMemblockImpl *mb);
-const void  *cnt_memblock_impl_const_end   (const CntMemblockImpl *mb);
-const void  *cnt_memblock_impl_const_at    (const CntMemblockImpl *mb,
-                                            size_t position);
+const void  *cnt_memblock_impl_cbegin (const CntMemblockImpl *mb);
+const void  *cnt_memblock_impl_cend   (const CntMemblockImpl *mb);
+const void  *cnt_memblock_impl_cat    (const CntMemblockImpl *mb,
+                                       size_t position);
 
 /**
   * 1 == success

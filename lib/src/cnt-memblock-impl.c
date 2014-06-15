@@ -197,7 +197,7 @@ void  *cnt_memblock_impl_at( CntMemblockImpl *mb, size_t position )
     return CNT_MBLOCK_AT( mb->data_.ptr_, position );
 }
 
-const void  *cnt_memblock_impl_const_begin(const CntMemblockImpl *mb)
+const void  *cnt_memblock_impl_cbegin(const CntMemblockImpl *mb)
 {
     assert( mb != NULL );
     assert( mb->data_.ptr_ != NULL );
@@ -205,7 +205,7 @@ const void  *cnt_memblock_impl_const_begin(const CntMemblockImpl *mb)
     return mb->data_.ptr_;
 }
 
-const void  *cnt_memblock_impl_const_end(const CntMemblockImpl *mb)
+const void  *cnt_memblock_impl_cend(const CntMemblockImpl *mb)
 {
     assert( mb != NULL );
     assert( mb->data_.ptr_ != NULL );
@@ -213,7 +213,7 @@ const void  *cnt_memblock_impl_const_end(const CntMemblockImpl *mb)
     return CNT_MBLOCK_AT( mb->data_.ptr_, mb->used_);
 }
 
-const void  *cnt_memblock_impl_const_at(const CntMemblockImpl *mb,
+const void  *cnt_memblock_impl_cat(const CntMemblockImpl *mb,
                                         size_t position)
 {
     assert( mb != NULL );

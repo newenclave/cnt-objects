@@ -31,9 +31,9 @@ void  *cnt_memblock_begin     (CntMemblock *mb);
 void  *cnt_memblock_end       (CntMemblock *mb);
 void  *cnt_memblock_at        (CntMemblock *mb, size_t position);
 
-const void  *cnt_memblock_const_begin (const CntMemblock *mb);
-const void  *cnt_memblock_const_end   (const CntMemblock *mb);
-const void  *cnt_memblock_const_at    (const CntMemblock *mb, size_t position);
+const void  *cnt_memblock_cbegin (const CntMemblock *mb);
+const void  *cnt_memblock_cend   (const CntMemblock *mb);
+const void  *cnt_memblock_cat    (const CntMemblock *mb, size_t position);
 
 /**
   * 1 == success

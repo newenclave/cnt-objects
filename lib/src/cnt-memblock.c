@@ -138,22 +138,22 @@ void  *cnt_memblock_at( CntMemblock *mb, size_t position )
     return cnt_memblock_impl_at( MBPIMPL( mb ), position );
 }
 
-const void  *cnt_memblock_const_begin(const CntMemblock *mb)
+const void  *cnt_memblock_cbegin(const CntMemblock *mb)
 {
     assert( mb != NULL );
-    return cnt_memblock_impl_const_begin( MBPIMPL( mb ) );
+    return cnt_memblock_impl_cbegin( MBPIMPL( mb ) );
 }
 
-const void  *cnt_memblock_const_end(const CntMemblock *mb)
+const void  *cnt_memblock_cend(const CntMemblock *mb)
 {
     assert( mb != NULL );
-    return cnt_memblock_impl_const_end( MBPIMPL( mb ) );
+    return cnt_memblock_impl_cend( MBPIMPL( mb ) );
 }
 
-const void  *cnt_memblock_const_at(const CntMemblock *mb, size_t position)
+const void  *cnt_memblock_cat(const CntMemblock *mb, size_t position)
 {
     assert( mb != NULL );
-    return cnt_memblock_impl_const_at( MBPIMPL( mb ), position);
+    return cnt_memblock_impl_cat( MBPIMPL( mb ), position);
 }
 
 int cnt_memblock_reserve ( CntMemblock *mb, size_t new_size )
@@ -273,7 +273,7 @@ static CntObject * clone( const CntObject * obj )
 
     CntMemblock *cloned =
             cnt_memblock_new_from_al(
-                cnt_memblock_impl_const_begin( MBPIMPL(container) ),
+                cnt_memblock_impl_cbegin( MBPIMPL(container) ),
                 cnt_memblock_impl_size( MBPIMPL(container) ),
                 CNT_OBJECT_BASE(container)->allocator_ );
 
