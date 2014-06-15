@@ -45,7 +45,7 @@ static void *block_memmove(void *dest, const void *src, size_t n)
 static size_t block_calc_prefer_size( size_t old_capa, size_t desired_size )
 {
     size_t new_capa = CNT_MBLOCK_FIX_SIZE( CNT_MBLOCK_DEF_INC( old_capa ) );
-    desired_size = CNT_MBLOCK_FIX_SIZE( desired_size );
+    desired_size    = CNT_MBLOCK_FIX_SIZE( desired_size );
 
     return ( new_capa > desired_size ) ? new_capa : desired_size;
 }
