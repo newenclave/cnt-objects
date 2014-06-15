@@ -12,6 +12,10 @@ typedef struct CntArrayImpl {
 CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
                                   const CntAllocator *allocator );
 
+CntArrayImpl *cnt_array_impl_new_reserved( const CntElementTraits *traits,
+                                           const CntAllocator *allocator,
+                                           size_t count );
+
 void cnt_array_impl_free( CntArrayImpl *arr );
 
 size_t cnt_array_impl_size( CntArrayImpl *arr );

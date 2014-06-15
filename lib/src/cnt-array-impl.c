@@ -50,8 +50,9 @@ static CntArrayImpl *create_arr( const CntElementTraits *traits,
     return inst;
 }
 
-CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
-                                  const CntAllocator *allocator )
+CntArrayImpl *cnt_array_impl_new_reserved(const CntElementTraits *traits,
+                                          const CntAllocator *allocator ,
+                                          size_t count)
 {
     assert( traits != NULL );
     assert( traits->copy != NULL );
@@ -61,12 +62,18 @@ CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
     assert( allocator->allocate != NULL );
     assert( allocator->deallocate != NULL );
 
-    return create_arr( traits, allocator, 0 );
+    return create_arr( traits, allocator, count );
+}
+
+CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
+                                  const CntAllocator *allocator )
+{
+    return cnt_array_impl_new_reserved( traits, allocator, 0 );
 }
 
 void cnt_array_impl_free( CntArrayImpl *arr )
 {
-    void *begin;
+    void  *begin;
     size_t i;
     size_t count;
 
