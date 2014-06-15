@@ -39,8 +39,13 @@ struct CntObject;
 
 typedef struct CntTypeInfo {
     cnt_object_type_id id_;
+
     void (*destroy_)( struct CntObject * );
+
     unsigned int (*hash_)( const struct CntObject * );
+
+    /// clone_ must return strong reference
+    struct CntObject *(*clone_ )( const struct CntObject * );
 } CntTypeInfo;
 
 typedef struct CntObject {
@@ -52,7 +57,7 @@ typedef struct CntObject {
 #define CntObject_BASE  \
         CntObject base_
 
-#define CNT_OBJECT_CONTAINER( base_obj, container_type ) \
+#define CNT_OBJECT_CONTAINER( container_type, base_obj ) \
         CONTAINER_OF( base_obj, container_type, base_ )
 
 #define CNT_OBJECT_BASE( obj ) (&(obj)->base_)
@@ -76,6 +81,11 @@ unsigned int cnt_object_hash( const CntObject *obj );
 
 #define CNT_OBJECT_HASH( obj ) cnt_object_hash( CNT_OBJECT_BASE(obj) )
 #define CNT_OBJECT_TYPE( obj ) ( CNT_OBJECT_BASE(obj)->type_->id_ )
+#define CNT_OBJECT_CLONE_BASE( obj ) obj->type_->clone_( obj )
+
+#define CNT_OBJECT_CLONE( obj_type, obj )                                   \
+        CNT_OBJECT_CONTAINER( obj_type,                                     \
+                              CNT_OBJECT_CLONE_BASE( CNT_OBJECT_BASE(obj) ) )
 
 #define CNT_OBJECT_TYPE_STRING( obj ) \
         cnt_type_id_to_string( CNT_OBJECT_BASE(obj)->type_->id_ )

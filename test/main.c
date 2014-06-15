@@ -25,9 +25,9 @@ int main( )
 {
 
     CntAllocator my_alloc = cnt_default_allocator;
-    CntInt *n = cnt_int_new_from_int( 1000 );
 
-    CntMemblock *m = cnt_memblock_new_al( &my_alloc );
+    CntMemblock *m = cnt_memblock_new_from_al( "123", 3, &my_alloc );
+    CntMemblock *m0;
     char *data;
     int i;
 
@@ -67,12 +67,19 @@ int main( )
     cnt_memblock_reduce( m, 1 );
     cnt_memblock_append( m, "123456789\0", 10 );
 
-    data = (char *)cnt_memblock_begin( m );
-    printf( "data hash: %lu %s %x\n", cnt_memblock_size(m), data,
-            CNT_OBJECT_HASH(m));
+    m0 = CNT_OBJECT_CLONE( CntMemblock, m );
 
-    CNT_DECREF( n );
+    data = (char *)cnt_memblock_begin( m0 );
+    printf( "data hash: %lu %s %x\n", cnt_memblock_size(m0), data,
+            CNT_OBJECT_HASH(m0));
+
+    printf( "m ref = %d\n", m->base_.refcount_ );
+
     CNT_DECREF( m );
+
+    printf( "m0 ref = %d\n", m0->base_.refcount_ );
+
+    CNT_DECREF( m0 );
 
     return 0;
 }

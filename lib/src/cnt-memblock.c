@@ -7,6 +7,7 @@
 
 static void destroy( struct CntObject *obj );
 static unsigned int hash( const struct CntObject *obj );
+static CntObject * clone(const CntObject * obj);
 
 #define cnt_this_object_type_id CNT_OBJ_MEMBLOCK
 
@@ -17,7 +18,8 @@ static unsigned int hash( const struct CntObject *obj );
 static const CntTypeInfo cnt_this_object_type = {
     cnt_this_object_type_id, // .id_
     destroy,                 // .destroy_
-    hash                     // .hash_
+    hash,                    // .hash_
+    clone                    // .clone_
 };
 
 #else
@@ -25,7 +27,8 @@ static const CntTypeInfo cnt_this_object_type = {
 static const CntTypeInfo cnt_this_object_type = {
     .id_        = cnt_this_object_type_id,
     .destroy_   = destroy,
-    .hash_      = hash
+    .hash_      = hash,
+    .clone_     = clone
 };
 
 #endif
@@ -61,8 +64,7 @@ CntMemblock *cnt_memblock_new_from_al( const void *data, size_t length,
 {
     CntMemblock *inst = cnt_memblock_new_reserved_al( length, allocator );
     if( inst ) {
-        inst->impl_ = cnt_memblock_impl_new_from( data, length, allocator );
-        if( !inst->impl_ ) {
+        if( !cnt_memblock_impl_assign( inst->impl_, data, length ) ) {
             cnt_memblock_destroy( inst );
             inst = NULL;
         }
@@ -248,7 +250,7 @@ static void destroy( CntObject *obj )
     CntMemblock *container;
 
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
-    container = CNT_OBJECT_CONTAINER( obj, CntMemblock );
+    container = CNT_OBJECT_CONTAINER( CntMemblock, obj );
 
     cnt_memblock_destroy( container );
 }
@@ -257,9 +259,23 @@ static unsigned int hash( const CntObject *obj )
 {
     CntMemblock *container;
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
-    container = CNT_OBJECT_CONTAINER( obj, CntMemblock );
+    container = CNT_OBJECT_CONTAINER( CntMemblock, obj );
 
     return tdb_hash( cnt_memblock_begin( container ),
                      cnt_memblock_size( container ) );
 }
 
+static CntObject * clone( const CntObject * obj )
+{
+    CntMemblock *container;
+    CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
+    container = CNT_OBJECT_CONTAINER( CntMemblock, obj );
+
+    CntMemblock *cloned =
+            cnt_memblock_new_from_al(
+                cnt_memblock_impl_const_begin( MBPIMPL(container) ),
+                cnt_memblock_impl_size( MBPIMPL(container) ),
+                CNT_OBJECT_BASE(container)->allocator_ );
+
+    return cloned ? CNT_OBJECT_BASE( cloned ) : NULL;
+}
