@@ -12,14 +12,15 @@
 void *my_alloc_call( size_t len )
 {
     void *ptr = malloc( len );
-    printf( "Allocate %lu bytes @%llx\n", len, ptr );
+    printf( "Allocate %lu bytes @%lx\n", len, (unsigned long)ptr );
     return ptr;
 }
 
 void *my_realloc_call( void *ptr, size_t len )
 {
     void *ptr_new = realloc( ptr, len );
-    printf( "Reallocate %lu bytes @%llx->@%llx\n", len, ptr, ptr_new );
+    printf( "Reallocate %lu bytes @%lx->@%lx\n", len,
+            (unsigned long)ptr, (unsigned long)ptr_new );
     return ptr_new;
 }
 
