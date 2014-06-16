@@ -44,13 +44,14 @@ int main( )
 
     CntAllocator my_alloc = cnt_default_allocator;
     CntArrayImpl *myarr;
+    void *p;
 
     my_alloc.allocate = my_alloc_call;
     my_alloc.reallocate = my_realloc_call;
 
     myarr = cnt_array_impl_new( &inttrait, &my_alloc );
 
-    void *p = cnt_array_impl_begin( myarr );
+    p = cnt_array_impl_begin( myarr );
 
     cnt_array_impl_free( myarr );
 

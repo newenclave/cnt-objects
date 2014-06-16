@@ -84,8 +84,12 @@ static unsigned int hash( const CntObject *obj )
 static CntObject * clone( const CntObject *obj )
 {
     int64_t value;
+    CntInt *cloned;
+
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
-    CntInt *cloned = cnt_int_new_from_int( value );
+    
+    value = CNT_OBJECT_CONTAINER( CntInt, obj )->value_;
+    cloned = cnt_int_new_from_int( value );
     return CNT_OBJECT_BASE( cloned );
 }
 

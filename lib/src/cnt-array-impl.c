@@ -35,9 +35,10 @@ static CntArrayImpl *create_arr( const CntElementTraits *traits,
 
     if( inst ) {
 
+        int res;
         inst->traits_ = traits;
 
-        int res = cnt_memblock_impl_init(
+        res = cnt_memblock_impl_init(
                             &inst->mblock_,
                             ARR_ELEMENTS_SIZE( traits->element_size, reserve ),
                             allocator );

@@ -268,11 +268,11 @@ static unsigned int hash( const CntObject *obj )
 static CntObject * clone( const CntObject * obj )
 {
     CntMemblock *container;
+    CntMemblock *cloned;
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
     container = CNT_OBJECT_CONTAINER( CntMemblock, obj );
 
-    CntMemblock *cloned =
-            cnt_memblock_new_from_al(
+    cloned = cnt_memblock_new_from_al(
                 cnt_memblock_impl_cbegin( MBPIMPL(container) ),
                 cnt_memblock_impl_size( MBPIMPL(container) ),
                 CNT_OBJECT_BASE(container)->allocator_ );
