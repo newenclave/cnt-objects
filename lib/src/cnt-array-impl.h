@@ -18,7 +18,13 @@ CntArrayImpl *cnt_array_impl_new_reserved( const CntElementTraits *traits,
 
 void cnt_array_impl_free( CntArrayImpl *arr );
 
-size_t cnt_array_impl_size( CntArrayImpl *arr );
+size_t cnt_array_impl_size( const CntArrayImpl *arr );
+
+size_t cnt_array_foreach( CntArrayImpl *arr,
+                        void (*call)(void *, void *), void *data );
+
+size_t cnt_array_cforeach( const CntArrayImpl *arr,
+                           void (*c_call)(const void *, void *), void *data );
 
 void  *cnt_array_impl_begin( CntArrayImpl *arr );
 void  *cnt_array_impl_end( CntArrayImpl *arr );
