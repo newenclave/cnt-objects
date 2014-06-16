@@ -8,31 +8,7 @@ static int compare( const struct CntObject *l, const struct CntObject *r );
 
 #define cnt_this_object_type_id CNT_OBJ_INT
 
-#ifdef _MSC_VER
-
-static const CntTypeInfo cnt_this_object_type = {
-    cnt_this_object_type_id, // .id_
-    destroy,                 // .destroy_
-    hash,                    // .hash_
-    clone,                   // .clone_
-    compare,                 // .compare_
-    sizeof( CntInt ),        // .size_
-    "int"                    // .name_
-};
-
-#else
-
-static const CntTypeInfo cnt_this_object_type = {
-    .id_        = cnt_this_object_type_id,
-    .destroy_   = destroy,
-    .hash_      = hash,
-    .clone_     = clone,
-    .compare_   = compare,
-    .size_      = sizeof( CntInt ),
-    .name_      = "int"
-};
-
-#endif
+CNT_DEFINE_OBJECT_TYPE( CntInt,  cnt_this_object_type_id );
 
 CntInt *cnt_int_new_from_int_al( int64_t value, const CntAllocator *allocator )
 {

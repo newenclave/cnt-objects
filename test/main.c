@@ -53,7 +53,8 @@ int main( )
     myblock =  cnt_memblock_new_from( "123", 3 );
     myblock2 = cnt_memblock_new_from( "123123", 6 );
 
-    printf( "cmp: %d\n", CNT_OBJECTS_COMPARE( myblock, myblock2 ) );
+    printf( "cmp: %s %d\n",  CNT_OBJECT_NAME( myblock ) ,
+            CNT_OBJECTS_COMPARE( myblock, myblock ) );
 
     CNT_DECREF(myblock);
     CNT_DECREF(myblock2);

@@ -15,26 +15,6 @@ typedef enum {
     ,CNT_OBJ_MAX
 } cnt_object_type_id;
 
-static const char * cnt_type_id_to_string( cnt_object_type_id id )
-{
-    switch ( id ) {
-
-    case CNT_OBJ_NONE:
-        return "none";
-
-    case CNT_OBJ_INT:
-        return "int";
-
-    case CNT_OBJ_MEMBLOCK:
-        return "memory block";
-
-    case CNT_OBJ_MAX:
-        return "__max__";
-    }
-
-    return "__unknown__";
-}
-
 struct CntObject;
 
 typedef struct CntTypeInfo {
@@ -62,6 +42,18 @@ typedef struct CntObject {
     const CntAllocator *allocator_;
     unsigned int        refcount_;
 } CntObject;
+
+
+#define CNT_DEFINE_OBJECT_TYPE( Type, TypeId )          \
+    static const CntTypeInfo cnt_this_object_type = {   \
+        TypeId,                                         \
+        destroy,                                        \
+        hash,                                           \
+        clone,                                          \
+        compare,                                        \
+        sizeof( Type ),                                 \
+        #Type                                           \
+    };
 
 #define CntObject_BASE  \
         CntObject base_
@@ -91,6 +83,8 @@ int          cnt_objects_compare( const CntObject *l, const CntObject *r );
 
 #define CNT_OBJECT_HASH( obj ) cnt_object_hash( CNT_OBJECT_BASE(obj) )
 #define CNT_OBJECT_TYPE( obj ) ( CNT_OBJECT_BASE(obj)->type_->id_ )
+#define CNT_OBJECT_NAME( obj ) ( CNT_OBJECT_BASE(obj)->type_->name_ )
+
 #define CNT_OBJECT_CLONE_BASE( obj ) obj->type_->clone_( obj )
 
 #define CNT_OBJECTS_COMPARE( lobj, robj )   \

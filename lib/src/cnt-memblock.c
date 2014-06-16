@@ -14,31 +14,7 @@ static int compare( const struct CntObject *l, const struct CntObject *r );
 
 #define MBPIMPL( mb ) (mb)->impl_
 
-#ifdef _MSC_VER
-
-static const CntTypeInfo cnt_this_object_type = {
-    cnt_this_object_type_id, // .id_
-    destroy,                 // .destroy_
-    hash,                    // .hash_
-    clone,                   // .clone_
-    compare,                 // .compare_
-    sizeof( CntMemblock ),   // .size_
-    "memblock"               // .name_
-};
-
-#else
-
-static const CntTypeInfo cnt_this_object_type = {
-    .id_        = cnt_this_object_type_id,
-    .destroy_   = destroy,
-    .hash_      = hash,
-    .clone_     = clone,
-    .compare_   = compare,
-    .size_      = sizeof( CntMemblock ),
-    .name_      = "memblock"
-};
-
-#endif
+CNT_DEFINE_OBJECT_TYPE( CntMemblock,  cnt_this_object_type_id );
 
 static void cnt_memblock_destroy( CntMemblock *container )
 {
