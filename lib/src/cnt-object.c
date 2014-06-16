@@ -28,7 +28,14 @@ unsigned int cnt_object_hash( const CntObject *obj )
 
 int cnt_objects_compare( const CntObject *l, const CntObject *r )
 {
-    if( l->type_->id_ == r->type_->id_ ) {
+    assert( l != NULL );
+    assert( r != NULL );
+    assert( l->type_ != NULL );
+    assert( l->type_->compare_ != NULL );
+
+    if( l == r ) {
+        return 0;
+    } else if( l->type_->id_ == r->type_->id_ ) {
         return l->type_->compare_( l, r );
     } else {
         return (l->type_->id_ < r->type_->id_) ? -1 : 1;
