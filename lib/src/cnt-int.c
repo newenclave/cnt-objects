@@ -45,8 +45,16 @@ CntInt *cnt_int_new_al( const CntAllocator *allocator )
 
 int64_t cnt_int_get_value( const CntInt *obj )
 {
+    assert( obj != NULL );
     return obj->value_;
 }
+
+void cnt_int_set_value( CntInt *obj, int64_t value )
+{
+    assert( obj != NULL );
+    obj->value_ = value;
+}
+
 
 /// ========================== DESTROY AND HASH ========================== ///
 static void destroy( struct CntObject *obj )

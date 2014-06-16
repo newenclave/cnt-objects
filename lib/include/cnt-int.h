@@ -15,5 +15,6 @@ CntInt *cnt_int_new_from_int( int64_t value );
 CntInt *cnt_int_new_from_int_al( int64_t value, const CntAllocator *allocator );
 
 int64_t cnt_int_get_value( const CntInt *obj );
+void    cnt_int_set_value( CntInt *obj, int64_t value );
 
 #endif // CNTINT_H
