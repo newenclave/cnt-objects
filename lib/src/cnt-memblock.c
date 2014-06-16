@@ -8,6 +8,7 @@
 static void destroy( struct CntObject *obj );
 static unsigned int hash( const struct CntObject *obj );
 static CntObject * clone(const CntObject * obj);
+static int compare( const struct CntObject *l, const struct CntObject *r );
 
 #define cnt_this_object_type_id CNT_OBJ_MEMBLOCK
 
@@ -20,6 +21,9 @@ static const CntTypeInfo cnt_this_object_type = {
     destroy,                 // .destroy_
     hash,                    // .hash_
     clone                    // .clone_
+    compare                  // .compare_
+    sizeof( CntInt )         // .size_
+    "memblock"               // .name_
 };
 
 #else
@@ -28,7 +32,10 @@ static const CntTypeInfo cnt_this_object_type = {
     .id_        = cnt_this_object_type_id,
     .destroy_   = destroy,
     .hash_      = hash,
-    .clone_     = clone
+    .clone_     = clone,
+    .compare_   = compare,
+    .size_      = sizeof( CntMemblock ),
+    .name_      = "memblock"
 };
 
 #endif
@@ -279,3 +286,35 @@ static CntObject * clone( const CntObject * obj )
 
     return cloned ? CNT_OBJECT_BASE( cloned ) : NULL;
 }
+
+static int compare( const struct CntObject *l, const struct CntObject *r )
+{
+    const CntMemblock *lb;
+    const CntMemblock *rb;
+
+    size_t llen;
+    size_t rlen;
+
+    int cmp_res;
+
+    CNT_OBJECT_ASSERT_TYPE( l, cnt_this_object_type_id );
+    CNT_OBJECT_ASSERT_TYPE( r, cnt_this_object_type_id );
+
+    assert( l->type_->compare_ != NULL );
+
+    lb = CNT_OBJECT_CONTAINER( const CntMemblock, l );
+    rb = CNT_OBJECT_CONTAINER( const CntMemblock, r );
+
+    llen = MBPIMPL( lb )->used_;
+    rlen = MBPIMPL( rb )->used_;
+
+    cmp_res = memcmp( MBPIMPL( lb )->data_.ptr_, MBPIMPL( rb )->data_.ptr_,
+                      llen <  rlen ? llen : rlen);
+
+    if( llen ==  rlen ) {
+        return cmp_res;
+    }
+
+    return (cmp_res == 0) ? ( llen < rlen ? -1 : 1 ) : cmp_res;
+}
+

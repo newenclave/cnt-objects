@@ -43,17 +43,20 @@ int main( )
 {
 
     CntAllocator my_alloc = cnt_default_allocator;
-    CntArrayImpl *myarr;
+    CntMemblock *myblock;
+    CntMemblock *myblock2;
     void *p;
 
     my_alloc.allocate = my_alloc_call;
     my_alloc.reallocate = my_realloc_call;
 
-    myarr = cnt_array_impl_new( &inttrait, &my_alloc );
+    myblock =  cnt_memblock_new_from( "123", 3 );
+    myblock2 = cnt_memblock_new_from( "123123", 6 );
 
-    p = cnt_array_impl_begin( myarr );
+    printf( "cmp: %d\n", CNT_OBJECTS_COMPARE( myblock, myblock2 ) );
 
-    cnt_array_impl_free( myarr );
+    CNT_DECREF(myblock);
+    CNT_DECREF(myblock2);
 
     return 0;
 }

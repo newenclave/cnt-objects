@@ -26,6 +26,15 @@ unsigned int cnt_object_hash( const CntObject *obj )
     return obj->type_->hash_( obj );
 }
 
+int cnt_objects_compare( const CntObject *l, const CntObject *r )
+{
+    if( l->type_->id_ == r->type_->id_ ) {
+        return l->type_->compare_( l, r );
+    } else {
+        return (l->type_->id_ < r->type_->id_) ? -1 : 1;
+    }
+}
+
 void * cnt_allocate( size_t size )
 {
     return malloc( size );

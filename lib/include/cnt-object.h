@@ -46,6 +46,15 @@ typedef struct CntTypeInfo {
 
     /// clone_ must return strong reference
     struct CntObject *(*clone_ )( const struct CntObject * );
+
+    /// <0 left  < right
+    ///  0 left == right
+    /// >0 left  > right
+    int ( *compare_)(const struct CntObject *, const struct CntObject *);
+
+    const size_t size_;
+    const char *name_;
+
 } CntTypeInfo;
 
 typedef struct CntObject {
@@ -75,6 +84,7 @@ typedef struct CntObject {
 void         cnt_object_decref( CntObject *obj );
 void         cnt_object_incref( CntObject *obj );
 unsigned int cnt_object_hash( const CntObject *obj );
+int          cnt_objects_compare( const CntObject *l, const CntObject *r );
 
 #define CNT_DECREF( obj ) cnt_object_decref( CNT_OBJECT_BASE(obj) )
 #define CNT_INCREF( obj ) cnt_object_incref( CNT_OBJECT_BASE(obj) )
@@ -82,6 +92,9 @@ unsigned int cnt_object_hash( const CntObject *obj );
 #define CNT_OBJECT_HASH( obj ) cnt_object_hash( CNT_OBJECT_BASE(obj) )
 #define CNT_OBJECT_TYPE( obj ) ( CNT_OBJECT_BASE(obj)->type_->id_ )
 #define CNT_OBJECT_CLONE_BASE( obj ) obj->type_->clone_( obj )
+
+#define CNT_OBJECTS_COMPARE( lobj, robj )   \
+        cnt_objects_compare( CNT_OBJECT_BASE(lobj), CNT_OBJECT_BASE(robj) )
 
 #define CNT_OBJECT_CLONE( obj_type, obj )                                   \
         CNT_OBJECT_CONTAINER( obj_type,                                     \
