@@ -76,6 +76,10 @@ typedef struct CntObject {
 void         cnt_object_decref( CntObject *obj );
 void         cnt_object_incref( CntObject *obj );
 unsigned int cnt_object_hash( const CntObject *obj );
+
+/// <0 left  < right
+///  0 left == right
+/// >0 left  > right
 int          cnt_objects_compare( const CntObject *l, const CntObject *r );
 
 #define CNT_DECREF( obj ) cnt_object_decref( CNT_OBJECT_BASE(obj) )
