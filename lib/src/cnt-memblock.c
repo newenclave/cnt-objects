@@ -278,8 +278,8 @@ static int compare( const struct CntObject *l, const struct CntObject *r )
 
     assert( l->type_->compare_ != NULL );
 
-    lb = CNT_OBJECT_CONTAINER( const CntMemblock, l );
-    rb = CNT_OBJECT_CONTAINER( const CntMemblock, r );
+    lb = CNT_OBJECT_CONTAINER( CntMemblock, l );
+    rb = CNT_OBJECT_CONTAINER( CntMemblock, r );
 
     llen = MBPIMPL( lb )->used_;
     rlen = MBPIMPL( rb )->used_;
