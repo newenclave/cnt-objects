@@ -33,7 +33,7 @@ typedef struct CntTypeInfo {
     int ( *compare_)(const struct CntObject *, const struct CntObject *);
 
     const size_t size_;
-    const char *name_;
+    const char  *name_;
 
 } CntTypeInfo;
 
@@ -53,7 +53,7 @@ typedef struct CntObject {
         compare,                                        \
         sizeof( Type ),                                 \
         #Type                                           \
-    };
+    }
 
 #define CntObject_BASE  \
         CntObject base_

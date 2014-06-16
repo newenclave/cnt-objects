@@ -44,17 +44,17 @@ int main( )
 
     CntAllocator my_alloc = cnt_default_allocator;
     CntMemblock *myblock;
-    CntMemblock *myblock2;
-    void *p;
+    CntInt *myblock2;
 
     my_alloc.allocate = my_alloc_call;
     my_alloc.reallocate = my_realloc_call;
 
     myblock =  cnt_memblock_new_from( "123", 3 );
-    myblock2 = cnt_memblock_new_from( "123123", 6 );
+    myblock2 = cnt_int_new( );
 
-    printf( "cmp: %s %d\n",  CNT_OBJECT_NAME( myblock ) ,
-            CNT_OBJECTS_COMPARE( myblock, myblock ) );
+    printf( "cmp: %s %s %d\n",
+            CNT_OBJECT_NAME( myblock ), CNT_OBJECT_NAME( myblock2 ),
+            CNT_OBJECTS_COMPARE( myblock, myblock2 ) );
 
     CNT_DECREF(myblock);
     CNT_DECREF(myblock2);
