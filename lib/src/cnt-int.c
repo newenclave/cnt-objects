@@ -14,9 +14,9 @@ static const CntTypeInfo cnt_this_object_type = {
     cnt_this_object_type_id, // .id_
     destroy,                 // .destroy_
     hash,                    // .hash_
-    clone                    // .clone_
-    compare                  // .compare_
-    sizeof( CntInt )         // .size_
+    clone,                   // .clone_
+    compare,                 // .compare_
+    sizeof( CntInt ),        // .size_
     "int"                    // .name_
 };
 
