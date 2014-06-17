@@ -17,6 +17,7 @@ CntArrayImpl *cnt_array_impl_new_reserved( const CntElementTraits *traits,
                                            size_t count );
 
 int cnt_array_impl_reserve( CntArrayImpl *arr, size_t count );
+int cnt_array_impl_resize( CntArrayImpl *arr, size_t count );
 
 void   cnt_array_impl_free( CntArrayImpl *arr );
 

@@ -75,10 +75,30 @@ static size_t array_elements_del( CntArrayImpl *arr,
     }
 }
 
+static void reduce_array_size( CntArrayImpl *arr, size_t count,
+                               void (* destroy)( void * ) )
+{
+    size_t old_count = ARR_ELEMENTS_COUNT( arr );
+
+    if( destroy ) {
+
+        void *tail_ptr = ARR_ELEMENT_SHIFT( MBPTR(arr),
+                                            ARR_ELEMENT_SIZE(arr),
+                                            old_count - count );
+
+        array_elements_del( arr, tail_ptr, count, destroy );
+
+    } else {
+        MBUSED( arr ) = ARR_ELEMENTS_SIZE( ARR_ELEMENT_SIZE(arr),
+                                           old_count - count );
+    }
+}
+
 static int extend_array_size( CntArrayImpl *arr, size_t count,
                               void *(* copy)( void *, const void *, size_t ))
 {
     int res = 0;
+
     if( copy ) {
 
         const size_t old_size = ARR_ELEMENTS_COUNT( arr );
@@ -144,14 +164,39 @@ CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
 int cnt_array_impl_reserve( CntArrayImpl *arr, size_t count )
 {
     int res;
+    size_t old_size;
 
     assert( arr != NULL );
 
-    if( ARR_ELEMENTS_COUNT( arr ) > count ) {
-        res = extend_array_size( arr, count, arr->traits_->copy );
+    old_size = ARR_ELEMENTS_COUNT( arr );
+
+    if( old_size < count ) {
+        res = extend_array_size( arr, count - old_size, arr->traits_->copy );
     }
     return res;
 }
+
+int cnt_array_impl_resize( CntArrayImpl *arr, size_t count )
+{
+    int res = 1;
+    size_t old_count;
+
+    assert( arr != NULL );
+
+    old_count = ARR_ELEMENTS_COUNT( arr );
+
+    if( old_count < count ) {
+        res = cnt_array_impl_reserve( arr, count );
+        if( res ) {
+            MBUSED( arr ) = ARR_ELEMENTS_SIZE( ARR_ELEMENT_SIZE(arr), count );
+        }
+    } else if( old_count > count ) {
+        reduce_array_size( arr, old_count - count, arr->traits_->destroy );
+    }
+
+    return res;
+}
+
 
 void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr )
 {
