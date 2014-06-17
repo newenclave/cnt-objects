@@ -191,21 +191,27 @@ int cnt_array_impl_push_back ( CntArrayImpl *arr, void *element )
 
 }
 
-int cnt_array_impl_append ( CntArrayImpl *arr, void *elements, size_t count )
+int cnt_array_impl_append ( CntArrayImpl *arr, const void *src, size_t count )
 {
-    int res;
+    int     res;
+    size_t  old_size;
 
     assert( arr != NULL );
     assert( arr->traits_ != NULL );
 
+    old_size = ARR_ELEMENTS_COUNT( arr );
+
     res = extend_array( arr, count, arr->traits_->init );
 
-//    if( res ) {
-//        void *old_tail =
-//    }
+    if( res ) {
 
-//    copy_elements(  );
+        void *dst = ARR_ELEMENT_SHIFT( MBPTR( arr ),
+                                      ARR_ELEMENT_SIZE( arr ), old_size );
 
+        copy_elements( dst, src, count, ARR_ELEMENT_SIZE( arr ),
+                       arr->traits_->copy );
+
+    }
     return res;
 }
 
