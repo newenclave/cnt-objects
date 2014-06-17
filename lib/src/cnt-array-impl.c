@@ -111,7 +111,7 @@ static void copy_elements( void *dst, const void *src,
 static void *init_elements( void *src, size_t count, size_t element_size,
                             int (* init)( void *, size_t, size_t ) )
 {
-    if( init ) {
+    if( src && init ) {
         init( src, count, element_size );
     }
     return src;
@@ -280,7 +280,7 @@ void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr )
     cnt_memblock_impl_swap( MBPIMPL( larr ), MBPIMPL( rarr ) );
 }
 
-size_t cnt_array_foreach( CntArrayImpl *arr,
+size_t cnt_array_impl_foreach( CntArrayImpl *arr,
                           void (*call)(void *, void *), void *data )
 {
     void  *begin;
@@ -301,7 +301,7 @@ size_t cnt_array_foreach( CntArrayImpl *arr,
     return i;
 }
 
-size_t cnt_array_cforeach( const CntArrayImpl *arr,
+size_t cnt_array_impl_cforeach( const CntArrayImpl *arr,
                            void (*c_call)(const void *, void *), void *data )
 {
     const void  *begin;

@@ -342,9 +342,9 @@ void *cnt_memblock_impl_create_insert( CntMemblockImpl *mb,
 
         if( res ) {
 
-            block = CNT_MBLOCK_AT( mb->data_.ptr_, count + position );
+            block = CNT_MBLOCK_AT( mb->data_.ptr_, position );
 
-            block_memmove( block, CNT_MBLOCK_AT( block, count ),
+            block_memmove( CNT_MBLOCK_AT( block, count ), block,
                            old_used - position );
         }
 

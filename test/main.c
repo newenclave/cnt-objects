@@ -60,14 +60,24 @@ int main( )
     cnt_array_impl_resize( a, 10 );
 
     for( i=0; i<cnt_array_impl_size( a ); ++i ) {
-        *((double *)cnt_array_impl_at( a, i )) = i;
+        *((double *)cnt_array_impl_at( a, i )) = (double)i;
     }
+
+    printf( "Elem size: %lu\n", a->traits_->element_size );
+    printf( "arr size: %lu\n", cnt_array_impl_size( a ) );
+
+    double *r = (double *)cnt_array_impl_create_insert( a, 2, 2 );
+
+    *r = 8.90;
+    *++r = 8.90;
+
+    printf( "arr size: %lu\n", cnt_array_impl_size( a ) );
 
     printf( "Add some!\n" );
 
     cnt_array_impl_resize( a, 20 );
 
-    for( i=10; i<cnt_array_impl_size( a ); ++i ) {
+    for( i=12; i<cnt_array_impl_size( a ); ++i ) {
         *((double *)cnt_array_impl_at( a, i )) = i * 2;
     }
 
