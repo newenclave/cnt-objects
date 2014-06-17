@@ -12,20 +12,20 @@ typedef struct CntElementTraits {
      *  reaturns >0 if success
      *  init( src, n, element_size );
     **/
-    int        (* init)( void *, size_t, size_t );
+    int (* init)( void *, size_t, size_t );
 
     /**
      *  free element's data. but NOT element pointer
      *  destroy( src, element_size )
     **/
-    void       (* destroy)( void *, size_t );
+    void (* destroy)( void *, size_t );
 
     /**
      *   copy element to another place;
      *   returns ptr to destination (1st parameter)
      *   copy( dst, src, element_size )
     **/
-    void      *(* copy)( void *, const void *, size_t );
+    void *(* copy)( void *, const void *, size_t );
 
     /**
      *  <0 left  < right
@@ -33,7 +33,7 @@ typedef struct CntElementTraits {
      *  >0 left  > right
      *   compare( left, right, element_size )
     **/
-    int        (*compare)( const void *, const void *, size_t );
+    int (*compare)( const void *, const void *, size_t );
 
 } CntElementTraits;
 
