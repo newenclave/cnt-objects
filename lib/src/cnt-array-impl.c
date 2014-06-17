@@ -60,12 +60,11 @@ static CntArrayImpl *create_arr( const CntElementTraits *traits,
     return inst;
 }
 
-static size_t array_elements_del( CntArrayImpl *arr, void (* freecall)(void *) )
+static size_t array_elements_del( CntArrayImpl *arr,
+                                  void *begin, size_t count,
+                                  void (* freecall)(void *) )
 {
     if( freecall ) {
-
-        void  *begin = cnt_memblock_impl_begin( MBPIMPL( arr ) );
-        size_t count = cnt_array_impl_size( arr );
 
         size_t i;
 
@@ -217,7 +216,9 @@ void cnt_array_impl_free( CntArrayImpl *arr )
     assert( arr != NULL );
     assert( arr->traits_ != NULL );
 
-    array_elements_del( arr, arr->traits_->destroy );
+    array_elements_del( arr,
+                        MBPTR( arr ), ARR_ELEMENTS_COUNT( arr ),
+                        arr->traits_->destroy );
 
     cnt_memblock_impl_deinit( MBPIMPL( arr ) );
     CNT_CALL_DEALLOCATE( MBPIMPL( arr )->allocator_, arr );
