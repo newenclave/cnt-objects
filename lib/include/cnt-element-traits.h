@@ -27,6 +27,6 @@ typedef struct CntElementTraits {
 #define CNT_ELEMENT_DESTROY( trait, src )                   \
         (trait)->destroy( src )
 
-#define CNT_EMPTY_ELEMENT_TRAITS( size ) = { size }
+#define CNT_EMPTY_ELEMENT_TRAITS( size ) { size }
 
 #endif // CNTELEMENTTRAITS_H

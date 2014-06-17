@@ -75,8 +75,8 @@ static void array_elements_del( CntArrayImpl *arr,
     }
 }
 
-static void reduce_array_size( CntArrayImpl *arr, size_t count,
-                               void (* destroy)( void * ) )
+static void reduce_array( CntArrayImpl *arr, size_t count,
+                          void (* destroy)( void * ) )
 {
     size_t old_count = ARR_ELEMENTS_COUNT( arr );
 
@@ -90,8 +90,8 @@ static void reduce_array_size( CntArrayImpl *arr, size_t count,
                                        old_count - count );
 }
 
-static int extend_array_size( CntArrayImpl *arr, size_t count,
-                              void *(* copy)( void *, const void *, size_t ))
+static int extend_array( CntArrayImpl *arr, size_t count,
+                         void *(* copy)( void *, const void *, size_t ))
 {
     int res = 0;
 
@@ -167,7 +167,7 @@ int cnt_array_impl_reserve( CntArrayImpl *arr, size_t count )
     old_size = ARR_ELEMENTS_COUNT( arr );
 
     if( old_size < count ) {
-        res = extend_array_size( arr, count - old_size, arr->traits_->copy );
+        res = extend_array( arr, count - old_size, arr->traits_->copy );
     }
     return res;
 }
@@ -187,7 +187,7 @@ int cnt_array_impl_resize( CntArrayImpl *arr, size_t count )
             MBUSED( arr ) = ARR_ELEMENTS_SIZE( ARR_ELEMENT_SIZE(arr), count );
         }
     } else if( old_count > count ) {
-        reduce_array_size( arr, old_count - count, arr->traits_->destroy );
+        reduce_array( arr, old_count - count, arr->traits_->destroy );
     }
 
     return res;

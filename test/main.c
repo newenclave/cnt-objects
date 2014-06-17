@@ -24,19 +24,25 @@ void *my_realloc_call( void *ptr, size_t len )
     return ptr_new;
 }
 
-void int_del( void *ptr )
-{
-    (void)(ptr);
-}
 
 void *int_cpy( void *dst, const void *src, size_t len )
 {
     (void)(len);
+
     *((int *)dst) = *((const int *)src);
+
+    printf( "copy: %d\n", *((int *)dst) );
+
     return dst;
 }
 
-const CntElementTraits inttrait = {
+void int_del( void *ptr )
+{
+    int *i = (int *)ptr;
+    printf( "destroy: %d\n", *i );
+}
+
+CntElementTraits inttrait = {
     sizeof( int ), int_del, int_cpy
 };
 
@@ -44,21 +50,30 @@ int main( )
 {
 
     CntAllocator my_alloc = cnt_default_allocator;
-    CntMemblock *myblock;
-    CntInt *myblock2;
+    CntArrayImpl *a = cnt_array_impl_new( &inttrait, &my_alloc );
+    size_t i;
 
-    my_alloc.allocate = my_alloc_call;
-    my_alloc.reallocate = my_realloc_call;
+    cnt_array_impl_resize( a, 10 );
 
-    myblock =  cnt_memblock_new_from( "123", 3 );
-    myblock2 = cnt_int_new( );
+    for( i=0; i<cnt_array_impl_size( a ); ++i ) {
+        *((int *)cnt_array_impl_at( a, i )) = i;
+    }
 
-    printf( "cmp: %s %s %d\n",
-            CNT_OBJECT_NAME( myblock ), CNT_OBJECT_NAME( myblock2 ),
-            CNT_OBJECTS_COMPARE( myblock, myblock2 ) );
+    printf( "Add some!\n" );
 
-    CNT_DECREF(myblock);
-    CNT_DECREF(myblock2);
+    cnt_array_impl_resize( a, 20 );
+
+    for( i=10; i<cnt_array_impl_size( a ); ++i ) {
+        *((int *)cnt_array_impl_at( a, i )) = i * 2;
+    }
+
+    printf( "Del some!\n" );
+
+    cnt_array_impl_resize( a, 5 );
+
+    printf( "Destroy all!\n" );
+
+    cnt_array_impl_free( a );
 
     return 0;
 }
