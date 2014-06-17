@@ -27,7 +27,7 @@ void *my_realloc_call( void *ptr, size_t len )
 
 void *int_cpy( void *dst, const void *src, size_t len )
 {
-    (void)(len);
+    assert( len == sizeof( int ) );
 
     *((int *)dst) = *((const int *)src);
 
@@ -36,8 +36,10 @@ void *int_cpy( void *dst, const void *src, size_t len )
     return dst;
 }
 
-void int_del( void *ptr )
+void int_del( void *ptr, size_t len )
 {
+    assert( len == sizeof( int ) );
+
     int *i = (int *)ptr;
     printf( "destroy: %d\n", *i );
 }

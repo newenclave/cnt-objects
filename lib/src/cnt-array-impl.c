@@ -62,21 +62,21 @@ static CntArrayImpl *create_arr( const CntElementTraits *traits,
 
 static void array_elements_del( CntArrayImpl *arr,
                                 void *begin, size_t count,
-                                void (* freecall)(void *) )
+                                void (* freecall)(void *, size_t) )
 {
     if( freecall ) {
 
         size_t i;
 
         for( i=0; i<count; ++i ) {
-            freecall( begin );
+            freecall( begin, ARR_ELEMENT_SIZE( arr ) );
             begin = ARR_ELEMENT_NEXT( begin, ARR_ELEMENT_SIZE( arr ) );
         }
     }
 }
 
 static void reduce_array( CntArrayImpl *arr, size_t count,
-                          void (* destroy)( void * ) )
+                          void (* destroy)( void *, size_t ) )
 {
     size_t old_count = ARR_ELEMENTS_COUNT( arr );
 
@@ -191,7 +191,7 @@ int cnt_array_impl_resize( CntArrayImpl *arr, size_t count )
             MBUSED( arr ) = ARR_ELEMENTS_SIZE( ARR_ELEMENT_SIZE(arr), count );
         }
     } else if( old_count > count ) {
-        reduce_array( arr, old_count - count, arr->traits_->destroy );
+        reduce_array( arr, old_count - count, arr->traits_->destroy  );
     }
 
     return res;
