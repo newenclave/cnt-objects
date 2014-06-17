@@ -72,6 +72,22 @@ CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
     return cnt_array_impl_new_reserved( traits, allocator, 0 );
 }
 
+void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr )
+{
+    const CntElementTraits *tmp_trait;
+
+    assert( larr != NULL );
+    assert( rarr != NULL );
+
+    /// swap trait
+    tmp_trait     = larr->traits_;
+    larr->traits_ = rarr->traits_;
+    rarr->traits_ = tmp_trait;
+
+    /// swap blocks
+    cnt_memblock_impl_swap( MBPIMPL( larr ), MBPIMPL( rarr ) );
+}
+
 size_t cnt_array_foreach( CntArrayImpl *arr,
                           void (*call)(void *, void *), void *data )
 {

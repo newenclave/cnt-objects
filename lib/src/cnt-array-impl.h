@@ -26,6 +26,8 @@ size_t cnt_array_foreach( CntArrayImpl *arr,
 size_t cnt_array_cforeach( const CntArrayImpl *arr,
                            void (*c_call)(const void *, void *), void *data );
 
+void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr );
+
 void  *cnt_array_impl_begin( CntArrayImpl *arr );
 void  *cnt_array_impl_end( CntArrayImpl *arr );
 void  *cnt_array_impl_at( CntArrayImpl *arr, size_t index );

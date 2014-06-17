@@ -213,8 +213,7 @@ const void  *cnt_memblock_impl_cend(const CntMemblockImpl *mb)
     return CNT_MBLOCK_AT( mb->data_.ptr_, mb->used_);
 }
 
-const void  *cnt_memblock_impl_cat(const CntMemblockImpl *mb,
-                                        size_t position)
+const void  *cnt_memblock_impl_cat(const CntMemblockImpl *mb, size_t position)
 {
     assert( mb != NULL );
     assert( mb->data_.ptr_ != NULL );
