@@ -56,8 +56,6 @@ CntArrayImpl *cnt_array_impl_new_reserved(const CntElementTraits *traits,
                                           size_t count)
 {
     assert( traits != NULL );
-    assert( traits->copy != NULL );
-    assert( traits->destroy != NULL );
 
     assert( allocator != NULL );
     assert( allocator->allocate != NULL );
@@ -128,23 +126,28 @@ size_t cnt_array_cforeach( const CntArrayImpl *arr,
     return i;
 }
 
+static size_t array_elements_del( CntArrayImpl *arr, void (* freecall)(void *) )
+{
+    if( freecall ) {
+
+        void  *begin = cnt_memblock_impl_begin( MBPIMPL( arr ) );
+        size_t count = cnt_array_impl_size( arr );;
+
+        size_t i;
+
+        for( i=0; i<count; ++i ) {
+            freecall( begin );
+            begin = ARR_ELEMENT_NEXT( begin, ARR_ELEMENT_SIZE( arr ) );
+        }
+    }
+}
+
 void cnt_array_impl_free( CntArrayImpl *arr )
 {
-    void  *begin;
-    size_t i;
-    size_t count;
-
     assert( arr != NULL );
     assert( arr->traits_ != NULL );
-    assert( arr->traits_->destroy != NULL );
 
-    count = cnt_array_impl_size( arr );
-    begin = cnt_memblock_impl_begin( MBPIMPL( arr ) );
-
-    for( i=0; i<count; ++i ) {
-        CNT_ELEMENT_DESTROY( arr->traits_, begin );
-        begin = ARR_ELEMENT_NEXT( begin, ARR_ELEMENT_SIZE( arr ) );
-    }
+    array_elements_del( arr, arr->traits_->destroy );
 
     cnt_memblock_impl_deinit( MBPIMPL( arr ) );
     CNT_CALL_DEALLOCATE( MBPIMPL( arr )->allocator_, arr );

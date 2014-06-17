@@ -5,7 +5,7 @@
 
 typedef struct CntElementTraits {
 
-    size_t     element_size;
+    const size_t element_size;
 
     /// destroy element
     void       (* destroy)( void * );
@@ -14,6 +14,11 @@ typedef struct CntElementTraits {
     /// returns ptr to destination (1st parameter)
     void      *(* copy)( void *, const void *, size_t );
 
+    /// <0 left  < right
+    ///  0 left == right
+    /// >0 left  > right
+    int        (*compare)( const void *, const void *, size_t );
+
 } CntElementTraits;
 
 #define CNT_ELEMENT_COPY( trait, dst, src )                 \
@@ -21,5 +26,7 @@ typedef struct CntElementTraits {
 
 #define CNT_ELEMENT_DESTROY( trait, src )                   \
         (trait)->destroy( src )
+
+#define CNT_EMPTY_ELEMENT_TRAITS( size ) = { size }
 
 #endif // CNTELEMENTTRAITS_H
