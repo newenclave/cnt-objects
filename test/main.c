@@ -86,10 +86,9 @@ int main( )
     cnt_array_impl_resize( a, 5 );
 
     d = 0.75;
-    cnt_array_impl_push_back( a, &d );
-    cnt_array_impl_push_back( a, &d );
-    cnt_array_impl_push_back( a, &d );
-    cnt_array_impl_push_back( a, &d );
+    for( i =0; i<1000; ++i ) {
+        cnt_array_impl_push_back( a, &d ); d += 0.13;
+    }
 
     printf( "Destroy all!\n" );
 
