@@ -110,28 +110,17 @@ static void copy_elements( void *dst, const void *src,
 }
 
 static int extend_array( CntArrayImpl *arr, size_t count,
-                         void *(* copy)( void *, const void *, size_t ))
+                         int (* init)( void *, size_t, size_t ))
 {
     int res = 0;
 
-    if( copy ) {
+    if( init ) {
 
-        const size_t old_size = ARR_ELEMENTS_COUNT( arr );
-
-        CntArrayImpl *tmp_arr = create_arr( arr->traits_,
-                                            MBPIMPL(arr)->allocator_,
-                                            old_size + count );
-        if( tmp_arr ) {
-
-            MBUSED(tmp_arr) = ARR_ELEMENTS_SIZE( ARR_ELEMENT_SIZE( arr ),
-                                                 old_size );
-
-            copy_elements( MBPTR( tmp_arr ), MBPTR( arr ),
-                           old_size, ARR_ELEMENT_SIZE( arr ), copy );
-
-            cnt_array_impl_swap( arr, tmp_arr );
-            cnt_array_impl_free( tmp_arr );
-
+        void *tail = cnt_memblock_impl_create_back( MBPIMPL(arr),
+                                 ARR_ELEMENTS_SIZE( ARR_ELEMENT_SIZE( arr ),
+                                                    count ) );
+        if( tail ) {
+            init( tail, count, ARR_ELEMENT_SIZE( arr ) );
             res = 1;
         }
 
@@ -171,7 +160,7 @@ int cnt_array_impl_reserve( CntArrayImpl *arr, size_t count )
     old_size = ARR_ELEMENTS_COUNT( arr );
 
     if( old_size < count ) {
-        res = extend_array( arr, count - old_size, arr->traits_->copy );
+        res = extend_array( arr, count - old_size, arr->traits_->init );
     }
     return res;
 }
@@ -209,7 +198,7 @@ int cnt_array_impl_append ( CntArrayImpl *arr, void *elements, size_t count )
     assert( arr != NULL );
     assert( arr->traits_ != NULL );
 
-    res = extend_array( arr, count, arr->traits_->copy );
+    res = extend_array( arr, count, arr->traits_->init );
 
 //    if( res ) {
 //        void *old_tail =
