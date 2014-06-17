@@ -60,9 +60,9 @@ static CntArrayImpl *create_arr( const CntElementTraits *traits,
     return inst;
 }
 
-static size_t array_elements_del( CntArrayImpl *arr,
-                                  void *begin, size_t count,
-                                  void (* freecall)(void *) )
+static void array_elements_del( CntArrayImpl *arr,
+                                void *begin, size_t count,
+                                void (* freecall)(void *) )
 {
     if( freecall ) {
 
@@ -80,18 +80,14 @@ static void reduce_array_size( CntArrayImpl *arr, size_t count,
 {
     size_t old_count = ARR_ELEMENTS_COUNT( arr );
 
-    if( destroy ) {
+    void *tail_ptr = ARR_ELEMENT_SHIFT( MBPTR(arr),
+                                        ARR_ELEMENT_SIZE(arr),
+                                        old_count - count );
 
-        void *tail_ptr = ARR_ELEMENT_SHIFT( MBPTR(arr),
-                                            ARR_ELEMENT_SIZE(arr),
-                                            old_count - count );
+    array_elements_del( arr, tail_ptr, count, destroy );
 
-        array_elements_del( arr, tail_ptr, count, destroy );
-
-    } else {
-        MBUSED( arr ) = ARR_ELEMENTS_SIZE( ARR_ELEMENT_SIZE(arr),
-                                           old_count - count );
-    }
+    MBUSED( arr ) = ARR_ELEMENTS_SIZE( ARR_ELEMENT_SIZE(arr),
+                                       old_count - count );
 }
 
 static int extend_array_size( CntArrayImpl *arr, size_t count,
