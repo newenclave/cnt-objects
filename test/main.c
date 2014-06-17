@@ -55,6 +55,7 @@ int main( )
     CntAllocator my_alloc = cnt_default_allocator;
     CntArrayImpl *a = cnt_array_impl_new( &inttrait, &my_alloc );
     size_t i;
+    double d;
 
     cnt_array_impl_resize( a, 10 );
 
@@ -74,10 +75,11 @@ int main( )
 
     cnt_array_impl_resize( a, 5 );
 
-    cnt_array_impl_push_back( a, &i );
-    cnt_array_impl_push_back( a, &i );
-    cnt_array_impl_push_back( a, &i );
-    cnt_array_impl_push_back( a, &i );
+    d = 0.75;
+    cnt_array_impl_push_back( a, &d );
+    cnt_array_impl_push_back( a, &d );
+    cnt_array_impl_push_back( a, &d );
+    cnt_array_impl_push_back( a, &d );
 
     printf( "Destroy all!\n" );
 

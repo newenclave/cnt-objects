@@ -336,9 +336,6 @@ void *cnt_memblock_impl_create_insert( CntMemblockImpl *mb,
 
     } else if( CNT_MBLOCK_AVAILABLE_LOCAL( mb ) < count ) {
 
-//        size_t new_size =
-//                block_calc_prefer_size( mb->capacity_, mb->used_ + count );
-
         size_t old_used = mb->used_;
 
         int res = cnt_memblock_impl_resize( mb, mb->used_ + count );
@@ -350,31 +347,6 @@ void *cnt_memblock_impl_create_insert( CntMemblockImpl *mb,
             block_memmove( block, CNT_MBLOCK_AT( block, count ),
                            old_used - position );
         }
-#if 0
-        CntMemblockImpl *new_block =
-                cnt_memblock_impl_new_reserved( new_size, mb->allocator_);
-
-        if( new_block ) {
-
-            size_t new_tail_shift  = position + count;
-            new_block->used_ = mb->used_ + count;
-
-            if( position ) {
-                block_memcpy( new_block->data_.ptr_, mb->data_.ptr_, position );
-            }
-
-            block_memcpy(
-                CNT_MBLOCK_AT(new_block->data_.ptr_, new_tail_shift),
-                CNT_MBLOCK_AT(mb->data_.ptr_, position),
-                mb->used_ - position);
-
-            cnt_memblock_impl_swap( mb, new_block );
-
-            memblock_free( new_block );
-
-            block = CNT_MBLOCK_AT(mb->data_.ptr_, position);
-        }
-#endif
 
     } else {
 
