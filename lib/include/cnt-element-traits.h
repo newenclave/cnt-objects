@@ -7,7 +7,7 @@ typedef struct CntElementTraits {
 
     const size_t element_size;
 
-    /// destroy element
+    /// free element's data. but NOT element pointer
     void       (* destroy)( void * );
 
     /// copy element to another place;

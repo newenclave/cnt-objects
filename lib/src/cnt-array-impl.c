@@ -1,6 +1,7 @@
 #include "cnt-array-impl.h"
 
 #include <assert.h>
+#include <string.h>
 
 #define ARR_ELEMENT_SIZE( arr ) ((arr)->traits_->element_size)
 
@@ -13,6 +14,9 @@
 #define MBCAPACITY( arr )   ((arr)->mblock_.capacity_)
 
 #define ARR_ELEMENTS_COUNT(arr) (MBUSED(arr) / ARR_ELEMENT_SIZE(arr))
+#define ARR_ELEMENTS_CAPACITY(arr) (MBCAPACITY(arr) / ARR_ELEMENT_SIZE(arr))
+#define ARR_ELEMENTS_AVAILABLE( arr )  \
+        (ARR_ELEMENTS_CAPACITY(arr) - ARR_ELEMENTS_COUNT(arr))
 
 #define ARR_ELEMENT_SHIFT( ptr, element_size, count )    \
     (((char *)ptr) + ((element_size) * (count)))
@@ -25,6 +29,11 @@
 
 #define ARR_ELEMENT_PREV( ptr, element_size )    \
     (((char *)ptr) - (element_size))
+
+static void *arr_memcopy( void *dst, const void *src, size_t size )
+{
+    return memcpy( dst, src, size );
+}
 
 static CntArrayImpl *create_arr( const CntElementTraits *traits,
                                  const CntAllocator *allocator,
@@ -51,6 +60,69 @@ static CntArrayImpl *create_arr( const CntElementTraits *traits,
     return inst;
 }
 
+static size_t array_elements_del( CntArrayImpl *arr, void (* freecall)(void *) )
+{
+    if( freecall ) {
+
+        void  *begin = cnt_memblock_impl_begin( MBPIMPL( arr ) );
+        size_t count = cnt_array_impl_size( arr );
+
+        size_t i;
+
+        for( i=0; i<count; ++i ) {
+            freecall( begin );
+            begin = ARR_ELEMENT_NEXT( begin, ARR_ELEMENT_SIZE( arr ) );
+        }
+    }
+}
+
+static int extend_array_size( CntArrayImpl *arr, size_t count,
+                              void *(* copy)( void *, const void *, size_t ))
+{
+    int res = 0;
+    if( copy ) {
+
+        const size_t old_size = ARR_ELEMENTS_COUNT( arr );
+
+        CntArrayImpl *tmp_arr = create_arr( arr->traits_,
+                                            MBPIMPL(arr)->allocator_,
+                                            old_size + count );
+        if( tmp_arr ) {
+
+            size_t  i;
+            void   *begin;
+            void   *old_begin;
+
+            MBUSED( tmp_arr ) = ARR_ELEMENTS_SIZE( ARR_ELEMENT_SIZE( arr ),
+                                                   old_size );
+
+            begin     = MBPTR( tmp_arr );
+            old_begin = MBPTR( arr );
+
+            for( i = 0; i < old_size; ++i ) {
+
+                copy( begin, old_begin, ARR_ELEMENT_SIZE( arr ) );
+
+                begin     = ARR_ELEMENT_NEXT( begin,
+                                              ARR_ELEMENT_SIZE( arr ) );
+
+                old_begin = ARR_ELEMENT_NEXT( old_begin,
+                                              ARR_ELEMENT_SIZE( arr ) );
+            }
+
+            cnt_array_impl_swap( arr, tmp_arr );
+            cnt_array_impl_free( tmp_arr );
+
+            res = 1;
+        }
+
+    } else {
+        res = cnt_memblock_impl_extend( MBPIMPL( arr ),
+              ARR_ELEMENTS_SIZE( arr->traits_->element_size, count ));
+    }
+    return res;
+}
+
 CntArrayImpl *cnt_array_impl_new_reserved(const CntElementTraits *traits,
                                           const CntAllocator *allocator ,
                                           size_t count)
@@ -68,6 +140,20 @@ CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
                                   const CntAllocator *allocator )
 {
     return cnt_array_impl_new_reserved( traits, allocator, 0 );
+}
+
+int cnt_array_impl_reserve( CntArrayImpl *arr, size_t count )
+{
+    size_t old_size;
+    assert( arr != NULL );
+
+    old_size = ARR_ELEMENTS_COUNT( arr );
+    if( old_size < count ) {
+
+    } else {
+
+    }
+    return 0;
 }
 
 void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr )
@@ -126,22 +212,6 @@ size_t cnt_array_cforeach( const CntArrayImpl *arr,
     return i;
 }
 
-static size_t array_elements_del( CntArrayImpl *arr, void (* freecall)(void *) )
-{
-    if( freecall ) {
-
-        void  *begin = cnt_memblock_impl_begin( MBPIMPL( arr ) );
-        size_t count = cnt_array_impl_size( arr );;
-
-        size_t i;
-
-        for( i=0; i<count; ++i ) {
-            freecall( begin );
-            begin = ARR_ELEMENT_NEXT( begin, ARR_ELEMENT_SIZE( arr ) );
-        }
-    }
-}
-
 void cnt_array_impl_free( CntArrayImpl *arr )
 {
     assert( arr != NULL );
@@ -159,6 +229,37 @@ size_t cnt_array_impl_size( const CntArrayImpl *arr )
     return  ARR_ELEMENTS_COUNT( arr );
 }
 
+size_t cnt_array_impl_capacity( const CntArrayImpl *arr )
+{
+    assert( arr != NULL );
+    return ARR_ELEMENTS_CAPACITY(arr);
+}
+
+size_t cnt_array_impl_available( const CntArrayImpl *arr )
+{
+    assert( arr != NULL );
+    return ARR_ELEMENTS_AVAILABLE( arr );
+}
+
+const CntElementTraits *cnt_array_impl_element_traits(const CntArrayImpl *arr)
+{
+    assert( arr != NULL );
+    return arr->traits_;
+}
+
+int cnt_array_impl_push_back( CntArrayImpl *arr, void *element )
+{
+    return 0;
+}
+
+int cnt_array_impl_append( CntArrayImpl *arr,
+                           void *elements, size_t count )
+{
+    return 0;
+}
+
+
+//// ptrs
 void  *cnt_array_impl_begin( CntArrayImpl *arr )
 {
     assert( arr );
