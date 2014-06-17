@@ -87,7 +87,7 @@ int main( )
 
     d = 0.75;
     for( i =0; i<1000; ++i ) {
-        cnt_array_impl_push_back( a, &d ); d += 0.13;
+        cnt_array_impl_push_back( a, &d ); d += 1.1349;
     }
 
     printf( "Destroy all!\n" );
