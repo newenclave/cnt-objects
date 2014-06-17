@@ -231,41 +231,37 @@ int cnt_array_impl_append ( CntArrayImpl *arr, const void *src, size_t count )
 
 void *cnt_array_impl_create_back( CntArrayImpl *arr, size_t count )
 {
-    void *tail = cnt_memblock_impl_create_back( MBPIMPL(arr),
-                                      ARR_ELEMENT_SIZE( arr ) * count);
-    if( tail ) {
-        init_elements( tail, count, ARR_ELEMENT_SIZE( arr ),
-                       arr->traits_->init );
-    }
-
-    return tail;
+    return init_elements(
+                cnt_memblock_impl_create_back (
+                    MBPIMPL(arr),
+                    ARR_ELEMENT_SIZE( arr ) * count ),
+                count,
+                ARR_ELEMENT_SIZE( arr ),
+                arr->traits_->init );
 }
 
 void *cnt_array_impl_create_front( CntArrayImpl *arr, size_t count )
 {
-    void *head = cnt_memblock_impl_create_front( MBPIMPL(arr),
-                                      ARR_ELEMENT_SIZE( arr ) * count);
-    if( head ) {
-        init_elements( head, count, ARR_ELEMENT_SIZE( arr ),
-                       arr->traits_->init );
-    }
-
-    return head;
+    return init_elements(
+                cnt_memblock_impl_create_front (
+                    MBPIMPL(arr),
+                    ARR_ELEMENT_SIZE( arr ) * count ),
+                count,
+                ARR_ELEMENT_SIZE( arr ),
+                arr->traits_->init );
 }
 
 void *cnt_array_impl_create_insert( CntArrayImpl *arr,
                                     size_t posision, size_t count )
 {
-    void *ins = cnt_memblock_impl_create_insert( MBPIMPL(arr),
-                                      ARR_ELEMENT_SIZE( arr ) * posision,
-                                      ARR_ELEMENT_SIZE( arr ) * count);
-
-    if( ins ) {
-        init_elements( ins, count, ARR_ELEMENT_SIZE( arr ),
-                       arr->traits_->init );
-    }
-
-    return ins;
+    return init_elements(
+                cnt_memblock_impl_create_insert (
+                    MBPIMPL(arr),
+                    ARR_ELEMENT_SIZE( arr ) * posision,
+                    ARR_ELEMENT_SIZE( arr ) * count ),
+                count,
+                ARR_ELEMENT_SIZE( arr ),
+                arr->traits_->init );
 }
 
 void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr )
