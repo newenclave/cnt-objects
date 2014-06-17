@@ -46,6 +46,8 @@ CntElementTraits inttrait = {
     sizeof( int ), int_del, int_cpy
 };
 
+CntElementTraits inttrait_def = { sizeof( int ) };
+
 int main( )
 {
 

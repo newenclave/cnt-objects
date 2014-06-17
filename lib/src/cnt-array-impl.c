@@ -90,6 +90,23 @@ static void reduce_array( CntArrayImpl *arr, size_t count,
                                        old_count - count );
 }
 
+
+static void copy_elements( void *dst, const void *src,
+                           const size_t count,  const size_t element_size,
+                           void *(* copy)( void *, const void *, size_t ))
+{
+    if( copy ) {
+
+        size_t i;
+
+        for( i = 0; i < count; ++i ) {
+            copy( dst, src, element_size );
+            dst = ARR_ELEMENT_NEXT( dst, element_size );
+            src = ARR_ELEMENT_NEXT( src, element_size );
+        }
+    }
+}
+
 static int extend_array( CntArrayImpl *arr, size_t count,
                          void *(* copy)( void *, const void *, size_t ))
 {
@@ -104,26 +121,12 @@ static int extend_array( CntArrayImpl *arr, size_t count,
                                             old_size + count );
         if( tmp_arr ) {
 
-            size_t  i;
-            void   *begin;
-            void   *old_begin;
-
             MBUSED( tmp_arr ) = ARR_ELEMENTS_SIZE( ARR_ELEMENT_SIZE( arr ),
                                                    old_size );
 
-            begin     = MBPTR( tmp_arr );
-            old_begin = MBPTR( arr );
-
-            for( i = 0; i < old_size; ++i ) {
-
-                copy( begin, old_begin, ARR_ELEMENT_SIZE( arr ) );
-
-                begin     = ARR_ELEMENT_NEXT( begin,
-                                              ARR_ELEMENT_SIZE( arr ) );
-
-                old_begin = ARR_ELEMENT_NEXT( old_begin,
-                                              ARR_ELEMENT_SIZE( arr ) );
-            }
+            copy_elements( MBPTR( tmp_arr ), MBPTR( arr ),
+                           old_size, ARR_ELEMENT_SIZE( arr ),
+                           copy );
 
             cnt_array_impl_swap( arr, tmp_arr );
             cnt_array_impl_free( tmp_arr );
@@ -191,6 +194,24 @@ int cnt_array_impl_resize( CntArrayImpl *arr, size_t count )
     }
 
     return res;
+}
+
+int cnt_array_impl_push_back ( CntArrayImpl *arr, void *element )
+{
+
+}
+
+int cnt_array_impl_append ( CntArrayImpl *arr, void *elements, size_t count )
+{
+    void *old_tail;
+
+    assert( arr != NULL );
+    assert( arr->traits_ != NULL );
+
+    old_tail = cnt_array_impl_end( arr );
+
+    int res = extend_array( arr, count, arr->traits_->copy );
+
 }
 
 
@@ -286,17 +307,6 @@ const CntElementTraits *cnt_array_impl_element_traits(const CntArrayImpl *arr)
 {
     assert( arr != NULL );
     return arr->traits_;
-}
-
-int cnt_array_impl_push_back( CntArrayImpl *arr, void *element )
-{
-    return 0;
-}
-
-int cnt_array_impl_append( CntArrayImpl *arr,
-                           void *elements, size_t count )
-{
-    return 0;
 }
 
 
