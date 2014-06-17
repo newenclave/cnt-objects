@@ -40,16 +40,16 @@ typedef struct CntElementTraits {
 } CntElementTraits;
 
 #define CNT_ELEMENT_COPY( trait, dst, src )                     \
-        (trait)->copy( (dst), (src) )
+        (trait)->copy( (dst), (src), (trait)->element_size )
 
 #define CNT_ELEMENT_DESTROY( trait, src )                       \
-        (trait)->destroy( src )
+        (trait)->destroy( src, (trait)->element_size )
 
 #define CNT_ELEMENT_INIT( trait, src )                          \
-        (trait)->init( src, 1 )
+        (trait)->init( src, 1, (trait)->element_size )
 
 #define CNT_ELEMENTS_INIT( trait, src, count )                   \
-        (trait)->init( src, count )
+        (trait)->init( src, count, (trait)->element_size )
 
 #define CNT_EMPTY_ELEMENT_TRAITS( size ) { size }
 
