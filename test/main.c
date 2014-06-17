@@ -56,6 +56,7 @@ int main( )
     CntArrayImpl *a = cnt_array_impl_new( &inttrait, &my_alloc );
     size_t i;
     double d;
+    double *r;
 
     cnt_array_impl_resize( a, 10 );
 
@@ -66,7 +67,7 @@ int main( )
     printf( "Elem size: %lu\n", a->traits_->element_size );
     printf( "arr size: %lu\n", cnt_array_impl_size( a ) );
 
-    double *r = (double *)cnt_array_impl_create_insert( a, 2, 2 );
+    r = (double *)cnt_array_impl_create_insert( a, 2, 2 );
 
     *r = 8.90;
     *++r = 8.90;
