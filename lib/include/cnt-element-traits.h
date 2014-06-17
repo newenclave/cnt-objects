@@ -35,7 +35,7 @@ typedef struct CntElementTraits {
      *      >0 left  > right
      *   compare( left, right, element_size )
     **/
-    int (*compare)( const void *, const void *, size_t );
+    int (* compare)( const void *, const void *, size_t );
 
 } CntElementTraits;
 
