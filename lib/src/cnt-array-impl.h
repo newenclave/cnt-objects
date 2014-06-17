@@ -43,7 +43,7 @@ void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr );
   * 1 == success
   * 0 == failed
   */
-int cnt_array_impl_push_back ( CntArrayImpl *arr, void *element );
+int cnt_array_impl_push_back (CntArrayImpl *arr, const void *element );
 int cnt_array_impl_append (CntArrayImpl *arr, const void *src, size_t count );
 
 void  *cnt_array_impl_begin( CntArrayImpl *arr );

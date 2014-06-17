@@ -27,28 +27,28 @@ void *my_realloc_call( void *ptr, size_t len )
 
 void *int_cpy( void *dst, const void *src, size_t len )
 {
-    assert( len == sizeof( int ) );
+    assert( len == sizeof( double ) );
 
-    *((int *)dst) = *((const int *)src);
+    *((double *)dst) = *((const double *)src);
 
-    printf( "copy: %d\n", *((int *)dst) );
+    printf( "copy: %lf\n", *((double *)dst) );
 
     return dst;
 }
 
 void int_del( void *ptr, size_t len )
 {
-    assert( len == sizeof( int ) );
+    assert( len == sizeof( double ) );
 
-    int *i = (int *)ptr;
-    printf( "destroy: %d\n", *i );
+    double *i = (double *)ptr;
+    printf( "destroy: %lf\n", *i );
 }
 
 CntElementTraits inttrait = {
-    sizeof( int ), 0, int_del, int_cpy
+    sizeof( double ), 0, int_del, int_cpy
 };
 
-CntElementTraits inttrait_def = { sizeof( int ) };
+CntElementTraits inttrait_def = { sizeof( double ) };
 
 int main( )
 {
@@ -59,7 +59,7 @@ int main( )
     cnt_array_impl_resize( a, 10 );
 
     for( i=0; i<cnt_array_impl_size( a ); ++i ) {
-        *((int *)cnt_array_impl_at( a, i )) = i;
+        *((double *)cnt_array_impl_at( a, i )) = i;
     }
 
     printf( "Add some!\n" );
@@ -67,12 +67,17 @@ int main( )
     cnt_array_impl_resize( a, 20 );
 
     for( i=10; i<cnt_array_impl_size( a ); ++i ) {
-        *((int *)cnt_array_impl_at( a, i )) = i * 2;
+        *((double *)cnt_array_impl_at( a, i )) = i * 2;
     }
 
     printf( "Del some!\n" );
 
     cnt_array_impl_resize( a, 5 );
+
+    cnt_array_impl_push_back( a, &i );
+    cnt_array_impl_push_back( a, &i );
+    cnt_array_impl_push_back( a, &i );
+    cnt_array_impl_push_back( a, &i );
 
     printf( "Destroy all!\n" );
 

@@ -90,7 +90,6 @@ static void reduce_array( CntArrayImpl *arr, size_t count,
                                        old_count - count );
 }
 
-
 static void copy_elements( void *dst, const void *src,
                            const size_t count,  const size_t element_size,
                            void *(* copy)( void *, const void *, size_t ))
@@ -131,9 +130,9 @@ static int extend_array( CntArrayImpl *arr, size_t count,
     return res;
 }
 
-CntArrayImpl *cnt_array_impl_new_reserved(const CntElementTraits *traits,
-                                          const CntAllocator *allocator ,
-                                          size_t count)
+CntArrayImpl *cnt_array_impl_new_reserved( const CntElementTraits *traits,
+                                           const CntAllocator *allocator ,
+                                           size_t count )
 {
     assert( traits != NULL );
 
@@ -186,9 +185,9 @@ int cnt_array_impl_resize( CntArrayImpl *arr, size_t count )
     return res;
 }
 
-int cnt_array_impl_push_back ( CntArrayImpl *arr, void *element )
+int cnt_array_impl_push_back ( CntArrayImpl *arr, const void *element )
 {
-
+    cnt_array_impl_append ( arr, element, 1 );
 }
 
 int cnt_array_impl_append ( CntArrayImpl *arr, const void *src, size_t count )
