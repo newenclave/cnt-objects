@@ -9,7 +9,8 @@ typedef struct CntElementTraits {
 
     /**
      *  init n elements
-     *  reaturns >0 if success
+     *  returns:
+     *      nonzero if success
      *  init( src, n, element_size );
     **/
     int (* init)( void *, size_t, size_t );
@@ -22,15 +23,16 @@ typedef struct CntElementTraits {
 
     /**
      *   copy element to another place;
-     *   returns ptr to destination (1st parameter)
+     *   returns: dst
      *   copy( dst, src, element_size )
     **/
     void *(* copy)( void *, const void *, size_t );
 
     /**
-     *  <0 left  < right
-     *   0 left == right
-     *  >0 left  > right
+     *  returns:
+     *      <0 left  < right
+     *       0 left == right
+     *      >0 left  > right
      *   compare( left, right, element_size )
     **/
     int (*compare)( const void *, const void *, size_t );
