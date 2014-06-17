@@ -143,16 +143,14 @@ CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
 
 int cnt_array_impl_reserve( CntArrayImpl *arr, size_t count )
 {
-    size_t old_size;
+    int res;
+
     assert( arr != NULL );
 
-    old_size = ARR_ELEMENTS_COUNT( arr );
-    if( old_size < count ) {
-
-    } else {
-
+    if( ARR_ELEMENTS_COUNT( arr ) > count ) {
+        res = extend_array_size( arr, count, arr->traits_->copy );
     }
-    return 0;
+    return res;
 }
 
 void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr )
@@ -188,6 +186,7 @@ size_t cnt_array_foreach( CntArrayImpl *arr,
         call( begin, data );
         begin = ARR_ELEMENT_NEXT( begin, ARR_ELEMENT_SIZE( arr ) );
     }
+
     return i;
 }
 
