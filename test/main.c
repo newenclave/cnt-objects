@@ -43,14 +43,13 @@ void int_del( void *ptr )
 }
 
 CntElementTraits inttrait = {
-    sizeof( int ), int_del, int_cpy
+    sizeof( int ), 0, int_del, int_cpy
 };
 
 CntElementTraits inttrait_def = { sizeof( int ) };
 
 int main( )
 {
-
     CntAllocator my_alloc = cnt_default_allocator;
     CntArrayImpl *a = cnt_array_impl_new( &inttrait, &my_alloc );
     size_t i;

@@ -70,7 +70,7 @@ void cnt_memblock_impl_zero    (CntMemblockImpl *mb);
 void  *cnt_memblock_impl_create_back( CntMemblockImpl *mb, size_t count );
 void  *cnt_memblock_impl_create_front( CntMemblockImpl *mb, size_t count );
 void  *cnt_memblock_impl_create_insert( CntMemblockImpl *mb,
-                                   size_t position, size_t count );
+                                        size_t position, size_t count );
 
 void *cnt_memblock_impl_delete( CntMemblockImpl *mb,
                                 size_t position, size_t count );

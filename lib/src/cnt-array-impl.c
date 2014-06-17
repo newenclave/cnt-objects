@@ -209,7 +209,6 @@ int cnt_array_impl_append ( CntArrayImpl *arr, void *elements, size_t count )
     assert( arr != NULL );
     assert( arr->traits_ != NULL );
 
-
     res = extend_array( arr, count, arr->traits_->copy );
 
 //    if( res ) {

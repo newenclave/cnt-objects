@@ -7,6 +7,11 @@ typedef struct CntElementTraits {
 
     const size_t element_size;
 
+    /// init n elements of m size
+    /// reaturns not 0 if success
+    /// init( begin, m, n );
+    int        (* init)( void *, size_t, size_t );
+
     /// free element's data. but NOT element pointer
     void       (* destroy)( void * );
 

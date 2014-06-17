@@ -7,7 +7,6 @@
 
 #include "cnt-memblock-impl.h"
 
-
 static const size_t void_ptr_size      =   sizeof(void *);
 static const size_t void_ptr_size_mask =   sizeof(void *) - 1;
 
@@ -337,9 +336,21 @@ void *cnt_memblock_impl_create_insert( CntMemblockImpl *mb,
 
     } else if( CNT_MBLOCK_AVAILABLE_LOCAL( mb ) < count ) {
 
-        size_t new_size =
-                block_calc_prefer_size( mb->capacity_, mb->used_ + count );
+//        size_t new_size =
+//                block_calc_prefer_size( mb->capacity_, mb->used_ + count );
 
+        size_t old_used = mb->used_;
+
+        int res = cnt_memblock_impl_resize( mb, mb->used_ + count );
+
+        if( res ) {
+
+            block = CNT_MBLOCK_AT( mb->data_.ptr_, count + position );
+
+            block_memmove( block, CNT_MBLOCK_AT( block, count ),
+                           old_used - position );
+        }
+#if 0
         CntMemblockImpl *new_block =
                 cnt_memblock_impl_new_reserved( new_size, mb->allocator_);
 
@@ -363,6 +374,8 @@ void *cnt_memblock_impl_create_insert( CntMemblockImpl *mb,
 
             block = CNT_MBLOCK_AT(mb->data_.ptr_, position);
         }
+#endif
+
     } else {
 
         void *from = CNT_MBLOCK_AT(mb->data_.ptr_ , position);
