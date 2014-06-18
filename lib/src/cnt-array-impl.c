@@ -200,6 +200,24 @@ int cnt_array_impl_extend( CntArrayImpl *arr, size_t count )
     return extend_array( arr, count, arr->traits_->init );
 }
 
+void cnt_array_impl_reduce( CntArrayImpl *arr, size_t count )
+{
+    void *tail;
+
+    assert( arr != NULL );
+    assert( count <= ARR_ELEMENTS_COUNT( arr ) );
+
+    tail = ARR_ELEMENT_SHIFT( MBPTR( arr ),
+                              ARR_ELEMENT_SIZE( arr ),
+                              ARR_ELEMENTS_COUNT( arr ) - count );
+
+    array_elements_del( arr, tail, count, arr->traits_->destroy );
+
+    cnt_memblock_impl_reduce( MBPTR( arr ), ARR_ELEMENT_SIZE( arr ) * count );
+
+}
+
+
 int cnt_array_impl_push_back ( CntArrayImpl *arr, const void *element )
 {
     cnt_array_impl_append ( arr, element, 1 );

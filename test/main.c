@@ -67,7 +67,7 @@ int main( )
     printf( "Elem size: %lu\n", a->traits_->element_size );
     printf( "arr size: %lu\n", cnt_array_impl_size( a ) );
 
-    r = (double *)cnt_array_impl_create_insert( a, 2, 2 );
+    r = (double *)cnt_array_impl_create_back( a, 2 );
 
     *r = 8.90;
     *++r = 8.90;
@@ -76,9 +76,11 @@ int main( )
 
     printf( "Add some!\n" );
 
+    cnt_array_impl_reduce( a, 2 );
+
     cnt_array_impl_resize( a, 20 );
 
-    for( i=12; i<cnt_array_impl_size( a ); ++i ) {
+    for( i=10; i<cnt_array_impl_size( a ); ++i ) {
         *((double *)cnt_array_impl_at( a, i )) = i * 2;
     }
 
@@ -87,7 +89,7 @@ int main( )
     cnt_array_impl_resize( a, 5 );
 
     d = 0.75;
-    for( i =0; i<1000; ++i ) {
+    for( i =0; i<10; ++i ) {
         cnt_array_impl_push_back( a, &d ); d += 1.1349;
     }
 

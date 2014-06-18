@@ -52,6 +52,8 @@ int cnt_array_impl_push_back (CntArrayImpl *arr, const void *element );
 int cnt_array_impl_append (CntArrayImpl *arr, const void *src, size_t count );
 int cnt_array_impl_extend( CntArrayImpl *arr, size_t count );
 
+void cnt_array_impl_reduce( CntArrayImpl *arr, size_t count );
+
 void *cnt_array_impl_create_back( CntArrayImpl *arr, size_t count );
 void *cnt_array_impl_create_front( CntArrayImpl *arr, size_t count );
 void *cnt_array_impl_create_insert( CntArrayImpl *arr,
