@@ -38,9 +38,10 @@ void *int_cpy( void *dst, const void *src, size_t len )
 
 void int_del( void *ptr, size_t len )
 {
+    double *i;
     assert( len == sizeof( double ) );
 
-    double *i = (double *)ptr;
+    i = (double *)ptr;
     printf( "destroy: %lf\n", *i );
 }
 
