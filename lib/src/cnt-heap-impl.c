@@ -14,6 +14,8 @@
 
 static int hp_memcmp( const void *l, const void *r, size_t length )
 {
+    printf( "mem cmp detected!\n" );
+    assert( 0 );
     return memcmp( l, r, length );
 }
 
@@ -77,7 +79,7 @@ static void sift_down( CntHeapImpl *hp, const size_t heap_size,
     while( next <= (heap_size >> 1) ) {
 
         const size_t children = next << 1;
-        size_t minimum = children - 1;
+        size_t minimum        = children - 1;
         void   *src_elem;
         void   *min_elem;
         int     cmp;
@@ -197,6 +199,7 @@ int cnt_heap_impl_push( CntHeapImpl *hp, const void *element )
         sift_up( hp, cnt_array_impl_size( ARRPTR(hp)),
                  ARRTRAITS(hp)->compare ? ARRTRAITS(hp)->compare : &hp_memcmp);
     }
+    return res;
 }
 
 void cnt_heap_impl_pop( CntHeapImpl *hp )

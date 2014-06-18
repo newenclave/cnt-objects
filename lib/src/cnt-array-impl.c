@@ -343,7 +343,7 @@ void cnt_array_impl_reduce_nodel( CntArrayImpl *arr, size_t count )
 
 int cnt_array_impl_push_back ( CntArrayImpl *arr, const void *element )
 {
-    cnt_array_impl_append ( arr, element, 1 );
+    return cnt_array_impl_append ( arr, element, 1 );
 }
 
 int cnt_array_impl_append ( CntArrayImpl *arr, const void *src, size_t count )

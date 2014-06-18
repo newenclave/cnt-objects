@@ -9,7 +9,7 @@
 #include "lib/src/cnt-array-impl.h"
 #include "lib/src/cnt-heap-impl.h"
 
-typedef unsigned int MYTYPE;
+typedef int MYTYPE;
 
 void *my_alloc_call( size_t len )
 {
@@ -33,7 +33,7 @@ void *int_cpy( void *dst, const void *src, size_t len )
 
     *((MYTYPE *)dst) = *((const MYTYPE *)src);
 
-    printf( "copy: %lu\n", *((MYTYPE *)dst) );
+    //printf( "copy: %lu\n", *((MYTYPE *)dst) );
 
     return dst;
 }
@@ -80,7 +80,7 @@ void init( void *src, size_t cnt, size_t len  )
 }
 
 CntElementTraits inttrait = {
-    sizeof( MYTYPE ), init, int_del, int_cpy, compare, 0//swap
+    sizeof( MYTYPE ), init, int_del, int_cpy, compare, swap
 };
 
 CntElementTraits inttrait_def = { sizeof( MYTYPE ) };
@@ -95,10 +95,12 @@ int main( )
 
     srand( 12312 );
 
-    for( i=0; i<300; ++i ) {
-        MYTYPE t = rand( );
+    for( i=0; i<10; ++i ) {
+        MYTYPE t = rand( ) % 1000;
         cnt_heap_impl_push( a, &t );
     }
+
+    printf( "Heap: %lu\n", cnt_heap_impl_size( a ) );
 
     while( cnt_heap_impl_size( a ) > 0 ) {
         MYTYPE t = *((MYTYPE *)cnt_heap_impl_top( a ));
