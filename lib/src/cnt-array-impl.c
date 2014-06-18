@@ -240,6 +240,36 @@ CntArrayImpl *cnt_array_impl_new_reserved( const CntElementTraits *traits,
     return create_arr( traits, allocator, count );
 }
 
+void cnt_array_impl_deinit( CntArrayImpl *arr )
+{
+    array_elements_del( arr,
+                        MBPTR( arr ),
+                        ARR_ELEMENTS_COUNT( arr ),
+                        arr->traits_->destroy );
+
+    cnt_memblock_impl_deinit( MBPIMPL(arr) );
+}
+
+int cnt_array_impl_init( CntArrayImpl *arr,
+                         const CntElementTraits *traits,
+                         const CntAllocator *allocator )
+{
+    int res;
+
+    assert( arr != NULL );
+    assert( traits != NULL );
+
+    assert( allocator != NULL );
+    assert( allocator->allocate != NULL );
+    assert( allocator->deallocate != NULL );
+
+    res = cnt_memblock_impl_init( MBPIMPL(arr), 0, allocator );
+
+    arr->traits_ = traits;
+    return res;
+}
+
+
 CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
                                   const CntAllocator *allocator )
 {

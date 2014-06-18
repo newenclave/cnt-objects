@@ -17,9 +17,18 @@ CntArrayImpl *cnt_array_impl_new_reserved( const CntElementTraits *traits,
                                            size_t count );
 
 /**
+ *  Destroy elements
+**/
+void cnt_array_impl_deinit( CntArrayImpl *arr );
+
+/**
  * 1 == success
  * 0 == failed
 **/
+int cnt_array_impl_init( CntArrayImpl *arr,
+                         const CntElementTraits *traits,
+                         const CntAllocator *allocator );
+
 int cnt_array_impl_reserve( CntArrayImpl *arr, size_t count );
 int cnt_array_impl_resize(  CntArrayImpl *arr, size_t count );
 
