@@ -44,8 +44,27 @@ void int_del( void *ptr, size_t len )
     printf( "destroy: %lf\n", *i );
 }
 
+int compare( const void *l, const void *r, size_t len )
+{
+    assert( len == sizeof( double ) );
+    return *((const double *)l) < *((const double *)r)
+            ? -1
+            : *((const double *)r) < *((const double *)l);
+}
+
+
+void swap( void *l, void *r, size_t len )
+{
+    double tmp;
+    assert( len == sizeof( double ) );
+
+    tmp = *((double *)l);
+    *((double *)l) = *((double *)r);
+    *((double *)r) = tmp;
+}
+
 CntElementTraits inttrait = {
-    sizeof( double ), 0, int_del, int_cpy
+    sizeof( double ), 0, int_del, int_cpy, compare, swap
 };
 
 CntElementTraits inttrait_def = { sizeof( double ) };
@@ -58,42 +77,17 @@ int main( )
     double d;
     double *r;
 
-    cnt_array_impl_resize( a, 10 );
+    srand( 12312 );
 
-    for( i=0; i<cnt_array_impl_size( a ); ++i ) {
-        *((double *)cnt_array_impl_at( a, i )) = (double)i;
+    for( i=0; i<100; ++i ) {
+        double t = rand( );
+        cnt_array_impl_bin_insert( a, &t );
     }
 
-    printf( "Elem size: %lu\n", a->traits_->element_size );
-    printf( "arr size: %lu\n", cnt_array_impl_size( a ) );
-
-    r = (double *)cnt_array_impl_create_back( a, 2 );
-
-    *r = 8.90;
-    *++r = 8.90;
-
-    printf( "arr size: %lu\n", cnt_array_impl_size( a ) );
-
-    printf( "Add some!\n" );
-
-    cnt_array_impl_reduce( a, 2 );
-
-    cnt_array_impl_resize( a, 20 );
-
-    for( i=10; i<cnt_array_impl_size( a ); ++i ) {
-        *((double *)cnt_array_impl_at( a, i )) = i * 2;
+    for( i=0; i<100; ++i ) {
+        double t = *((double *)cnt_array_impl_at( a, i ));
+        printf( "%lu - %lf\n", i, t );
     }
-
-    printf( "Del some!\n" );
-
-    cnt_array_impl_resize( a, 5 );
-
-    d = 0.75;
-    for( i =0; i<10; ++i ) {
-        cnt_array_impl_push_back( a, &d ); d += 1.1349;
-    }
-
-    printf( "Destroy all!\n" );
 
     cnt_array_impl_free( a );
 

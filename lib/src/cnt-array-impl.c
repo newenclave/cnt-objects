@@ -35,6 +35,11 @@ static void *arr_memcopy( void *dst, const void *src, size_t size )
     return memcpy( dst, src, size );
 }
 
+static int arr_memcmp( const void *dst, const void *src, size_t size )
+{
+    return memcmp( dst, src, size );
+}
+
 static CntArrayImpl *create_arr( const CntElementTraits *traits,
                                  const CntAllocator *allocator,
                                  size_t reserve )
@@ -138,6 +143,89 @@ static int extend_array( CntArrayImpl *arr, size_t count,
     }
     return res;
 }
+
+static int cmp_eq( const int c )
+{
+    return c == 0;
+}
+
+static int cmp_not_eq( const int c )
+{
+    return c != 0;
+}
+
+static int cmp_less( const int c )
+{
+    return c < 0;
+}
+
+static int cmp_less_eq( const int c )
+{
+    return c <= 0;
+}
+
+static size_t array_bin_bound_any( const CntArrayImpl *arr,
+               const void  *element,
+               int (* cmp_call)( const void *, const void *, size_t ),
+               int (* cmp_cmp)( const int ) )
+{
+    size_t right  =  ARR_ELEMENTS_COUNT( arr );
+    size_t left   =  0;
+    size_t middle =  0;
+    int cmp       = -1;
+
+    while( (right != left) && (cmp != 0) ) {
+
+        middle = left + ((right - left) >> 1);
+
+        cmp = cmp_call( element, cnt_array_impl_cat( arr, middle ),
+                        ARR_ELEMENT_SIZE(arr) );
+
+        if( cmp_cmp( cmp ) ) {
+            if( cmp < 0 ) {
+                right = middle;
+            } else  {
+                middle++;
+                left  = middle;
+            }
+        }
+    }
+    return middle;
+}
+
+
+static int array_bin_bound( const CntArrayImpl *arr,
+               const void  *element,
+               int (* cmp_call)( const void *, const void *, size_t ),
+               size_t  *position )
+{
+    size_t right  =  ARR_ELEMENTS_COUNT( arr );
+    size_t left   =  0;
+    size_t middle =  0;
+    int cmp       = -1;
+
+    while( (right != left) && (cmp != 0) ) {
+
+        middle = left + ((right - left) >> 1);
+
+        cmp = cmp_call( element, cnt_array_impl_cat( arr, middle ),
+                        ARR_ELEMENT_SIZE(arr) );
+
+        if( cmp != 0 ) {
+            if( cmp < 0 ) {
+                right = middle;
+            } else  {
+                middle++;
+                left  = middle;
+            }
+        }
+    }
+    *position = middle;
+    return (cmp == 0);
+}
+
+
+/// =============================================
 
 CntArrayImpl *cnt_array_impl_new_reserved( const CntElementTraits *traits,
                                            const CntAllocator *allocator ,
@@ -280,6 +368,67 @@ void *cnt_array_impl_create_insert( CntArrayImpl *arr,
                 count,
                 ARR_ELEMENT_SIZE( arr ),
                 arr->traits_->init );
+}
+
+void  *cnt_array_impl_bin_find( CntArrayImpl *arr,
+                                const void *element )
+{
+    size_t pos;
+    int res;
+    assert( arr != NULL );
+    assert( element != NULL );
+
+    pos = 0;
+    res = array_bin_bound( arr, element,
+                           arr->traits_->compare
+                               ? arr->traits_->compare
+                               : &arr_memcmp,
+                           &pos );
+    return res ? ARR_ELEMENT_SHIFT( MBPTR(arr),
+                                    ARR_ELEMENT_SIZE( arr ),
+                                    pos )
+               : NULL;
+}
+
+const void *cnt_array_impl_bin_cfind(const CntArrayImpl *arr,
+                                     const void *element)
+{
+    size_t pos;
+    int res;
+    assert( arr != NULL );
+    assert( element != NULL );
+
+    pos = 0;
+    res = array_bin_bound( arr, element,
+                           arr->traits_->compare
+                               ? arr->traits_->compare
+                               : &arr_memcmp,
+                           &pos );
+    return res ? ARR_ELEMENT_SHIFT( MBPTR(arr),
+                                    ARR_ELEMENT_SIZE( arr ),
+                                    pos )
+               : NULL;
+}
+
+void *cnt_array_impl_bin_insert( CntArrayImpl *arr, void *element )
+{
+    size_t pos;
+    void * ins;
+
+    assert( arr != NULL );
+    assert( element != NULL );
+
+    array_bin_bound( arr, element,
+                     arr->traits_->compare
+                         ? arr->traits_->compare
+                         : &arr_memcmp,
+                     &pos );
+    ins = cnt_array_impl_create_insert( arr, pos, 1 );
+    if( ins ) {
+        copy_elements( ins, element, 1,
+                       ARR_ELEMENT_SIZE(arr), arr->traits_->copy );
+    }
+    return ins;
 }
 
 void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr )

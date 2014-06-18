@@ -59,6 +59,12 @@ void *cnt_array_impl_create_front( CntArrayImpl *arr, size_t count );
 void *cnt_array_impl_create_insert( CntArrayImpl *arr,
                                     size_t posision, size_t count );
 
+void  *cnt_array_impl_bin_find( CntArrayImpl *arr, const void *element );
+const void *cnt_array_impl_bin_cfind(const CntArrayImpl *arr,
+                                     const void *element);
+
+void  *cnt_array_impl_bin_insert( CntArrayImpl *arr, void *element );
+
 void  *cnt_array_impl_begin( CntArrayImpl *arr );
 void  *cnt_array_impl_end( CntArrayImpl *arr );
 void  *cnt_array_impl_at( CntArrayImpl *arr, size_t index );
