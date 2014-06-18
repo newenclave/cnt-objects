@@ -14,7 +14,6 @@
 
 static int hp_memcmp( const void *l, const void *r, size_t length )
 {
-    printf( "mem cmp detected!\n" );
     assert( 0 );
     return memcmp( l, r, length );
 }
@@ -217,13 +216,14 @@ void cnt_heap_impl_pop( CntHeapImpl *hp )
                                 ARRTRAITS(hp)->element_size );
     }
 
-    hp_memcpy( cnt_array_impl_begin( ARRPTR(hp) ),
-               cnt_array_impl_at( ARRPTR(hp), size - 1 ),
-               ARRTRAITS(hp)->element_size );
+    if( size > 1 ) {
+        hp_memcpy( cnt_array_impl_begin( ARRPTR(hp) ),
+                   cnt_array_impl_at( ARRPTR(hp), size - 1 ),
+                   ARRTRAITS(hp)->element_size );
 
-    sift_down( hp, size - 1,
-               ARRTRAITS(hp)->compare ? ARRTRAITS(hp)->compare : &hp_memcmp);
-
+        sift_down( hp, size - 1,
+                 ARRTRAITS(hp)->compare ? ARRTRAITS(hp)->compare : &hp_memcmp);
+    }
     cnt_array_impl_reduce_nodel( ARRPTR(hp), 1 );
 
 }

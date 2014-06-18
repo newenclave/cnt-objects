@@ -9,7 +9,7 @@
 #include "lib/src/cnt-array-impl.h"
 #include "lib/src/cnt-heap-impl.h"
 
-typedef int MYTYPE;
+typedef size_t MYTYPE;
 
 void *my_alloc_call( size_t len )
 {
@@ -95,7 +95,7 @@ int main( )
 
     srand( 12312 );
 
-    for( i=0; i<10; ++i ) {
+    for( i=0; i<300; ++i ) {
         MYTYPE t = rand( ) % 1000;
         cnt_heap_impl_push( a, &t );
     }
@@ -104,9 +104,14 @@ int main( )
 
     while( cnt_heap_impl_size( a ) > 0 ) {
         MYTYPE t = *((MYTYPE *)cnt_heap_impl_top( a ));
-        printf( "top : %lu\n", t );
+        printf( " %lu", t );
+        if( cnt_heap_impl_size( a ) % 20 == 0  ) {
+            printf( "\n" );
+        }
         cnt_heap_impl_pop( a );
     }
+
+    printf( "\n" );
 
     cnt_heap_impl_free( a );
 
