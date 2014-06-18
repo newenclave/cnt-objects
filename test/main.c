@@ -7,6 +7,7 @@
 
 #include "lib/include/cnt-allocator.h"
 #include "lib/src/cnt-array-impl.h"
+#include "lib/src/cnt-heap-impl.h"
 
 
 void *my_alloc_call( size_t len )
@@ -83,7 +84,7 @@ CntElementTraits inttrait_def = { sizeof( double ) };
 int main( )
 {
     CntAllocator my_alloc = cnt_default_allocator;
-    CntArrayImpl *a = cnt_array_impl_new( &inttrait, &my_alloc );
+    CntHeapImpl *a = cnt_heap_impl_new( &inttrait, &my_alloc );
     size_t i;
     double d;
     double *r;
@@ -92,17 +93,16 @@ int main( )
 
     for( i=0; i<100; ++i ) {
         double t = rand( );
-        cnt_array_impl_bin_insert( a, &t );
+        cnt_heap_impl_push( a, &t );
     }
 
-    for( i=0; i<100; ++i ) {
-        double t = *((double *)cnt_array_impl_at( a, i ));
-        printf( "%lu - %lf\n", i, t );
+    while( cnt_heap_impl_size( a ) > 0 ) {
+        double t = *((double *)cnt_heap_impl_top( a ));
+        printf( "top : %lf size: %lu\n", t, cnt_heap_impl_size( a ) );
+        cnt_heap_impl_pop( a );
     }
 
-    cnt_array_impl_extend( a, 100 );
-
-    cnt_array_impl_free( a );
+    cnt_heap_impl_free( a );
 
     return 0;
 }

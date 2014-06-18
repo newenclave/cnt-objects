@@ -17,8 +17,8 @@ size_t cnt_heap_impl_size( CntHeapImpl *hp );
 int cnt_heap_impl_push  ( CntHeapImpl *hp, const void *element );
 void cnt_heap_impl_pop  ( CntHeapImpl *hp );
 
-void *cnt_heap_top( CntHeapImpl *hp );
-const void *cnt_heap_ctop( const CntHeapImpl *hp );
+void *cnt_heap_impl_top( CntHeapImpl *hp );
+const void *cnt_heap_impl_ctop( const CntHeapImpl *hp );
 
 
 #endif // CNT_HEAP_IMPL_H

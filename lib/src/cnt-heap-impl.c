@@ -199,16 +199,21 @@ int cnt_heap_impl_push( CntHeapImpl *hp, const void *element )
     }
 }
 
-void cnt_heap_impl_pop ( CntHeapImpl *hp )
+void cnt_heap_impl_pop( CntHeapImpl *hp )
 {
     size_t size;
+
     assert( hp != NULL );
+
     size = cnt_array_impl_size( ARRPTR(hp) );
+
     assert( size != 0 );
+
     if( ARRTRAITS(hp)->destroy ) {
         ARRTRAITS(hp)->destroy( cnt_array_impl_begin( ARRPTR(hp) ),
                                 ARRTRAITS(hp)->element_size );
     }
+
     hp_memcpy( cnt_array_impl_begin( ARRPTR(hp) ),
                cnt_array_impl_at( ARRPTR(hp), size - 1 ),
                ARRTRAITS(hp)->element_size );
@@ -219,13 +224,13 @@ void cnt_heap_impl_pop ( CntHeapImpl *hp )
     cnt_array_impl_reduce_nodel( ARRPTR(hp), 1 );
 }
 
-void *cnt_heap_top( CntHeapImpl *hp )
+void *cnt_heap_impl_top( CntHeapImpl *hp )
 {
     assert( hp != NULL );
     return cnt_array_impl_begin( ARRPTR(hp) );
 }
 
-const void *cnt_heap_ctop( const CntHeapImpl *hp )
+const void *cnt_heap_impl_ctop( const CntHeapImpl *hp )
 {
     assert( hp != NULL );
     return cnt_array_impl_cbegin( ARRPTR(hp) );
