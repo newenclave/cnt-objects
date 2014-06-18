@@ -75,7 +75,7 @@ void init( void *src, size_t cnt, size_t len  )
 
     r = ((MYTYPE *)src);
     while( cnt-- ) {
-        *r++ = 99.999;
+        *r++ = 99;
     }
 }
 
@@ -95,17 +95,18 @@ int main( )
 
     srand( 12312 );
 
-    for( i=0; i<300; ++i ) {
+    for( i=0; i<1000; ++i ) {
         MYTYPE t = rand( ) % 1000;
         cnt_heap_impl_push( a, &t );
+        cnt_heap_impl_push( a, &i );
     }
 
     printf( "Heap: %lu\n", cnt_heap_impl_size( a ) );
 
     while( cnt_heap_impl_size( a ) > 0 ) {
         MYTYPE t = *((MYTYPE *)cnt_heap_impl_top( a ));
-        printf( " %lu", t );
-        if( cnt_heap_impl_size( a ) % 20 == 0  ) {
+        printf( " %4lu", t );
+        if( cnt_heap_impl_size( a ) % 20 == 1  ) {
             printf( "\n" );
         }
         cnt_heap_impl_pop( a );
