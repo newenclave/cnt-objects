@@ -168,9 +168,10 @@ CntHeapImpl *cnt_heap_impl_new( const CntElementTraits *traits,
 
 void cnt_heap_impl_free( CntHeapImpl *hp )
 {
+    void (*dealloc)(void *);
     assert( hp != NULL );
 
-    void (*dealloc)(void *) = ARRALOCATOR(hp)->deallocate;
+    dealloc = ARRALOCATOR(hp)->deallocate;
 
     cnt_array_impl_deinit( ARRPTR(hp) );
 
