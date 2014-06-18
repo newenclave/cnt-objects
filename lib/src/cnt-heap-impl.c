@@ -17,15 +17,20 @@ static int hp_memcmp( const void *l, const void *r, size_t length )
     return memcmp( l, r, length );
 }
 
+static void * hp_memcpy( void *dst, const void *src, size_t length )
+{
+    return memcpy( dst, src, length );
+}
+
 static void hp_memswap( void *l, void *r, size_t length )
 {
     char *lc = (char *)l;
     char *rc = (char *)r;
     while( length-- ) {
         char
-          t = *lc;
-        *lc = *rc;
-        *rc = t;
+          t   = *lc;
+        *lc++ = *rc;
+        *rc++ = t;
     }
 }
 
@@ -178,4 +183,51 @@ void cnt_heap_impl_free( CntHeapImpl *hp )
     dealloc( hp );
 }
 
+
+size_t cnt_heap_impl_size( CntHeapImpl *hp )
+{
+    assert( hp != NULL );
+    return cnt_array_impl_size( ARRPTR(hp) );
+}
+
+int cnt_heap_impl_push( CntHeapImpl *hp, const void *element )
+{
+    int res = cnt_array_impl_push_back( ARRPTR(hp), element );
+    if( res ) {
+        sift_up( hp, cnt_array_impl_size( ARRPTR(hp)),
+                 ARRTRAITS(hp)->compare ? ARRTRAITS(hp)->compare : &hp_memcmp);
+    }
+}
+
+void cnt_heap_impl_pop ( CntHeapImpl *hp )
+{
+    size_t size;
+    assert( hp != NULL );
+    size = cnt_array_impl_size( ARRPTR(hp) );
+    assert( size != 0 );
+    if( ARRTRAITS(hp)->destroy ) {
+        ARRTRAITS(hp)->destroy( cnt_array_impl_begin( ARRPTR(hp) ),
+                                ARRTRAITS(hp)->element_size );
+    }
+    hp_memcpy( cnt_array_impl_begin( ARRPTR(hp) ),
+               cnt_array_impl_at( ARRPTR(hp), size - 1 ),
+               ARRTRAITS(hp)->element_size );
+
+    sift_down( hp, size - 1,
+               ARRTRAITS(hp)->compare ? ARRTRAITS(hp)->compare : &hp_memcmp);
+
+    cnt_array_impl_reduce_nodel( ARRPTR(hp), 1 );
+}
+
+void *cnt_heap_top( CntHeapImpl *hp )
+{
+    assert( hp != NULL );
+    return cnt_array_impl_begin( ARRPTR(hp) );
+}
+
+const void *cnt_heap_ctop( const CntHeapImpl *hp )
+{
+    assert( hp != NULL );
+    return cnt_array_impl_cbegin( ARRPTR(hp) );
+}
 
