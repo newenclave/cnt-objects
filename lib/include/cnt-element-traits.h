@@ -37,6 +37,12 @@ typedef struct CntElementTraits {
     **/
     int (* compare)( const void *, const void *, size_t );
 
+    /**
+     *   swaps 2 elements
+     *   swap( left, right, element_size )
+    **/
+    void (* swap)( void *, void *, size_t );
+
 } CntElementTraits;
 
 #define CNT_ELEMENT_COPY( trait, dst, src )                     \

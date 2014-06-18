@@ -31,11 +31,16 @@ size_t cnt_array_impl_available( const CntArrayImpl *arr );
 
 const CntElementTraits *cnt_array_impl_element_traits(const CntArrayImpl *arr);
 
-size_t cnt_array_impl_foreach( CntArrayImpl *arr,
-                            void (*call)(void *, void *), void *data );
 
-size_t cnt_array_impl_cforeach( const CntArrayImpl *arr,
-                            void (*c_call)(const void *, void *), void *data );
+/**
+ * call function 'call' for each element in the array
+ * returns count of processed elements
+**/
+size_t cnt_array_impl_foreach( CntArrayImpl *arr,
+                    void (*call)(void *, size_t, void *), void *data );
+
+size_t cnt_array_impl_cforeach(const CntArrayImpl *arr,
+                    void (*c_call)(const void *, size_t, void *), void *data );
 
 void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr );
 

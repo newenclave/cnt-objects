@@ -280,8 +280,8 @@ void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr )
     cnt_memblock_impl_swap( MBPIMPL( larr ), MBPIMPL( rarr ) );
 }
 
-size_t cnt_array_impl_foreach( CntArrayImpl *arr,
-                          void (*call)(void *, void *), void *data )
+size_t cnt_array_impl_foreach(CntArrayImpl *arr,
+                          void (*call)(void *, size_t, void *), void *data )
 {
     void  *begin;
     size_t i;
@@ -294,7 +294,7 @@ size_t cnt_array_impl_foreach( CntArrayImpl *arr,
     begin = cnt_memblock_impl_begin( MBPIMPL( arr ) );
 
     for( i=0; i<count; ++i ) {
-        call( begin, data );
+        call( begin, ARR_ELEMENT_SIZE( arr ), data );
         begin = ARR_ELEMENT_NEXT( begin, ARR_ELEMENT_SIZE( arr ) );
     }
 
@@ -302,7 +302,7 @@ size_t cnt_array_impl_foreach( CntArrayImpl *arr,
 }
 
 size_t cnt_array_impl_cforeach( const CntArrayImpl *arr,
-                           void (*c_call)(const void *, void *), void *data )
+                     void (*c_call)(const void *, size_t, void *), void *data )
 {
     const void  *begin;
     size_t i;
@@ -315,7 +315,7 @@ size_t cnt_array_impl_cforeach( const CntArrayImpl *arr,
     begin = cnt_memblock_impl_cbegin( MBPIMPL( arr ) );
 
     for( i=0; i<count; ++i ) {
-        c_call( begin, data );
+        c_call( begin, ARR_ELEMENT_SIZE( arr ), data );
         begin = ARR_ELEMENT_NEXT( begin, ARR_ELEMENT_SIZE( arr ) );
     }
     return i;
