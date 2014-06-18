@@ -1,7 +1,7 @@
 #include <string.h>
+#include <assert.h>
 
 #include "cnt-heap-impl.h"
-
 
 #define ARRPTR( hp )        (&(hp)->array_)
 #define ARRALOCATOR( hp )   (ARRPTR( hp )->mblock_.allocator_)
