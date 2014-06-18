@@ -115,7 +115,7 @@ siftup( array heap )
 {
     heap_size = len(heap);
     while( heap_size / 2 ) {
-        parent = (heap_size * 2);
+        parent = (heap_size / 2);
         if( heap[heap_size - 1] < heap[parent - 1] ) {
             swap( heap[heap_size - 1], heap[parent - 1] );
             heap_size = parent;
