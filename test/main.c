@@ -52,19 +52,29 @@ int compare( const void *l, const void *r, size_t len )
             : *((const double *)r) < *((const double *)l);
 }
 
-
 void swap( void *l, void *r, size_t len )
 {
     double tmp;
     assert( len == sizeof( double ) );
 
-    tmp = *((double *)l);
+              tmp  = *((double *)l);
     *((double *)l) = *((double *)r);
     *((double *)r) = tmp;
 }
 
+void init( void *src, size_t cnt, size_t len  )
+{
+    double *r;
+    assert( len == sizeof( double ) );
+
+    r = ((double *)src);
+    while( cnt-- ) {
+        *r++ = 99.999;
+    }
+}
+
 CntElementTraits inttrait = {
-    sizeof( double ), 0, int_del, int_cpy, compare, swap
+    sizeof( double ), init, int_del, int_cpy, compare, swap
 };
 
 CntElementTraits inttrait_def = { sizeof( double ) };
@@ -88,6 +98,8 @@ int main( )
         double t = *((double *)cnt_array_impl_at( a, i ));
         printf( "%lu - %lf\n", i, t );
     }
+
+    cnt_array_impl_extend( a, 100 );
 
     cnt_array_impl_free( a );
 

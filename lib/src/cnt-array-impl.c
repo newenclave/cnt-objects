@@ -114,7 +114,7 @@ static void copy_elements( void *dst, const void *src,
 }
 
 static void *init_elements( void *src, size_t count, size_t element_size,
-                            int (* init)( void *, size_t, size_t ) )
+                            void (* init)( void *, size_t, size_t ) )
 {
     if( src && init ) {
         init( src, count, element_size );
@@ -123,7 +123,7 @@ static void *init_elements( void *src, size_t count, size_t element_size,
 }
 
 static int extend_array( CntArrayImpl *arr, size_t count,
-                         int (* init)( void *, size_t, size_t ))
+                         void (* init)( void *, size_t, size_t ))
 {
     int res = 0;
 

@@ -9,11 +9,9 @@ typedef struct CntElementTraits {
 
     /**
      *  init n elements
-     *  returns:
-     *      nonzero if success
      *  init( src, n, element_size );
     **/
-    int (* init)( void *, size_t, size_t );
+    void (* init)( void *, size_t, size_t );
 
     /**
      *  free element's data. but NOT element pointer
