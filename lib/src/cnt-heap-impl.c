@@ -222,6 +222,7 @@ void cnt_heap_impl_pop( CntHeapImpl *hp )
                ARRTRAITS(hp)->compare ? ARRTRAITS(hp)->compare : &hp_memcmp);
 
     cnt_array_impl_reduce_nodel( ARRPTR(hp), 1 );
+
 }
 
 void *cnt_heap_impl_top( CntHeapImpl *hp )

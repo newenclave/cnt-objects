@@ -331,14 +331,14 @@ void cnt_array_impl_reduce( CntArrayImpl *arr, size_t count )
 
     array_elements_del( arr, tail, count, arr->traits_->destroy );
 
-    cnt_memblock_impl_reduce( MBPTR( arr ), ARR_ELEMENT_SIZE( arr ) * count );
+    cnt_memblock_impl_reduce( MBPIMPL( arr ), ARR_ELEMENT_SIZE( arr ) * count );
 }
 
 void cnt_array_impl_reduce_nodel( CntArrayImpl *arr, size_t count )
 {
     assert( arr != NULL );
     assert( count <= ARR_ELEMENTS_COUNT( arr ) );
-    cnt_memblock_impl_reduce( MBPTR( arr ), ARR_ELEMENT_SIZE( arr ) * count );
+    cnt_memblock_impl_reduce( MBPIMPL( arr ), ARR_ELEMENT_SIZE( arr ) * count );
 }
 
 int cnt_array_impl_push_back ( CntArrayImpl *arr, const void *element )

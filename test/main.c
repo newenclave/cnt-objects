@@ -9,6 +9,7 @@
 #include "lib/src/cnt-array-impl.h"
 #include "lib/src/cnt-heap-impl.h"
 
+typedef unsigned int MYTYPE;
 
 void *my_alloc_call( size_t len )
 {
@@ -28,77 +29,80 @@ void *my_realloc_call( void *ptr, size_t len )
 
 void *int_cpy( void *dst, const void *src, size_t len )
 {
-    assert( len == sizeof( double ) );
+    assert( len == sizeof( MYTYPE ) );
 
-    *((double *)dst) = *((const double *)src);
+    *((MYTYPE *)dst) = *((const MYTYPE *)src);
 
-    printf( "copy: %lf\n", *((double *)dst) );
+    printf( "copy: %lu\n", *((MYTYPE *)dst) );
 
     return dst;
 }
 
 void int_del( void *ptr, size_t len )
 {
-    double *i;
-    assert( len == sizeof( double ) );
+    MYTYPE *i;
+    assert( len == sizeof( MYTYPE ) );
 
-    i = (double *)ptr;
-    printf( "destroy: %lf\n", *i );
+    i = (MYTYPE *)ptr;
+    //printf( "destroy: %lf\n", *i );
 }
 
 int compare( const void *l, const void *r, size_t len )
 {
-    assert( len == sizeof( double ) );
-    return *((const double *)l) < *((const double *)r)
+    assert( len == sizeof( MYTYPE ) );
+
+//    printf( "compare %lf, %lf\n", *((const MYTYPE *)l), *((const MYTYPE *)r) );
+
+    return *((const MYTYPE *)l) < *((const MYTYPE *)r)
             ? -1
-            : *((const double *)r) < *((const double *)l);
+            : *((const MYTYPE *)r) < *((const MYTYPE *)l);
 }
 
 void swap( void *l, void *r, size_t len )
 {
-    double tmp;
-    assert( len == sizeof( double ) );
+    MYTYPE tmp;
+    assert( len == sizeof( MYTYPE ) );
 
-              tmp  = *((double *)l);
-    *((double *)l) = *((double *)r);
-    *((double *)r) = tmp;
+              tmp  = *((MYTYPE *)l);
+    *((MYTYPE *)l) = *((MYTYPE *)r);
+    *((MYTYPE *)r) = tmp;
 }
 
 void init( void *src, size_t cnt, size_t len  )
 {
-    double *r;
-    assert( len == sizeof( double ) );
+    MYTYPE *r;
+    assert( len == sizeof( MYTYPE ) );
 
-    r = ((double *)src);
+    r = ((MYTYPE *)src);
     while( cnt-- ) {
         *r++ = 99.999;
     }
 }
 
 CntElementTraits inttrait = {
-    sizeof( double ), init, int_del, int_cpy, compare, swap
+    sizeof( MYTYPE ), init, int_del, int_cpy, compare, 0//swap
 };
 
-CntElementTraits inttrait_def = { sizeof( double ) };
+CntElementTraits inttrait_def = { sizeof( MYTYPE ) };
 
 int main( )
 {
     CntAllocator my_alloc = cnt_default_allocator;
     CntHeapImpl *a = cnt_heap_impl_new( &inttrait, &my_alloc );
     size_t i;
-    double d;
-    double *r;
+    MYTYPE d;
+    MYTYPE *r;
 
     srand( 12312 );
 
-    for( i=0; i<100; ++i ) {
-        double t = rand( );
+    for( i=0; i<300; ++i ) {
+        MYTYPE t = rand( );
         cnt_heap_impl_push( a, &t );
     }
 
     while( cnt_heap_impl_size( a ) > 0 ) {
-        double t = *((double *)cnt_heap_impl_top( a ));
-        printf( "top : %lf size: %lu\n", t, cnt_heap_impl_size( a ) );
+        MYTYPE t = *((MYTYPE *)cnt_heap_impl_top( a ));
+        printf( "top : %lu\n", t );
         cnt_heap_impl_pop( a );
     }
 
