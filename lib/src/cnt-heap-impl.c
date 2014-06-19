@@ -14,7 +14,6 @@
 
 static int hp_memcmp( const void *l, const void *r, size_t length )
 {
-    assert( 0 );
     return memcmp( l, r, length );
 }
 
