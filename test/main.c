@@ -44,7 +44,7 @@ void int_del( void *ptr, size_t len )
     assert( len == sizeof( MYTYPE ) );
 
     i = (MYTYPE *)ptr;
-    //printf( "destroy: %lf\n", *i );
+    //printf( "destroy: %lu\n", *i );
 }
 
 int compare( const void *l, const void *r, size_t len )
@@ -93,6 +93,8 @@ int main( )
     MYTYPE d;
     MYTYPE *r;
 
+    MYTYPE test[] = { 456, 897, 3, 7, 8, 0, 0, 0 };
+
     srand( 12312 );
 
     for( i=0; i<1000; ++i ) {
@@ -112,7 +114,20 @@ int main( )
         cnt_heap_impl_pop( a );
     }
 
-    printf( "\n" );
+    printf( "\n===============\n" );
+
+    cnt_heap_impl_assign( a, test, 8 );
+
+    while( cnt_heap_impl_size( a ) > 0 ) {
+        MYTYPE t = *((MYTYPE *)cnt_heap_impl_top( a ));
+        printf( " %4lu", t );
+        if( cnt_heap_impl_size( a ) % 20 == 1  ) {
+            printf( "\n" );
+        }
+        cnt_heap_impl_pop( a );
+    }
+
+    printf( "\n===============\n" );
 
     cnt_heap_impl_free( a );
 

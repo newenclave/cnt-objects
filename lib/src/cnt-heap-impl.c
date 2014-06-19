@@ -206,6 +206,7 @@ int cnt_heap_impl_assign( CntHeapImpl *hp, const void *elements, size_t count )
     assert( hp != NULL );
     tmp = cnt_heap_impl_new( ARRTRAITS(hp),  ARRALOCATOR(hp) );
     if( tmp ) {
+
         const void *e = elements;
         res = cnt_array_impl_reserve( ARRPTR(hp), count );
 

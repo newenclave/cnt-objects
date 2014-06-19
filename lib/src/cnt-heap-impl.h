@@ -37,7 +37,7 @@ void cnt_heap_impl_swap( CntHeapImpl *lhp, CntHeapImpl *rhp );
 int cnt_heap_impl_push  ( CntHeapImpl *hp, const void *element );
 void cnt_heap_impl_pop  ( CntHeapImpl *hp );
 
-void *cnt_heap_impl_top( CntHeapImpl *hp );
+void *cnt_heap_impl_top       ( CntHeapImpl *hp );
 const void *cnt_heap_impl_ctop( const CntHeapImpl *hp );
 
 
