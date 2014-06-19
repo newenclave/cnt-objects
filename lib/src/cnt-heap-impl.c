@@ -225,22 +225,23 @@ int cnt_heap_impl_assign( CntHeapImpl *hp, const void *elements, size_t count )
 
 int cnt_heap_impl_assign_array( CntHeapImpl *hp, const CntArrayImpl *arr )
 {
-    assert( hp != NULL );
-    assert( arr != NULL );
 
-    int res = 0;
+    int          res = 0;
     CntHeapImpl *tmp;
-    assert( hp != NULL );
+
+    assert( arr != NULL );
+    assert(  hp != NULL );
 
     tmp = cnt_heap_impl_new( arr->traits_,  arr->mblock_.allocator_ );
 
     if( tmp ) {
+
         const size_t count = cnt_array_impl_size( arr );
         size_t i;
 
         res = cnt_array_impl_reserve( ARRPTR(hp), count );
 
-        for( i=0; res && i<count; ++i ) {
+        for( i=0; (res != 0) && (i < count); ++i ) {
             res = cnt_heap_impl_push( tmp, cnt_array_impl_cat( arr, i ) );
         }
 
