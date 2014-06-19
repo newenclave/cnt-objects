@@ -55,8 +55,9 @@ siftdown( array heap )
     while( (next * 2) <= heap_size ) {
         minimum = (next * 2) - 1;
         if( minimum + 1 < heap_size ) {
-            minimum = heap[minimum] < heap[minimum+1]
-                      ? minimum : minimum + 1;
+            minimum = (heap[minimum] < heap[minimum+1])
+                      ? minimum
+                      : minimum + 1;
         }
         if( heap[minimum] < heap[next-1] )
             swap( heap[next-1], heap[minimum] );
