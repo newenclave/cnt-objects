@@ -85,12 +85,13 @@ CntElementTraits inttrait = {
 
 CntElementTraits inttrait_def = { sizeof( MYTYPE ) };
 
+
 int main( )
 {
     CntAllocator my_alloc = cnt_default_allocator;
     CntHeapImpl *a = cnt_heap_impl_new( &inttrait, &my_alloc );
-    size_t i;
-    MYTYPE d;
+    size_t  i;
+    MYTYPE  d;
     MYTYPE *r;
 
     MYTYPE test[] = { 456, 897, 3, 7, 8, 0, 0, 0 };
