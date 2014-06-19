@@ -7,6 +7,8 @@
 #define ARRALOCATOR( hp )   (ARRPTR( hp )->mblock_.allocator_)
 #define ARRTRAITS( hp )     (ARRPTR( hp )->traits_)
 
+#define ARRELEM_CNEXT( hp, ptr ) \
+    (((const char *)(ptr)) + ARRTRAITS( hp )->element_size)
 
 /**
  *  sift action
@@ -183,12 +185,88 @@ void cnt_heap_impl_free( CntHeapImpl *hp )
     dealloc( hp );
 }
 
+void cnt_heap_impl_deinit( CntHeapImpl *hp )
+{
+    assert( hp != NULL );
+    cnt_array_impl_deinit( ARRPTR(hp) );
+}
+
+int cnt_heap_impl_init( CntHeapImpl *hp,
+                        const CntElementTraits *traits,
+                        const CntAllocator *allocator )
+{
+    assert( hp != NULL );
+    return cnt_array_impl_init( ARRPTR(hp), traits, allocator );
+}
+
+int cnt_heap_impl_assign( CntHeapImpl *hp, const void *elements, size_t count )
+{
+    int res = 0;
+    CntHeapImpl *tmp;
+    assert( hp != NULL );
+    tmp = cnt_heap_impl_new( ARRTRAITS(hp),  ARRALOCATOR(hp) );
+    if( tmp ) {
+        const void *e = elements;
+        res = cnt_array_impl_reserve( ARRPTR(hp), count );
+
+        while( res && count-- ) {
+            res = cnt_heap_impl_push( tmp, e );
+            e = ARRELEM_CNEXT( tmp, e );
+        }
+
+        if( res ) {
+            cnt_array_impl_swap( ARRPTR(hp), ARRPTR(tmp) );
+        }
+
+        cnt_heap_impl_free( tmp );
+    }
+    return res;
+}
+
+int cnt_heap_impl_assign_array( CntHeapImpl *hp, const CntArrayImpl *arr )
+{
+    assert( hp != NULL );
+    assert( arr != NULL );
+
+    int res = 0;
+    CntHeapImpl *tmp;
+    assert( hp != NULL );
+
+    tmp = cnt_heap_impl_new( arr->traits_,  arr->mblock_.allocator_ );
+
+    if( tmp ) {
+        const size_t count = cnt_array_impl_size( arr );
+        size_t i;
+
+        res = cnt_array_impl_reserve( ARRPTR(hp), count );
+
+        for( i=0; res && i<count; ++i ) {
+            res = cnt_heap_impl_push( tmp, cnt_array_impl_cat( arr, i ) );
+        }
+
+        if( res ) {
+            cnt_array_impl_swap( ARRPTR(hp), ARRPTR(tmp) );
+        }
+
+        cnt_heap_impl_free( tmp );
+    }
+    return res;
+}
 
 size_t cnt_heap_impl_size( CntHeapImpl *hp )
 {
     assert( hp != NULL );
     return cnt_array_impl_size( ARRPTR(hp) );
 }
+
+void cnt_heap_impl_swap( CntHeapImpl *lhp, CntHeapImpl *rhp )
+{
+    assert( lhp != NULL );
+    assert( rhp != NULL );
+
+    cnt_array_impl_swap( ARRPTR(lhp), ARRPTR(rhp) );
+}
+
 
 int cnt_heap_impl_push( CntHeapImpl *hp, const void *element )
 {

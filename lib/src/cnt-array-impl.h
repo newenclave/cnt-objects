@@ -29,6 +29,11 @@ int cnt_array_impl_init( CntArrayImpl *arr,
                          const CntElementTraits *traits,
                          const CntAllocator *allocator );
 
+int cnt_array_impl_init_reserved( CntArrayImpl *arr,
+                                  const CntElementTraits *traits,
+                                  const CntAllocator *allocator,
+                                  size_t count );
+
 int cnt_array_impl_reserve( CntArrayImpl *arr, size_t count );
 int cnt_array_impl_resize(  CntArrayImpl *arr, size_t count );
 
@@ -52,6 +57,8 @@ size_t cnt_array_impl_cforeach(const CntArrayImpl *arr,
                     void (*c_call)(const void *, size_t, void *), void *data );
 
 void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr );
+
+void cnt_array_impl_clear( CntArrayImpl *arr );
 
 /**
  * 1 == success

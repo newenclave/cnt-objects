@@ -193,7 +193,6 @@ static size_t array_bin_bound_any( const CntArrayImpl *arr,
     return middle;
 }
 
-
 static int array_bin_bound( const CntArrayImpl *arr,
                const void  *element,
                int (* cmp_call)( const void *, const void *, size_t ),
@@ -254,6 +253,14 @@ int cnt_array_impl_init( CntArrayImpl *arr,
                          const CntElementTraits *traits,
                          const CntAllocator *allocator )
 {
+    return cnt_array_impl_init_reserved( arr, traits, allocator, 0 );
+}
+
+int cnt_array_impl_init_reserved( CntArrayImpl *arr,
+                                  const CntElementTraits *traits,
+                                  const CntAllocator *allocator,
+                                  size_t count )
+{
     int res;
 
     assert( arr != NULL );
@@ -263,12 +270,13 @@ int cnt_array_impl_init( CntArrayImpl *arr,
     assert( allocator->allocate != NULL );
     assert( allocator->deallocate != NULL );
 
-    res = cnt_memblock_impl_init( MBPIMPL(arr), 0, allocator );
+    res = cnt_memblock_impl_init( MBPIMPL(arr),
+                                  traits->element_size * count,
+                                  allocator );
 
     arr->traits_ = traits;
     return res;
 }
-
 
 CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
                                   const CntAllocator *allocator )
@@ -480,6 +488,14 @@ void cnt_array_impl_swap( CntArrayImpl *larr, CntArrayImpl *rarr )
 
     /// swap blocks
     cnt_memblock_impl_swap( MBPIMPL( larr ), MBPIMPL( rarr ) );
+}
+
+void cnt_array_impl_clear( CntArrayImpl *arr )
+{
+    assert( arr != NULL );
+    array_elements_del( arr, MBPIMPL( arr ), ARR_ELEMENTS_COUNT( arr ),
+                        arr->traits_->destroy);
+    cnt_memblock_impl_clear( MBPIMPL( arr ) );
 }
 
 size_t cnt_array_impl_foreach(CntArrayImpl *arr,
