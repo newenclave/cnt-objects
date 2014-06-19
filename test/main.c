@@ -99,7 +99,7 @@ int main( )
     srand( 12312 );
 
     for( i=0; i<1000; ++i ) {
-        MYTYPE t = rand( ) % 1000;
+        MYTYPE t = (rand( ) % 1000);
         cnt_heap_impl_push( a, &t );
         cnt_heap_impl_push( a, &i );
     }
