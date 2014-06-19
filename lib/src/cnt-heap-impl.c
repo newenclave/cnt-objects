@@ -37,7 +37,7 @@ static void hp_memswap( void *l, void *r, size_t length )
 }
 
 static void swap_elements( void *l, void *r, size_t length,
-                           void (*swap)( void *, void *, size_t ))
+                           void (* swap)( void *, void *, size_t ))
 {
     if( swap ) {
         swap( l, r, length );
@@ -47,7 +47,6 @@ static void swap_elements( void *l, void *r, size_t length,
 }
 
 /**
- *
 siftdown( array heap )
 {
     heap_size = len(heap);
@@ -66,9 +65,7 @@ siftdown( array heap )
         next = minimum+1;
     }
 }
-*
 **/
-
 static void sift_down( CntHeapImpl *hp, const size_t heap_size,
                        int (* compare)( const void *, const void *, size_t ))
 {
@@ -127,7 +124,6 @@ siftup( array heap )
     }
 }
 **/
-
 static void sift_up( CntHeapImpl *hp, size_t heap_size,
                      int (* compare)( const void *, const void *, size_t ))
 {
