@@ -21,12 +21,12 @@ typedef struct CntDequeSide {
 } CntDequeSide;
 
 typedef struct CntDequeImpl {
-    struct CntDequeSide    sides_[2];
-    size_t                 element_size_;
-    size_t                 count_;
-
     const CntAllocator     *allocator_;
     const CntElementTraits *traits_;
+
+    CntDequeSide    sides_[2];
+    size_t          count_;
+
 } CntDequeImpl;
 
 #endif // CNT_DEQUE_IMPL_H
