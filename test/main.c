@@ -11,6 +11,8 @@
 
 typedef size_t MYTYPE;
 
+#include "include/cnt-list.h"
+
 void *my_alloc_call( size_t len )
 {
     void *ptr = malloc( len );
@@ -51,7 +53,7 @@ int compare( const void *l, const void *r, size_t len )
 {
     assert( len == sizeof( MYTYPE ) );
 
-//    printf( "compare %lf, %lf\n", *((const MYTYPE *)l), *((const MYTYPE *)r) );
+//    printf( "compare %lu, %lu\n", *((const MYTYPE *)l), *((const MYTYPE *)r) );
 
     return *((const MYTYPE *)l) < *((const MYTYPE *)r)
             ? -1
@@ -96,7 +98,7 @@ int main( )
 
     MYTYPE test[] = { 456, 897, 3, 7, 8, 0, 0, 0 };
 
-    srand( 12312 );
+    srand( 54654 );
 
     for( i=0; i<1000; ++i ) {
         MYTYPE t = (rand( ) % 1000);
