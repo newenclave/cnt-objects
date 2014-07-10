@@ -52,7 +52,7 @@ typedef struct CntElementTraits {
 #define CNT_ELEMENT_INIT( trait, src )                          \
         (trait)->init( src, 1, (trait)->element_size )
 
-#define CNT_ELEMENTS_INIT( trait, src, count )                   \
+#define CNT_ELEMENTS_INIT( trait, src, count )                  \
         (trait)->init( src, count, (trait)->element_size )
 
 #define CNT_EMPTY_ELEMENT_TRAITS( size ) { size }

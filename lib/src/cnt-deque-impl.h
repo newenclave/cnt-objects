@@ -16,8 +16,8 @@ typedef struct CntDequeUnit {
 } CntDequeUnit;
 
 typedef struct CntDequeSide {
-    struct CntDequeUnit  *unit_;
-    void                 *ptr_;
+    CntDequeUnit  *unit_;
+    void          *ptr_;
 } CntDequeSide;
 
 typedef struct CntDequeImpl {
@@ -28,5 +28,22 @@ typedef struct CntDequeImpl {
     size_t          count_;
 
 } CntDequeImpl;
+
+CntDequeImpl *cnt_deque_impl_new( const CntElementTraits *traits,
+                                  const CntAllocator *allocator );
+
+/**
+ *  Destroy elements
+**/
+void cnt_deque_impl_deinit( CntDequeImpl *deq );
+
+/**
+ * 1 == success
+ * 0 == failed
+**/
+int cnt_deque_impl_init( CntDequeImpl *deq,
+                         const CntElementTraits *traits,
+                         const CntAllocator *allocator );
+
 
 #endif // CNT_DEQUE_IMPL_H
