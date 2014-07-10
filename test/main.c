@@ -87,52 +87,26 @@ CntElementTraits inttrait = {
 
 CntElementTraits inttrait_def = { sizeof( MYTYPE ) };
 
+typedef struct test_list {
+    CntDLinkedListHead l;
+    int b;
+} test_list;
+
 
 int main( )
 {
-    CntAllocator my_alloc = cnt_default_allocator;
-    CntHeapImpl *a = cnt_heap_impl_new( &inttrait, &my_alloc );
-    size_t  i;
-    MYTYPE  d;
-    MYTYPE *r;
+    test_list tl  = { 0 };
+    test_list tl2 = { 0 };
 
-    MYTYPE test[] = { 456, 897, 3, 7, 8, 0, 0, 0 };
+    tl2.b = 100;
 
-    srand( 54654 );
+    CNT_DLINKED_LIST_INSERT( &tl.l, &tl2.l, 1 );
 
-    for( i=0; i<1000; ++i ) {
-        MYTYPE t = (rand( ) % 1000);
-        cnt_heap_impl_push( a, &t );
-        cnt_heap_impl_push( a, &i );
+    CntDLinkedListHead *lh = &tl.l;
+    while( lh ) {
+        printf( "element %d\n", CONTAINER_OF( lh, test_list, l )->b );
+        lh = lh->links_[1];
     }
-
-    printf( "Heap: %lu\n", cnt_heap_impl_size( a ) );
-
-    while( cnt_heap_impl_size( a ) > 0 ) {
-        MYTYPE t = *((MYTYPE *)cnt_heap_impl_top( a ));
-        printf( " %4lu", t );
-        if( cnt_heap_impl_size( a ) % 20 == 1  ) {
-            printf( "\n" );
-        }
-        cnt_heap_impl_pop( a );
-    }
-
-    printf( "\n===============\n" );
-
-    cnt_heap_impl_assign( a, test, 8 );
-
-    while( cnt_heap_impl_size( a ) > 0 ) {
-        MYTYPE t = *((MYTYPE *)cnt_heap_impl_top( a ));
-        printf( " %4lu", t );
-        if( cnt_heap_impl_size( a ) % 20 == 1  ) {
-            printf( "\n" );
-        }
-        cnt_heap_impl_pop( a );
-    }
-
-    printf( "\n===============\n" );
-
-    cnt_heap_impl_free( a );
 
     return 0;
 }
