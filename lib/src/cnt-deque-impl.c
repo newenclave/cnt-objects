@@ -138,13 +138,14 @@ static int deque_init( CntDequeImpl *deq,
                        enum cnt_deque_start_point position)
 {
     int res = 0;
+    CntDequeUnit *unit;
 
     deq->traits_    = traits;
     deq->allocator_ = allocator;
     deq->count_     = 0;
 
-    CntDequeUnit *unit = deque_unit_create( deq,
-                                            init_size ? init_size + 1 : 4);
+    unit = deque_unit_create( deq, init_size ? init_size + 1 : 4);
+
     if( unit ) {
 
         deq->sides_[DEQ_SIDE_FRONT].unit_ =
