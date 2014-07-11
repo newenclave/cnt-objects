@@ -20,6 +20,7 @@
         ((deq)->sides_[side].ptr_ ==                    \
          (deq)->sides_[side].unit_->border_[side] )
 
+#define DEQ_PTR_DIFF( l, r ) ((const char *)(l) - (const char *)(r))
 
 //#define DEQUE_DEF_INC(size) ((size))
 #define DEQUE_DEF_INC(size) ((size) + ((size) >> 1))
@@ -278,9 +279,12 @@ static int deque_extend_side( CntDequeImpl *deq, int dir )
             other_list->links_[0] = other_list->links_[1] = NULL;
 
         } else {
-            const size_t old_size = (side->unit_->border_[DEQ_SIDE_BACK]-
-                                     side->unit_->border_[DEQ_SIDE_FRONT]) /
-                                                deq->traits_->element_size;
+
+            const size_t old_size =
+                    DEQ_PTR_DIFF (side->unit_->border_[DEQ_SIDE_BACK],
+                                  side->unit_->border_[DEQ_SIDE_FRONT])
+                    / deq->traits_->element_size;
+
             const size_t new_size = DEQUE_DEF_INC(old_size);
             new_unit = deque_unit_create( deq, new_size );
         }
