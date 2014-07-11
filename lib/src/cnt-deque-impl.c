@@ -11,6 +11,19 @@
 #define DEQUE_ELEMENT_AT( ptr, element_size, position ) \
             (((char *)ptr) + ((element_size) * (position)))
 
+#define DEQUE_BLOCK_SIDE( unit, side ) ((unit)->border_[!(side)])
+
+#define DEQUE_BLOCK_IS_SIDE( unit, ptr, side )          \
+        DEQUE_BLOCK_SIDE(unit, side) == (ptr)
+
+#define DEQUE_IS_BORDER( deq, side )                    \
+        ((deq)->sides_[side].ptr_ ==                    \
+         (deq)->sides_[side].unit_->border_[side] )
+
+
+//#define DEQUE_DEF_INC(size) ((size))
+#define DEQUE_DEF_INC(size) ((size) + ((size) >> 1))
+
 /**
  * creates new unit for deque
 **/
@@ -37,7 +50,7 @@ static CntDequeUnit *deque_unit_create( CntDequeImpl* cnd, size_t elements )
 }
 
 /**
- * sets up unit's pointer to desired position
+ * sets up unit's pointer to the desired position
 **/
 static void deque_init_position( CntDequeImpl *cnd, size_t reserve,
                                  enum cnt_deque_start_point position)
@@ -190,5 +203,141 @@ void cnt_deque_impl_deinit( CntDequeImpl *deq )
 {
     assert( deq != NULL );
     deque_list_free( deq );
+}
+
+int cnt_deque_impl_empty( const CntDequeImpl *deq )
+{
+    assert( deq != NULL );
+    return (deq->count_ == 0) ? 1 : 0;
+}
+
+size_t cnt_deque_impl_size ( const CntDequeImpl *deq )
+{
+    assert( deq != NULL );
+    return deq->count_;
+}
+
+void *cnt_deque_impl_front(CntDequeImpl *deq )
+{
+    assert( deq != NULL );
+    assert( deq->count_ != 0 );
+
+    return deq->sides_[DEQ_SIDE_FRONT].ptr_;
+}
+
+void *cnt_deque_impl_back (CntDequeImpl *deq )
+{
+    void *ptr = NULL;
+
+    assert( deq != NULL );
+    assert( deq->count_ != 0 );
+
+    ptr = (char *)(deq->sides_[DEQ_SIDE_BACK].ptr_) -
+                   deq->traits_->element_size;
+    return ptr;
+}
+
+const void *cnt_deque_impl_cfront(const CntDequeImpl *deq )
+{
+    assert( deq != NULL );
+    assert( deq->count_ != 0 );
+
+    return deq->sides_[DEQ_SIDE_FRONT].ptr_;
+}
+
+const void *cnt_deque_impl_cback (const CntDequeImpl *deq )
+{
+    const void *ptr = NULL;
+
+    assert( deq != NULL );
+    assert( deq->count_ != 0 );
+
+    ptr = (const char *)(deq->sides_[DEQ_SIDE_BACK].ptr_) -
+                         deq->traits_->element_size;
+    return ptr;
+}
+
+
+static int deque_extend_side( CntDequeImpl *deq, int dir )
+{
+    CntDequeSide *side       = &deq->sides_[dir];
+    CntDequeUnit *new_unit   =
+            CONTAINER_OF( CNT_DLINKED_LIST_STEP( &side->unit_->list_, dir ),
+                          CntDequeUnit, list_);
+
+    if( !new_unit ) {
+
+        CntDLinkedListHead *other_list =
+                CNT_DLINKED_LIST_STEP( &deq->sides_[!dir].unit_->list_, !dir );
+
+        if( other_list ) {
+
+            new_unit = CONTAINER_OF( other_list, CntDequeUnit, list_ );
+            CNT_DLINKED_LIST_REMOVE( other_list );
+            other_list->links_[0] = other_list->links_[1] = NULL;
+
+        } else {
+            const size_t old_size = (side->unit_->border_[DEQ_SIDE_BACK]-
+                                     side->unit_->border_[DEQ_SIDE_FRONT]) /
+                                                deq->traits_->element_size;
+            const size_t new_size = DEQUE_DEF_INC(old_size);
+            new_unit = deque_unit_create( deq, new_size );
+        }
+        if( new_unit ) {
+            CNT_DLINKED_LIST_INSERT( &side->unit_->list_,
+                                     &new_unit->list_, dir );
+        }
+    }
+
+    if( new_unit ) {
+        side->unit_ = new_unit;
+        side->ptr_  = DEQUE_BLOCK_SIDE( new_unit, dir );
+    }
+
+    return new_unit != NULL;
+}
+
+static void *cnt_dec_ptr_call( void **ptr, size_t size )
+{
+    char *tmp = (char *)*ptr;
+    tmp  -= size;
+    *ptr  = tmp;
+    return tmp;
+}
+
+static void *cnt_inc_ptr_call( void **ptr, size_t size )
+{
+    char *tmp = (char *)*ptr;
+    *ptr = tmp + size;
+    return tmp;
+}
+
+static void *deque_shift_side( CntDequeImpl *deq, int dir )
+{
+    typedef void *(* fix_ptr_call)( void **, size_t );
+
+    void *new_ptr = NULL;
+    int res       = 1;
+
+    static const fix_ptr_call ptr_calls[2] = {
+        cnt_dec_ptr_call, cnt_inc_ptr_call
+    };
+
+    if( DEQUE_IS_BORDER( deq, dir ) ) {
+        res = deque_extend_side( deq, dir );
+    }
+
+    if( res ) {
+        CntDequeSide *side = &deq->sides_[dir];
+        new_ptr = ptr_calls[dir]( &side->ptr_, deq->traits_->element_size );
+        ++deq->count_;
+    }
+    return new_ptr;
+}
+
+void *cnt_deque_create_front( CntDequeImpl *deq )
+{
+    assert( deq != NULL );
+
 }
 

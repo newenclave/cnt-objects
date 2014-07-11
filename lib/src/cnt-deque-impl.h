@@ -52,5 +52,16 @@ void    cnt_deque_impl_free(CntDequeImpl *deq);
 **/
 void cnt_deque_impl_deinit( CntDequeImpl *deq );
 
+int     cnt_deque_impl_empty( const CntDequeImpl *deq );
+size_t  cnt_deque_impl_size ( const CntDequeImpl *deq );
+
+void   *cnt_deque_impl_front( CntDequeImpl *deq );
+void   *cnt_deque_impl_back ( CntDequeImpl *deq );
+
+const void   *cnt_deque_impl_cfront( const CntDequeImpl *deq );
+const void   *cnt_deque_impl_cback ( const CntDequeImpl *deq );
+
+void   *cnt_deque_create_front( CntDequeImpl *deq );
+
 
 #endif // CNT_DEQUE_IMPL_H

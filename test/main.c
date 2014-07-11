@@ -102,7 +102,7 @@ int main( )
 
     cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
 
-    printf( "deq count: %u\n", deq.count_ );
+    printf( "deq count: %u\n", cnt_deque_impl_empty( &deq ) );
 
     cnt_deque_impl_deinit( &deq );
 
