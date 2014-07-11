@@ -329,7 +329,7 @@ static void *cnt_inc_ptr_call( void **ptr, size_t size )
     return tmp;
 }
 
-static void *deque_shift_side( CntDequeImpl *deq, int dir )
+static void *deque_create_at( CntDequeImpl *deq, int dir )
 {
     typedef void *(* fix_ptr_call)( void **, size_t );
 
@@ -358,17 +358,16 @@ static void *deque_shift_side( CntDequeImpl *deq, int dir )
 void *cnt_deque_impl_create_front( CntDequeImpl *deq )
 {
     assert( deq != NULL );
-    return deque_shift_side( deq, DEQ_SIDE_FRONT );
+    return deque_create_at( deq, DEQ_SIDE_FRONT );
 }
 
 void *cnt_deque_impl_create_back( CntDequeImpl *deq )
 {
     assert( deq != NULL );
-    return deque_shift_side( deq, DEQ_SIDE_BACK );
+    return deque_create_at( deq, DEQ_SIDE_BACK );
 }
 
-static void deque_reduce_side( CntDequeImpl *deq, int dir )
-
+static void deque_pop( CntDequeImpl *deq, int dir )
 {
     CntDequeSide *side = &deq->sides_[dir];
 
@@ -414,17 +413,17 @@ static void deque_reduce_side( CntDequeImpl *deq, int dir )
 
 void cnt_deque_impl_pop_front (CntDequeImpl *deq )
 {
-    deque_reduce_side( deq, DEQ_SIDE_FRONT );
+    deque_pop( deq, DEQ_SIDE_FRONT );
 }
 
 void cnt_deque_impl_pop_back (CntDequeImpl *deq )
 {
-    deque_reduce_side( deq, DEQ_SIDE_BACK );
+    deque_pop( deq, DEQ_SIDE_BACK );
 }
 
 static int deque_push( CntDequeImpl *deq, const void *element, int dir )
 {
-    void *new_ptr = deque_shift_side( deq, dir );
+    void *new_ptr = deque_create_at( deq, dir );
     if( new_ptr ) {
         if( deq->traits_->copy ) {
             deq->traits_->copy( new_ptr, element, deq->traits_->element_size );
