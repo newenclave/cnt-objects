@@ -1,6 +1,9 @@
 #include <assert.h>
+#include <string.h>
 
 #include "cnt-deque-impl.h"
+
+#define DEQUE_DEFAULT_INIT_ELEMENTS 64
 
 #define DEQUE_ELEMENT_NEXT( ptr, element_size )         \
             (((char *)ptr) + (element_size))
@@ -28,6 +31,12 @@
 #define DEQ_UNIT_SIZE( unit )                           \
         DEQ_PTR_DIFF ((unit)->border_[DEQ_SIDE_BACK],   \
                       (unit)->border_[DEQ_SIDE_FRONT])
+
+
+static void *deq_memcopy( void *dst, const void *src, size_t size )
+{
+    return memcpy( dst, src, size );
+}
 
 /**
  * creates new unit for deque
@@ -149,7 +158,8 @@ static int deque_init( CntDequeImpl *deq,
     deq->allocator_ = allocator;
     deq->count_     = 0;
 
-    unit = deque_unit_create( deq, init_size ? init_size + 1 : 8 );
+    unit = deque_unit_create( deq, init_size ? init_size + 1
+                                             : DEQUE_DEFAULT_INIT_ELEMENTS );
 
     if( unit ) {
 
@@ -412,3 +422,25 @@ void cnt_deque_impl_pop_back (CntDequeImpl *deq )
     deque_reduce_side( deq, DEQ_SIDE_BACK );
 }
 
+static int deque_push( CntDequeImpl *deq, const void *element, int dir )
+{
+    void *new_ptr = deque_shift_side( deq, dir );
+    if( new_ptr ) {
+        if( deq->traits_->copy ) {
+            deq->traits_->copy( new_ptr, element, deq->traits_->element_size );
+        } else {
+            deq_memcopy( new_ptr, element, deq->traits_->element_size );
+        }
+    }
+    return ( new_ptr != NULL );
+}
+
+int cnt_deque_impl_push_front ( CntDequeImpl *deq, const void *element )
+{
+    return deque_push( deq, element, DEQ_SIDE_FRONT );
+}
+
+int cnt_deque_impl_push_back (  CntDequeImpl *deq, const void *element )
+{
+    return deque_push( deq, element, DEQ_SIDE_BACK );
+}

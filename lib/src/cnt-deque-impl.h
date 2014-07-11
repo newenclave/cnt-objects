@@ -67,5 +67,11 @@ void *cnt_deque_impl_create_back(  CntDequeImpl *deq );
 void cnt_deque_impl_pop_front ( CntDequeImpl *deq );
 void cnt_deque_impl_pop_back (  CntDequeImpl *deq );
 
+/**
+ * 1 == success
+ * 0 == failed
+**/
+int cnt_deque_impl_push_front ( CntDequeImpl *deq, const void *element );
+int cnt_deque_impl_push_back (  CntDequeImpl *deq, const void *element );
 
 #endif // CNT_DEQUE_IMPL_H

@@ -47,7 +47,7 @@ void int_del( void *ptr, size_t len )
     assert( len == sizeof( MYTYPE ) );
 
     i = (MYTYPE *)ptr;
-    printf( "destroy: %lu\n", *i );
+    //printf( "destroy: %lu\n", *i );
 }
 
 int compare( const void *l, const void *r, size_t len )
@@ -79,7 +79,7 @@ void init( void *src, size_t cnt, size_t len  )
 
     r = ((MYTYPE *)src);
     while( cnt-- ) {
-        printf( "init data to %ul\n", 101 );
+        //printf( "init data to %ul\n", 101 );
         *r++ = 101;
     }
 }
@@ -95,27 +95,35 @@ typedef struct test_list {
     int b;
 } test_list;
 
+#define MAX_ITERATION 10000000
 
 int main( )
 {
     CntAllocator def_allocator = cnt_default_allocator;
 
     CntDequeImpl deq;
-    int i;
+
+    MYTYPE i;
 
     cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
 
-    for( i=0; i<100; ++i ) {
-        cnt_deque_impl_create_front( &deq );
+    for( i=0; i<MAX_ITERATION; ++i ) {
+        cnt_deque_impl_push_front( &deq, &i );
     }
 
-    for( i=0; i<100; ++i ) {
-        cnt_deque_impl_create_back( &deq );
+    for( i=0; i<MAX_ITERATION; ++i ) {
+        cnt_deque_impl_push_back( &deq, &i );
     }
 
-    printf( "deq count: %lu\n", cnt_deque_impl_size( &deq ) );
-    printf( "deq front: %lu\n", *((MYTYPE *)cnt_deque_impl_front( &deq )) );
-    printf( "deq back : %lu\n", *((MYTYPE *)cnt_deque_impl_back( &deq )) );
+    while( !cnt_deque_impl_empty( &deq ) ) {
+        cnt_deque_impl_pop_back( &deq );
+        cnt_deque_impl_pop_front( &deq );
+    }
+
+    for( i=0; i<MAX_ITERATION; ++i ) {
+        cnt_deque_impl_push_back( &deq, &i );
+        cnt_deque_impl_pop_front( &deq );
+    }
 
     cnt_deque_impl_deinit( &deq );
 
