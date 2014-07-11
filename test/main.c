@@ -108,26 +108,27 @@ int main( )
 
     cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
 
-    printf( "start\n" );
+//    printf( "start\n" );
 
-    for( i=0; i<MAX_ITERATION; ++i ) {
-        cnt_deque_impl_push_front( &deq, &i );
-    }
+//    for( i=0; i<MAX_ITERATION; ++i ) {
+//        cnt_deque_impl_push_front( &deq, &i );
+//    }
 
-    printf( "start back\n" );
+//    printf( "start back\n" );
 
-    for( i=0; i<MAX_ITERATION; ++i ) {
-        cnt_deque_impl_push_back( &deq, &i );
-    }
+//    for( i=0; i<MAX_ITERATION; ++i ) {
+//        cnt_deque_impl_push_back( &deq, &i );
+//    }
 
-    printf( "start pop\n" );
-    while( !cnt_deque_impl_empty( &deq ) ) {
-        cnt_deque_impl_pop_back( &deq );
-        cnt_deque_impl_pop_front( &deq );
-    }
+//    printf( "start pop\n" );
+//    while( !cnt_deque_impl_empty( &deq ) ) {
+//        cnt_deque_impl_pop_back( &deq );
+//        cnt_deque_impl_pop_front( &deq );
+//    }
 
-    printf( "start push-pop\n" );
+//    printf( "start push-pop\n" );
 
+    //cnt_deque_impl_push_front( &deq, &i );
     for( i=0; i<MAX_ITERATION; ++i ) {
         cnt_deque_impl_push_front( &deq, &i );
         cnt_deque_impl_pop_back( &deq );
@@ -135,7 +136,7 @@ int main( )
 
     printf( "start deinit %lu\n", cnt_deque_impl_size( &deq ) );
 
-    cnt_deque_impl_deinit( &deq );
+    //cnt_deque_impl_deinit( &deq );
 
     return 0;
 }

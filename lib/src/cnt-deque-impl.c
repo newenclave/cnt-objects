@@ -389,16 +389,16 @@ static void deque_pop( CntDequeImpl *deq, int dir )
                                deq->traits_->element_size );
     }
 
-    if( DEQUE_BLOCK_IS_SIDE(side->unit_, new_side, dir)
-            && new_side != deq->sides_[!dir].ptr_ )
-    {
+    if( DEQUE_BLOCK_IS_SIDE(side->unit_, new_side, dir)  ) {
 
         CntDLinkedListHead  *old_list = &side->unit_->list_;
-        CntDLinkedListHead  *next_unit =
-               CNT_DLINKED_LIST_STEP(&side->unit_->list_, !dir);
+        if( new_side != deq->sides_[!dir].ptr_ ) {
+            CntDLinkedListHead  *next_unit =
+                   CNT_DLINKED_LIST_STEP(&side->unit_->list_, !dir);
 
-        side->unit_ = CONTAINER_OF(next_unit, CntDequeUnit, list_);
-        new_side    = DEQUE_BLOCK_SIDE(side->unit_, !dir);
+            side->unit_ = CONTAINER_OF(next_unit, CntDequeUnit, list_);
+            new_side    = DEQUE_BLOCK_SIDE(side->unit_, !dir);
+        }
 
         if( NULL != (old_list = old_list->links_[dir]) ) {
             CntDequeUnit *old_un = CONTAINER_OF(old_list, CntDequeUnit, list_);
