@@ -401,3 +401,14 @@ static void deque_reduce_side( CntDequeImpl *deq, int dir )
     side->ptr_ = new_side;
     --deq->count_;
 }
+
+void cnt_deque_impl_pop_front (CntDequeImpl *deq )
+{
+    deque_reduce_side( deq, DEQ_SIDE_FRONT );
+}
+
+void cnt_deque_impl_pop_back (CntDequeImpl *deq )
+{
+    deque_reduce_side( deq, DEQ_SIDE_BACK );
+}
+

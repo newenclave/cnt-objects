@@ -64,5 +64,8 @@ const void   *cnt_deque_impl_cback ( const CntDequeImpl *deq );
 void *cnt_deque_impl_create_front( CntDequeImpl *deq );
 void *cnt_deque_impl_create_back(  CntDequeImpl *deq );
 
+void cnt_deque_impl_pop_front ( CntDequeImpl *deq );
+void cnt_deque_impl_pop_back (  CntDequeImpl *deq );
+
 
 #endif // CNT_DEQUE_IMPL_H
