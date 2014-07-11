@@ -113,11 +113,11 @@ static int deque_unit_free( CntDequeImpl *cnd,
 
 static void deque_list_free( CntDequeImpl *cnd )
 {
-    // free elements
     CntDequeUnit       *unit       = NULL;
     CntDequeSide       *front_side = &cnd->sides_[DEQ_SIDE_FRONT];
     CntDLinkedListHead *head       = &front_side->unit_->list_;
 
+    // free elements
     if( cnd->traits_->destroy ) {
         void *begin     = NULL;
         const void *end = cnd->sides_[DEQ_SIDE_BACK].ptr_;
@@ -411,12 +411,12 @@ static void deque_pop( CntDequeImpl *deq, int dir )
     --deq->count_;
 }
 
-void cnt_deque_impl_pop_front (CntDequeImpl *deq )
+void cnt_deque_impl_pop_front( CntDequeImpl *deq )
 {
     deque_pop( deq, DEQ_SIDE_FRONT );
 }
 
-void cnt_deque_impl_pop_back (CntDequeImpl *deq )
+void cnt_deque_impl_pop_back( CntDequeImpl *deq )
 {
     deque_pop( deq, DEQ_SIDE_BACK );
 }
@@ -434,12 +434,12 @@ static int deque_push( CntDequeImpl *deq, const void *element, int dir )
     return ( new_ptr != NULL );
 }
 
-int cnt_deque_impl_push_front ( CntDequeImpl *deq, const void *element )
+int cnt_deque_impl_push_front( CntDequeImpl *deq, const void *element )
 {
     return deque_push( deq, element, DEQ_SIDE_FRONT );
 }
 
-int cnt_deque_impl_push_back (  CntDequeImpl *deq, const void *element )
+int cnt_deque_impl_push_back( CntDequeImpl *deq, const void *element )
 {
     return deque_push( deq, element, DEQ_SIDE_BACK );
 }

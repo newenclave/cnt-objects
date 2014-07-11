@@ -95,7 +95,7 @@ typedef struct test_list {
     int b;
 } test_list;
 
-#define MAX_ITERATION 10000000
+#define MAX_ITERATION 10700000
 
 int main( )
 {
@@ -104,6 +104,7 @@ int main( )
     CntDequeImpl deq;
 
     MYTYPE i;
+
 
     cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
 
