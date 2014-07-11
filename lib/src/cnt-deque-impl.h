@@ -5,6 +5,12 @@
 #include "include/cnt-element-traits.h"
 #include "include/cnt-allocator.h"
 
+enum cnt_deque_start_point {
+     DEQ_START_TOP    = 0
+    ,DEQ_START_MIDDLE = 1
+    ,DEQ_START_BOTTOM = 2
+};
+
 enum cnt_deque_direction {
      DEQ_SIDE_FRONT = 0
     ,DEQ_SIDE_BACK  = 1
@@ -31,12 +37,6 @@ typedef struct CntDequeImpl {
 
 CntDequeImpl *cnt_deque_impl_new( const CntElementTraits *traits,
                                   const CntAllocator *allocator );
-
-/**
- *  Destroy elements
-**/
-void cnt_deque_impl_deinit( CntDequeImpl *deq );
-
 /**
  * 1 == success
  * 0 == failed
@@ -44,6 +44,13 @@ void cnt_deque_impl_deinit( CntDequeImpl *deq );
 int cnt_deque_impl_init( CntDequeImpl *deq,
                          const CntElementTraits *traits,
                          const CntAllocator *allocator );
+
+
+void    cnt_deque_impl_free(CntDequeImpl *deq);
+/**
+ *  Destroy elements
+**/
+void cnt_deque_impl_deinit( CntDequeImpl *deq );
 
 
 #endif // CNT_DEQUE_IMPL_H

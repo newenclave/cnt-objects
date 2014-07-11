@@ -8,6 +8,7 @@
 #include "lib/include/cnt-allocator.h"
 #include "lib/src/cnt-array-impl.h"
 #include "lib/src/cnt-heap-impl.h"
+#include "lib/src/cnt-deque-impl.h"
 
 typedef size_t MYTYPE;
 
@@ -95,18 +96,15 @@ typedef struct test_list {
 
 int main( )
 {
-    test_list tl  = { 0 };
-    test_list tl2 = { 0 };
+    CntAllocator def_allocator = cnt_default_allocator;
 
-    tl2.b = 100;
+    CntDequeImpl deq;
 
-    CNT_DLINKED_LIST_INSERT( &tl.l, &tl2.l, 1 );
+    cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
 
-    CntDLinkedListHead *lh = &tl.l;
-    while( lh ) {
-        printf( "element %d\n", CONTAINER_OF( lh, test_list, l )->b );
-        lh = lh->links_[1];
-    }
+    printf( "deq count: %u\n", deq.count_ );
+
+    cnt_deque_impl_deinit( &deq );
 
     return 0;
 }
