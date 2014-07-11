@@ -3,7 +3,7 @@
 
 #include "cnt-deque-impl.h"
 
-#define DEQUE_DEFAULT_INIT_ELEMENTS 64
+#define DEQUE_DEFAULT_INIT_ELEMENTS 4
 
 #define DEQUE_ELEMENT_NEXT( ptr, element_size )         \
             (((char *)ptr) + (element_size))
@@ -104,7 +104,7 @@ static int deque_unit_free( CntDequeImpl *cnd,
 
     while( begin != end && begin != block_end ) {
 
-        cnd->traits_->destroy( begin, cnd->traits_->element_size );
+        cnd->traits_->destroy( begin, element_size );
         begin = DEQUE_ELEMENT_NEXT(begin, element_size);
 
     }
