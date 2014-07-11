@@ -113,7 +113,6 @@ int main( )
         cnt_deque_impl_create_back( &deq );
     }
 
-
     printf( "deq count: %lu\n", cnt_deque_impl_size( &deq ) );
     printf( "deq front: %lu\n", *((MYTYPE *)cnt_deque_impl_front( &deq )) );
     printf( "deq back : %lu\n", *((MYTYPE *)cnt_deque_impl_back( &deq )) );

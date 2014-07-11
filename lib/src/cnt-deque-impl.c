@@ -357,3 +357,47 @@ void *cnt_deque_impl_create_back( CntDequeImpl *deq )
     return deque_shift_side( deq, DEQ_SIDE_BACK );
 }
 
+static void deque_reduce_side( CntDequeImpl *deq, int dir )
+
+{
+    CntDequeSide *side = &deq->sides_[dir];
+
+    void *old_and_new_side[2];
+    void *new_side;
+    size_t const elem_size = deq->traits_->element_size;
+
+    old_and_new_side[0] = side->ptr_;
+    old_and_new_side[1] = new_side =
+            dir ? DEQUE_ELEMENT_PREV( side->ptr_, elem_size )
+                : DEQUE_ELEMENT_NEXT( side->ptr_, elem_size );
+
+    if( deq->traits_->destroy ) {
+        deq->traits_->destroy( old_and_new_side[dir],
+                               deq->traits_->element_size );
+    }
+
+    if( DEQUE_BLOCK_IS_SIDE(side->unit_, new_side, dir)
+            && new_side != deq->sides_[!dir].ptr_ )
+    {
+
+        CntDLinkedListHead  *old_list = &side->unit_->list_;
+        CntDLinkedListHead  *next_unit =
+               CNT_DLINKED_LIST_STEP(&side->unit_->list_, !dir);
+
+        side->unit_ = CONTAINER_OF(next_unit, CntDequeUnit, list_);
+        new_side    = DEQUE_BLOCK_SIDE(side->unit_, !dir);
+
+        if( NULL != (old_list = old_list->links_[dir]) ) {
+            CntDequeUnit *old_un = CONTAINER_OF(old_list, CntDequeUnit, list_);
+
+            CNT_DLINKED_LIST_REMOVE( old_list );
+
+            deq->allocator_->deallocate( old_un->border_[DEQ_SIDE_FRONT] );
+            deq->allocator_->deallocate( old_un );
+        }
+
+    }
+
+    side->ptr_ = new_side;
+    --deq->count_;
+}
