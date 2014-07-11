@@ -280,6 +280,7 @@ static int deque_extend_side( CntDequeImpl *deq, int dir )
     CntDequeUnit *new_unit   =
             CONTAINER_OF( CNT_DLINKED_LIST_STEP( &side->unit_->list_, dir ),
                           CntDequeUnit, list_);
+    int const deq_empty      = (deq->sides_[0].ptr_ == deq->sides_[1].ptr_);
 
     if( !new_unit ) {
 
@@ -309,6 +310,9 @@ static int deque_extend_side( CntDequeImpl *deq, int dir )
     if( new_unit ) {
         side->unit_ = new_unit;
         side->ptr_  = DEQUE_BLOCK_SIDE( new_unit, dir );
+        if( deq_empty ) {
+            deq->sides_[!dir].ptr_ = side->unit_->border_[!dir];
+        }
     }
 
     return new_unit != NULL;
