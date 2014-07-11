@@ -149,7 +149,7 @@ static int deque_init( CntDequeImpl *deq,
     deq->allocator_ = allocator;
     deq->count_     = 0;
 
-    unit = deque_unit_create( deq, init_size ? init_size + 1 : 4);
+    unit = deque_unit_create( deq, init_size ? init_size + 1 : 8 );
 
     if( unit ) {
 
@@ -337,14 +337,23 @@ static void *deque_shift_side( CntDequeImpl *deq, int dir )
     if( res ) {
         CntDequeSide *side = &deq->sides_[dir];
         new_ptr = ptr_calls[dir]( &side->ptr_, deq->traits_->element_size );
+        if( deq->traits_->init ) {
+            deq->traits_->init( new_ptr, 1, deq->traits_->element_size );
+        }
         ++deq->count_;
     }
     return new_ptr;
 }
 
-void *cnt_deque_create_front( CntDequeImpl *deq )
+void *cnt_deque_impl_create_front( CntDequeImpl *deq )
 {
     assert( deq != NULL );
+    return deque_shift_side( deq, DEQ_SIDE_FRONT );
+}
 
+void *cnt_deque_impl_create_back( CntDequeImpl *deq )
+{
+    assert( deq != NULL );
+    return deque_shift_side( deq, DEQ_SIDE_BACK );
 }
 

@@ -47,7 +47,7 @@ void int_del( void *ptr, size_t len )
     assert( len == sizeof( MYTYPE ) );
 
     i = (MYTYPE *)ptr;
-    //printf( "destroy: %lu\n", *i );
+    printf( "destroy: %lu\n", *i );
 }
 
 int compare( const void *l, const void *r, size_t len )
@@ -76,9 +76,11 @@ void init( void *src, size_t cnt, size_t len  )
     MYTYPE *r;
     assert( len == sizeof( MYTYPE ) );
 
+
     r = ((MYTYPE *)src);
     while( cnt-- ) {
-        *r++ = 99;
+        printf( "init data to %ul\n", 101 );
+        *r++ = 101;
     }
 }
 
@@ -99,10 +101,22 @@ int main( )
     CntAllocator def_allocator = cnt_default_allocator;
 
     CntDequeImpl deq;
+    int i;
 
     cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
 
-    printf( "deq count: %u\n", cnt_deque_impl_empty( &deq ) );
+    for( i=0; i<100; ++i ) {
+        cnt_deque_impl_create_front( &deq );
+    }
+
+    for( i=0; i<100; ++i ) {
+        cnt_deque_impl_create_back( &deq );
+    }
+
+
+    printf( "deq count: %lu\n", cnt_deque_impl_size( &deq ) );
+    printf( "deq front: %lu\n", *((MYTYPE *)cnt_deque_impl_front( &deq )) );
+    printf( "deq back : %lu\n", *((MYTYPE *)cnt_deque_impl_back( &deq )) );
 
     cnt_deque_impl_deinit( &deq );
 
