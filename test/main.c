@@ -109,7 +109,7 @@ typedef struct test_list {
     int b;
 } test_list;
 
-#define MAX_ITERATION 10000000
+#define MAX_ITERATION 20000000
 
 int main( )
 {
@@ -139,7 +139,7 @@ int main( )
     printf( "start pop 1\n" );
     while( !cnt_deque_impl_empty( &deq ) ) {
         cnt_deque_impl_pop_back( &deq );
-        cnt_deque_impl_pop_front( &deq );
+        //cnt_deque_impl_pop_front( &deq );
     }
 
     printf( "start push-pop\n" );
