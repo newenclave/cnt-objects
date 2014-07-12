@@ -3,7 +3,7 @@
 
 #include "cnt-deque-impl.h"
 
-#define DEQUE_DEFAULT_INIT_ELEMENTS 4
+#define DEQUE_DEFAULT_INIT_ELEMENTS 64
 
 #define DEQUE_ELEMENT_NEXT( ptr, element_size )         \
             (((char *)ptr) + (element_size))
