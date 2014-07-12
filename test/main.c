@@ -12,13 +12,26 @@
 
 typedef size_t MYTYPE;
 
+size_t alloc_calls   = 0;
+size_t free_calls    = 0;
+size_t init_calls    = 0;
+size_t copy_calls    = 0;
+size_t destroy_calls = 0;
+
 #include "include/cnt-list.h"
 
 void *my_alloc_call( size_t len )
 {
     void *ptr = malloc( len );
-    printf( "Allocate %lu bytes @%lx\n", len, (unsigned long)ptr );
+    alloc_calls++;
+    //printf( "Allocate %lu bytes @%lx\n", len, (unsigned long)ptr );
     return ptr;
+}
+
+void my_free_call( void *ptr )
+{
+    free_calls++;
+    free(ptr);
 }
 
 void *my_realloc_call( void *ptr, size_t len )
@@ -36,6 +49,7 @@ void *int_cpy( void *dst, const void *src, size_t len )
 
     *((MYTYPE *)dst) = *((const MYTYPE *)src);
 
+    copy_calls++;
     //printf( "copy: %lu\n", *((MYTYPE *)dst) );
 
     return dst;
@@ -45,7 +59,7 @@ void int_del( void *ptr, size_t len )
 {
     MYTYPE *i;
     assert( len == sizeof( MYTYPE ) );
-
+    destroy_calls++;
     i = (MYTYPE *)ptr;
     //printf( "destroy: %lu\n", *i );
 }
@@ -76,7 +90,7 @@ void init( void *src, size_t cnt, size_t len  )
     MYTYPE *r;
     assert( len == sizeof( MYTYPE ) );
 
-
+    init_calls++;
     r = ((MYTYPE *)src);
     while( cnt-- ) {
         //printf( "init data to %ul\n", 101 );
@@ -95,11 +109,14 @@ typedef struct test_list {
     int b;
 } test_list;
 
-#define MAX_ITERATION 100000
+#define MAX_ITERATION 10000000
 
 int main( )
 {
     CntAllocator def_allocator = cnt_default_allocator;
+
+    def_allocator.allocate = my_alloc_call;
+    def_allocator.deallocate = my_free_call;
 
     CntDequeImpl deq;
 
@@ -127,7 +144,7 @@ int main( )
 
     printf( "start push-pop\n" );
 
-    //cnt_deque_impl_push_front( &deq, &i );
+    cnt_deque_impl_push_front( &deq, &i );
     for( i=0; i<MAX_ITERATION; ++i ) {
         cnt_deque_impl_push_back( &deq, &i );
         cnt_deque_impl_pop_front( &deq );
@@ -135,7 +152,6 @@ int main( )
 
     printf( "start push-pop 2\n" );
 
-    cnt_deque_impl_push_front( &deq, &i );
     for( i=0; i<MAX_ITERATION; ++i ) {
         cnt_deque_impl_push_back( &deq, &i );
         cnt_deque_impl_pop_front( &deq );
@@ -144,6 +160,14 @@ int main( )
     printf( "start deinit %lu\n", cnt_deque_impl_size( &deq ) );
 
     cnt_deque_impl_deinit( &deq );
+
+    printf( "alloc  : %lu\n"
+            "free   : %lu\n"
+            "init   : %lu\n"
+            "copy   : %lu\n"
+            "delete : %lu\n"
+            ,
+            alloc_calls, free_calls, init_calls, copy_calls, destroy_calls);
 
     return 0;
 }
