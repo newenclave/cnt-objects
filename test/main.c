@@ -95,7 +95,7 @@ typedef struct test_list {
     int b;
 } test_list;
 
-#define MAX_ITERATION 10000000
+#define MAX_ITERATION 100000
 
 int main( )
 {
@@ -104,7 +104,6 @@ int main( )
     CntDequeImpl deq;
 
     MYTYPE i;
-
 
     cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
 
@@ -120,7 +119,7 @@ int main( )
         cnt_deque_impl_push_back( &deq, &i );
     }
 
-    printf( "start pop\n" );
+    printf( "start pop 1\n" );
     while( !cnt_deque_impl_empty( &deq ) ) {
         cnt_deque_impl_pop_back( &deq );
         cnt_deque_impl_pop_front( &deq );
@@ -129,6 +128,14 @@ int main( )
     printf( "start push-pop\n" );
 
     //cnt_deque_impl_push_front( &deq, &i );
+    for( i=0; i<MAX_ITERATION; ++i ) {
+        cnt_deque_impl_push_back( &deq, &i );
+        cnt_deque_impl_pop_front( &deq );
+    }
+
+    printf( "start push-pop 2\n" );
+
+    cnt_deque_impl_push_front( &deq, &i );
     for( i=0; i<MAX_ITERATION; ++i ) {
         cnt_deque_impl_push_back( &deq, &i );
         cnt_deque_impl_pop_front( &deq );
