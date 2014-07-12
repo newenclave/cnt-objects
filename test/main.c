@@ -115,7 +115,7 @@ int main( )
 {
     CntAllocator def_allocator = cnt_default_allocator;
 
-    def_allocator.allocate = my_alloc_call;
+    def_allocator.allocate   = my_alloc_call;
     def_allocator.deallocate = my_free_call;
 
     CntDequeImpl deq;
@@ -159,7 +159,7 @@ int main( )
 
     printf( "start deinit %lu\n", cnt_deque_impl_size( &deq ) );
 
-    //cnt_deque_impl_deinit( &deq );
+    cnt_deque_impl_deinit( &deq );
 
     printf( "alloc  : %lu\n"
             "free   : %lu\n"
