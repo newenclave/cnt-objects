@@ -1,7 +1,7 @@
 #ifndef CNT_DEQUE_IMPL_H
 #define CNT_DEQUE_IMPL_H
 
-#include "include/cnt-list.h"
+#include "include/cnt-list-head.h"
 #include "include/cnt-element-traits.h"
 #include "include/cnt-allocator.h"
 
