@@ -244,8 +244,8 @@ static unsigned int hash( const CntObject *obj )
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
     container = CNT_OBJECT_CONTAINER( CntMemblock, obj );
 
-    return tdb_hash( cnt_memblock_begin( container ),
-                     cnt_memblock_size( container ) );
+    return tdb_hash_default( cnt_memblock_begin( container ),
+                             cnt_memblock_size( container ) );
 }
 
 static CntObject * clone( const CntObject * obj )

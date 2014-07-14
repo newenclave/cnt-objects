@@ -69,7 +69,7 @@ static unsigned int hash( const CntObject *obj )
     CNT_OBJECT_ASSERT_TYPE( obj, cnt_this_object_type_id );
 
     value = CNT_OBJECT_CONTAINER( CntInt, obj )->value_;
-    return tdb_hash( &value, sizeof(value) );
+    return tdb_hash_default( &value, sizeof(value) );
 }
 
 static CntObject * clone( const CntObject *obj )
