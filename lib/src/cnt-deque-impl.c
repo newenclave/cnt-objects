@@ -25,7 +25,7 @@
 
 #define DEQUE_PTR_DIFF( l, r ) ((const char *)(l) - (const char *)(r))
 
-//#define DEQUE_DEF_INC(size) ((size))
+//#define DEQUE_DEF_INC(size) (size)
 #define DEQUE_DEF_INC(size) ((size) + ((size) >> 1))
 
 #define DEQUE_UNIT_SIZE( unit )                           \
