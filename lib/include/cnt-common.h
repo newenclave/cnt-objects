@@ -31,7 +31,7 @@ typedef unsigned __int64 uint64_t;
 /**
  * tdb_hash(): based on the hash agorithm from gdbm, via tdb
  * (from module-init-tools)
- **/
+**/
 static unsigned int tdb_hash( const void *begin, size_t length, unsigned init )
 {
     unsigned value;

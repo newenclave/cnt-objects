@@ -109,7 +109,7 @@ typedef struct test_list {
     int b;
 } test_list;
 
-#define MAX_ITERATION 2000000
+#define MAX_ITERATION 20000000
 
 int main( )
 {
@@ -123,7 +123,8 @@ int main( )
     def_allocator.deallocate = my_free_call;
 
 
-    cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
+//    cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
+    cnt_deque_impl_init( &deq, &inttrait_def, &def_allocator );
 
     printf( "start\n" );
 
