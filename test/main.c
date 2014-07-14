@@ -115,12 +115,13 @@ int main( )
 {
     CntAllocator def_allocator = cnt_default_allocator;
 
-    def_allocator.allocate   = my_alloc_call;
-    def_allocator.deallocate = my_free_call;
-
     CntDequeImpl deq;
 
     MYTYPE i;
+
+    def_allocator.allocate   = my_alloc_call;
+    def_allocator.deallocate = my_free_call;
+
 
     cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
 
