@@ -6,12 +6,12 @@
 #include "include/cnt-allocator.h"
 
 typedef struct CntMemblockImpl {
+    const CntAllocator *allocator_;
     union block_data {
         void *ptr_;
     }                   data_;
     size_t              capacity_;
     size_t              used_;
-    const CntAllocator *allocator_;
 } CntMemblockImpl;
 
 /**

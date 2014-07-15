@@ -5,8 +5,8 @@
 #include "include/cnt-element-traits.h"
 
 typedef struct CntArrayImpl {
-    CntMemblockImpl         mblock_;
     const CntElementTraits *traits_;
+    CntMemblockImpl         mblock_;
 } CntArrayImpl;
 
 CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
