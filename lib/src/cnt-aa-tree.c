@@ -226,7 +226,7 @@ static int aa_tree_node_insert( CntAATree *aat,
             (t->links_[AA_LINK_LEFT]->level_  < (t->level_-1)))
 
 /**
- *  rebalnce tree
+ *  rebalances tree
  *  return new ptr to node
  *
 **/
@@ -266,8 +266,8 @@ static CntAATreeNode *aa_tree_node_take_left( CntAATreeNode * cur,
 static int aa_tree_node_delete( CntAATree *aat,
                                 CntAATreeNodePtr *top, const void *data )
 {
-    int            result = 0;
-    CntAATreeNode *t      = *top;
+    int       result =  0;
+    CntAATreeNode *t = *top;
 
     if( t ) {
 
