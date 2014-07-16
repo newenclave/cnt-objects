@@ -120,7 +120,7 @@ int main( )
 
     MYTYPE i;
 
-    CntAATree *aat = cnt_aa_tree_new( &inttrait_def, &def_allocator );
+    CntAATree *aat = cnt_aa_tree_new( &inttrait, &def_allocator );
 
     for( i=0; i<10; ++i ) {
         aa_tree_insert( aat, &i );
