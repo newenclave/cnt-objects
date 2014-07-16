@@ -32,6 +32,7 @@ typedef struct CntAATree {
     size_t                  count_;
 } CntAATree;
 
+
 CntAATree *cnt_aa_tree_new( const CntElementTraits *traits,
                             const CntAllocator *allocator );
 
