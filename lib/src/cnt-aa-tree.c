@@ -378,4 +378,10 @@ size_t cnt_aa_tree_size( const CntAATree *aat )
     return aat->count_;
 }
 
+int cnt_aa_tree_delete( CntAATree *aat, const void *data )
+{
+    assert( aat != NULL );
+    return aa_tree_node_delete( aat, &aat->root_, data );
+}
+
 

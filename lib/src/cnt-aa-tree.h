@@ -59,5 +59,11 @@ const void *cnt_aa_tree_cfind( const CntAATree *aat, const void *data );
 
 size_t cnt_aa_tree_size( const CntAATree *aat );
 
+/**
+ *  1 = removed
+ *  0 = not found
+**/
+int cnt_aa_tree_delete( CntAATree *aat, const void *data );
+
 
 #endif // CNT_AA_TREE_H
