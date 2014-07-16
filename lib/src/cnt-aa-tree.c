@@ -210,3 +210,61 @@ static int aa_tree_node_insert( CntAATree *aat,
     return res;
 }
 
+static CntAATreeNode *aa_tree_node_find( const CntAATree *aat,
+                                         CntAATreeNode *node, const void *data )
+{
+    int cmp_res;
+    CntAATreeNode *res = NULL;
+
+    if( node ) {
+        cmp_res = aat->traits_->compare( data, node->data_.ptr_,
+                                         aat->traits_->element_size );
+        if( cmp_res == 0 ) {
+            res = node;
+        } else {
+            res = aa_tree_node_find( aat, node->links_[cmp_res > 0], data );
+        }
+    }
+
+    return res;
+}
+
+int aa_tree_insert ( CntAATree *aat, const void *data )
+{
+    CntAATreeNode *inserted = NULL;
+    int res = 0;
+    assert( aat != NULL );
+
+    res = aa_tree_node_insert( aat, &aat->root_, data, &inserted );
+
+    return res == 1;
+}
+
+void *aa_tree_find( CntAATree *aat, const void *data )
+{
+    CntAATreeNode *res;
+
+    assert( aat != NULL );
+    assert( aat->traits_ != NULL );
+    assert( aat->traits_->compare != NULL );
+
+    res = aa_tree_node_find( aat, aat->root_, data );
+
+    return res ? res->data_.ptr_ : NULL;
+}
+
+const void *aa_tree_cfind( const CntAATree *aat, const void *data )
+{
+    CntAATreeNode *res;
+
+    assert( aat != NULL );
+    assert( aat->traits_ != NULL );
+    assert( aat->traits_->compare != NULL );
+
+    res = aa_tree_node_find( aat, aat->root_, data );
+
+    return res ? res->data_.ptr_ : NULL;
+}
+
+
+

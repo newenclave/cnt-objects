@@ -47,5 +47,14 @@ void cnt_aa_tree_free( CntAATree *aat );
 **/
 void cnt_aa_tree_deinit( CntAATree *aat );
 
+/**
+ *  1 = success
+ *  0 = failed ( alloc failed or element already esists)
+**/
+int aa_tree_insert ( CntAATree *aat, const void *data );
+
+
+void *aa_tree_find( CntAATree *aat, const void *data );
+const void *aa_tree_cfind( const CntAATree *aat, const void *data );
 
 #endif // CNT_AA_TREE_H
