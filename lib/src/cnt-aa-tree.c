@@ -113,7 +113,9 @@ static void aa_tree_free_node( CntAATree *aat, CntAATreeNode *node )
 void cnt_aa_tree_free( CntAATree *aat )
 {
     assert( aat != NULL );
-    aa_tree_free_node( aat, aat->root_ );
+    if( aat->root_ ) {
+        aa_tree_free_node( aat, aat->root_ );
+    }
     aat->allocator_->deallocate( aat );
 }
 
@@ -165,3 +167,46 @@ static CntAATreeNode *split( CntAATreeNode *t )
 /**
  *  =====================================
 **/
+
+/**
+ *  common 'insert' function
+ *  rerurns: 0 - failed ( *inserted == NULL )
+ *           1 - success inserted ( *inserted == new_element_ptr )
+ *           2 - element is already present ( *inserted == old_element_ptr )
+ *
+**/
+static int aa_tree_node_insert( CntAATree *aat,
+                                CntAATreeNodePtr *top,
+                                const void *data,
+                                CntAATreeNodePtr *inserted )
+{
+    CntAATreeNode *top_node = *top;
+    int res = 0;
+    if( NULL == top_node ) {
+        top_node = aa_tree_create_node( aat, data );
+        if( top_node ) {
+            *top = *inserted = top_node;
+            res = 1;
+        } else {
+            *inserted = NULL;
+            res = 0;
+        }
+    } else {
+        int cmp_res = aat->traits_->compare( data, top_node->data_.ptr_,
+                                             aat->traits_->element_size );
+        if( 0 == cmp_res ) {
+            res       = 2;
+            *inserted = top_node;
+        } else {
+            res = aa_tree_node_insert( aat,
+                                       &top_node->links_[cmp_res > 0],
+                                        data, inserted);
+        }
+
+        if( res == 1 ) {
+            *top = split(skew(top_node));
+        }
+    }
+    return res;
+}
+

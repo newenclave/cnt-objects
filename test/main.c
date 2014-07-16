@@ -9,6 +9,7 @@
 #include "lib/src/cnt-array-impl.h"
 #include "lib/src/cnt-heap-impl.h"
 #include "lib/src/cnt-deque-impl.h"
+#include "lib/src/cnt-aa-tree.h"
 
 typedef size_t MYTYPE;
 
@@ -118,6 +119,12 @@ int main( )
     CntDequeImpl deq;
 
     MYTYPE i;
+
+    CntAATree *aat = cnt_aa_tree_new( &inttrait_def, &def_allocator );
+
+    cnt_aa_tree_free( aat );
+
+    return 0;
 
     def_allocator.allocate   = my_alloc_call;
     def_allocator.deallocate = my_free_call;
