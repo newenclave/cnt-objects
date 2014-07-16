@@ -348,6 +348,36 @@ int cnt_aa_tree_insert ( CntAATree *aat, const void *data )
     return res == 1;
 }
 
+int cnt_aa_tree_insert_update ( CntAATree *aat, const void *data )
+{
+    CntAATreeNode *inserted = NULL;
+    int res = 0;
+    assert( aat != NULL );
+
+    res = aa_tree_node_insert( aat, &aat->root_, data, &inserted );
+
+    aat->count_ += (res == 1);
+
+    if( res == 2 ) {
+
+        if( aat->traits_->destroy ) {
+            aat->traits_->destroy( inserted->data_.ptr_,
+                                   aat->traits_->element_size );
+        }
+
+        if( aat->traits_->copy ) {
+            aat->traits_->copy( inserted->data_.ptr_, data,
+                                aat->traits_->element_size );
+        } else {
+            aat_memcopy( inserted->data_.ptr_, data,
+                         aat->traits_->element_size );
+        }
+    }
+
+    return res != 0;
+}
+
+
 void *cnt_aa_tree_find( CntAATree *aat, const void *data )
 {
     CntAATreeNode *res;

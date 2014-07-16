@@ -126,7 +126,7 @@ int main( )
 
     for( i=0; i<MAX_ITERATION; ++i ) {
         cnt_aa_tree_insert( aat, &i );
-        cnt_aa_tree_insert( aat, &i );
+        cnt_aa_tree_insert_update( aat, &i );
     }
 
     for( i=0; i<MAX_ITERATION; ++i ) {

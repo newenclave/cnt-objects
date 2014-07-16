@@ -53,6 +53,12 @@ void cnt_aa_tree_deinit( CntAATree *aat );
 **/
 int cnt_aa_tree_insert ( CntAATree *aat, const void *data );
 
+/**
+ *  1 = success inserted or updated
+ *  0 = failed ( memory alloc failed )
+**/
+int cnt_aa_tree_insert_update ( CntAATree *aat, const void *data );
+
 
 void       *cnt_aa_tree_find (       CntAATree *aat, const void *data );
 const void *cnt_aa_tree_cfind( const CntAATree *aat, const void *data );
