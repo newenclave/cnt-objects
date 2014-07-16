@@ -122,6 +122,10 @@ int main( )
 
     CntAATree *aat = cnt_aa_tree_new( &inttrait_def, &def_allocator );
 
+    for( i=0; i<10; ++i ) {
+        aa_tree_insert( aat, &i );
+    }
+
     cnt_aa_tree_free( aat );
 
     return 0;
