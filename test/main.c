@@ -124,8 +124,10 @@ int main( )
 
     for( i=0; i<10; ++i ) {
         aa_tree_insert( aat, &i );
+        aa_tree_insert( aat, &i );
     }
 
+    printf( "array size: %lu\n", cnt_aa_tree_size( aat ) );
     cnt_aa_tree_free( aat );
 
     return 0;

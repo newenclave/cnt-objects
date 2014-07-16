@@ -54,7 +54,10 @@ void cnt_aa_tree_deinit( CntAATree *aat );
 int aa_tree_insert ( CntAATree *aat, const void *data );
 
 
-void *aa_tree_find( CntAATree *aat, const void *data );
-const void *aa_tree_cfind( const CntAATree *aat, const void *data );
+void *cnt_aa_tree_find( CntAATree *aat, const void *data );
+const void *cnt_aa_tree_cfind( const CntAATree *aat, const void *data );
+
+size_t cnt_aa_tree_size( const CntAATree *aat );
+
 
 #endif // CNT_AA_TREE_H
