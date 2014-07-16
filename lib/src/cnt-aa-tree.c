@@ -383,8 +383,6 @@ void *cnt_aa_tree_find( CntAATree *aat, const void *data )
     CntAATreeNode *res;
 
     assert( aat != NULL );
-    assert( aat->traits_ != NULL );
-    assert( aat->traits_->compare != NULL );
 
     res = aa_tree_node_find( aat, aat->root_, data );
 
