@@ -110,11 +110,13 @@ typedef struct test_list {
     int b;
 } test_list;
 
-#define MAX_ITERATION 20000000
+#define MAX_ITERATION 2000000
 
 int main( )
 {
     CntAllocator def_allocator = cnt_default_allocator;
+    def_allocator.allocate   = my_alloc_call;
+    def_allocator.deallocate = my_free_call;
 
     CntDequeImpl deq;
 
@@ -122,18 +124,19 @@ int main( )
 
     CntAATree *aat = cnt_aa_tree_new( &inttrait, &def_allocator );
 
-    for( i=0; i<10; ++i ) {
-        aa_tree_insert( aat, &i );
-        aa_tree_insert( aat, &i );
+    for( i=0; i<MAX_ITERATION; ++i ) {
+        cnt_aa_tree_insert( aat, &i );
+        cnt_aa_tree_insert( aat, &i );
+    }
+
+    for( i=0; i<MAX_ITERATION; ++i ) {
+        cnt_aa_tree_delete( aat, &i );
     }
 
     printf( "array size: %lu\n", cnt_aa_tree_size( aat ) );
     cnt_aa_tree_free( aat );
 
-    return 0;
-
-    def_allocator.allocate   = my_alloc_call;
-    def_allocator.deallocate = my_free_call;
+    goto tstop;
 
 
 //    cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
@@ -176,6 +179,7 @@ int main( )
 
     cnt_deque_impl_deinit( &deq );
 
+tstop:
     printf( "alloc  : %lu\n"
             "free   : %lu\n"
             "init   : %lu\n"

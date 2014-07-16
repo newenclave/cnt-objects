@@ -302,10 +302,11 @@ static int aa_tree_node_delete( CntAATree *aat,
                                        aat->traits_->element_size );
             }
 
+            aat->allocator_->deallocate( t->data_.ptr_ );
             aat->allocator_->deallocate( t );
 
             result = 1;
-            t = tmp;
+            t      = tmp;
 
         } else {
             result = aa_tree_node_delete( aat, &t->links_[cmp_res > 0], data );
@@ -335,7 +336,7 @@ static CntAATreeNode *aa_tree_node_find( const CntAATree *aat,
     return res;
 }
 
-int aa_tree_insert ( CntAATree *aat, const void *data )
+int cnt_aa_tree_insert ( CntAATree *aat, const void *data )
 {
     CntAATreeNode *inserted = NULL;
     int res = 0;
@@ -380,8 +381,11 @@ size_t cnt_aa_tree_size( const CntAATree *aat )
 
 int cnt_aa_tree_delete( CntAATree *aat, const void *data )
 {
+    int res;
     assert( aat != NULL );
-    return aa_tree_node_delete( aat, &aat->root_, data );
+    res = aa_tree_node_delete( aat, &aat->root_, data );
+    aat->count_ -= ( res == 1 );
+    return res;
 }
 
 
