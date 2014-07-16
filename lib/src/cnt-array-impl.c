@@ -286,7 +286,7 @@ CntArrayImpl *cnt_array_impl_new( const CntElementTraits *traits,
 
 int cnt_array_impl_reserve( CntArrayImpl *arr, size_t count )
 {
-    int res;
+    int res = 1;
     size_t old_size;
 
     assert( arr != NULL );
