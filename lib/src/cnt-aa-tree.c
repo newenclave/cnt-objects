@@ -352,6 +352,8 @@ int cnt_aa_tree_insert_update ( CntAATree *aat, const void *data )
 {
     CntAATreeNode *inserted = NULL;
     int res = 0;
+    const CntElementTraits *traits = aat->traits_;
+
     assert( aat != NULL );
 
     res = aa_tree_node_insert( aat, &aat->root_, data, &inserted );
@@ -360,17 +362,14 @@ int cnt_aa_tree_insert_update ( CntAATree *aat, const void *data )
 
     if( res == 2 ) {
 
-        if( aat->traits_->destroy ) {
-            aat->traits_->destroy( inserted->data_.ptr_,
-                                   aat->traits_->element_size );
+        if( traits->destroy ) {
+            traits->destroy( inserted->data_.ptr_, traits->element_size );
         }
 
-        if( aat->traits_->copy ) {
-            aat->traits_->copy( inserted->data_.ptr_, data,
-                                aat->traits_->element_size );
+        if( traits->copy ) {
+            traits->copy( inserted->data_.ptr_, data, traits->element_size );
         } else {
-            aat_memcopy( inserted->data_.ptr_, data,
-                         aat->traits_->element_size );
+            aat_memcopy( inserted->data_.ptr_, data, traits->element_size );
         }
     }
 
