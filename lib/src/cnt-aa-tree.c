@@ -15,8 +15,11 @@ CntAATree *cnt_aa_tree_new( const CntElementTraits *traits,
                             const CntAllocator *allocator )
 {
     CntAATree *inst;
-    assert( traits != NULL );
     assert( allocator != NULL );
+    assert( traits != NULL );
+    assert( traits->compare != NULL );
+    assert( traits->copy != NULL );
+    assert( traits->element_size > 0 );
 
     inst = (CntAATree *)allocator->allocate( sizeof(*inst) );
 
@@ -34,8 +37,11 @@ int cnt_aa_tree_init( CntAATree *aat,
                       const CntElementTraits *traits,
                       const CntAllocator *allocator )
 {
-    assert( traits != NULL );
     assert( allocator != NULL );
+    assert( traits != NULL );
+    assert( traits->compare != NULL );
+    assert( traits->copy != NULL );
+    assert( traits->element_size > 0 );
     assert( aat != NULL );
 
     aat->root_      = NULL;
