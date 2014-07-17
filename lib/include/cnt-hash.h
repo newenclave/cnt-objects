@@ -19,8 +19,16 @@ static unsigned int tdb_hash( const void *begin, size_t length, unsigned init )
     return (1103515243 * value + 12345);
 }
 
-static unsigned int tdb_hash_update( const void *begin,
-                                     size_t length, unsigned init )
+static unsigned int tdb_hash_update( const void *begin, size_t length,
+                                     unsigned init );
+
+static unsigned int tdb_hash_start( const void *begin, size_t length)
+{
+    return tdb_hash_update( begin, length, 0x238F13AF );
+}
+
+static unsigned int tdb_hash_update( const void *begin, size_t length,
+                                     unsigned init )
 {
     unsigned value;
     unsigned i;
@@ -32,11 +40,6 @@ static unsigned int tdb_hash_update( const void *begin,
     }
 
     return value;
-}
-
-static unsigned int tdb_hash_start( const void *begin, size_t length)
-{
-    return tdb_hash_update( begin, length, 0x238F13AF );
 }
 
 static unsigned int tdb_hash_final( unsigned value )

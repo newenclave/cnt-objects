@@ -12,6 +12,7 @@ typedef enum {
      CNT_OBJ_NONE = 0
     ,CNT_OBJ_INT
     ,CNT_OBJ_MEMBLOCK
+    ,CNT_OBJ_ARRAY
 
     ,CNT_OBJ_MAX
 } cnt_object_type_id;
@@ -43,7 +44,6 @@ typedef struct CntObject {
     const CntAllocator *allocator_;
     unsigned int        refcount_;
 } CntObject;
-
 
 #define CNT_DEFINE_OBJECT_TYPE( Type, TypeId )          \
     static const CntTypeInfo cnt_this_object_type = {   \
