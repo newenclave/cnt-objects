@@ -117,14 +117,15 @@ typedef struct test_list {
 int main( )
 {
     CntAllocator def_allocator = cnt_default_allocator;
-    def_allocator.allocate   = my_alloc_call;
-    def_allocator.deallocate = my_free_call;
-
     CntDequeImpl deq;
 
     MYTYPE i;
+    CntAATree *aat;
 
-    CntAATree *aat = cnt_aa_tree_new( &inttrait, &def_allocator );
+    def_allocator.allocate   = my_alloc_call;
+    def_allocator.deallocate = my_free_call;
+
+    aat = cnt_aa_tree_new( &inttrait, &def_allocator );
 
     for( i=0; i<MAX_ITERATION; ++i ) {
         cnt_aa_tree_insert( aat, &i );
