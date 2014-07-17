@@ -7,13 +7,6 @@
 #include "cnt-object.h"
 #include "cnt-element-traits.h"
 
-//void (* init)( void *, size_t, size_t );
-//void (* destroy)( void *, size_t );
-//void *(* copy)( void *, const void *, size_t );
-//int  (* compare)( const void *, const void *, size_t );
-//void (* swap)( void *, void *, size_t );
-
-
 static void cnt_opt_init( void *obj_ptr, size_t count, size_t element_size )
 {
     assert( obj_ptr != NULL );
