@@ -44,14 +44,14 @@ static void *cnt_opt_copy( void *obj_ptr, const void *data, size_t element_size)
 
 static int cnt_opt_compare( const void *l, const void *r, size_t element_size )
 {
-    CntObject *lobj;
-    CntObject *robj;
+    const CntObject *lobj;
+    const CntObject *robj;
     assert( l != NULL );
     assert( r != NULL );
     assert( element_size == sizeof( sizeof(CntObject*) ));
 
-    lobj = *((CntObject **)l);
-    robj = *((CntObject **)r);
+    lobj = *((const CntObject **)l);
+    robj = *((const CntObject **)r);
 
     return cnt_objects_compare( lobj, robj );
 }
@@ -71,5 +71,13 @@ static void  cnt_opt_swap( void *l, void *r, size_t element_size)
     *((CntObject **)l) = robj;
 }
 
+static const CntElementTraits cnt_object_ptr_traits = {
+    sizeof(CntObject *),
+    cnt_opt_init,
+    cnt_opt_destroy,
+    cnt_opt_copy,
+    cnt_opt_compare,
+    cnt_opt_swap
+};
 
 #endif // CNTOBJECTPTRTRAITS_H

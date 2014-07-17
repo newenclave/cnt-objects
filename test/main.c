@@ -11,6 +11,8 @@
 #include "lib/src/cnt-deque-impl.h"
 #include "lib/src/cnt-aa-tree.h"
 
+#include "lib/include/cnt-object-ptr-traits.h"
+
 typedef size_t MYTYPE;
 
 size_t alloc_calls   = 0;
