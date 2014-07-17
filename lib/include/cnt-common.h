@@ -76,10 +76,10 @@ static unsigned int tdb_hash_default( const void *begin, size_t length )
     return tdb_hash( begin, length, 0x238F13AF );
 }
 
-#define FIELD_OFFSET( type, field ) \
+#define FIELD_OFFSET( type, field )                 \
     ((unsigned long)( &((const type *)0)->field ))
 
-#define CONTAINER_OF( ptr, type, field ) \
+#define CONTAINER_OF( ptr, type, field )            \
     ((type *)((const char *)(ptr) - FIELD_OFFSET(type, field)))
 
 #endif // CNTCOMMON_H
