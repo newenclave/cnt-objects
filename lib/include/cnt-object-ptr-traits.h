@@ -33,9 +33,11 @@ static void  cnt_opt_destroy( void *obj_ptr, size_t element_size )
 static void *cnt_opt_copy( void *obj_ptr, const void *data, size_t element_size)
 {
     CntObject *obj;
+
     assert( obj_ptr != NULL );
     assert( element_size == sizeof( sizeof(CntObject*) ));
-    obj = *((CntObject **)obj_ptr);
+
+    obj = *((CntObject **)obj_ptr) = *((CntObject **)data);
 
     cnt_object_incref( obj );
 
@@ -44,31 +46,25 @@ static void *cnt_opt_copy( void *obj_ptr, const void *data, size_t element_size)
 
 static int cnt_opt_compare( const void *l, const void *r, size_t element_size )
 {
-    const CntObject *lobj;
-    const CntObject *robj;
     assert( l != NULL );
     assert( r != NULL );
     assert( element_size == sizeof( sizeof(CntObject*) ));
 
-    lobj = *((const CntObject **)l);
-    robj = *((const CntObject **)r);
-
-    return cnt_objects_compare( lobj, robj );
+    return cnt_objects_compare( *((const CntObject **)l),
+                                *((const CntObject **)r) );
 }
 
 static void  cnt_opt_swap( void *l, void *r, size_t element_size)
 {
-    CntObject *lobj;
-    CntObject *robj;
+    CntObject *tmp;
+
     assert( l != NULL );
     assert( r != NULL );
     assert( element_size == sizeof( sizeof(CntObject*) ));
 
-    lobj = *((CntObject **)l);
-    robj = *((CntObject **)r);
-
-    *((CntObject **)r) = lobj;
-    *((CntObject **)l) = robj;
+    tmp = *((CntObject **)l);
+    *((CntObject **)l) = *((CntObject **)r);
+    *((CntObject **)r) = tmp;
 }
 
 static const CntElementTraits cnt_object_ptr_traits = {

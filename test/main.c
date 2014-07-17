@@ -112,7 +112,7 @@ typedef struct test_list {
     int b;
 } test_list;
 
-#define MAX_ITERATION 2000000
+#define MAX_ITERATION 2
 
 int main( )
 {
@@ -125,16 +125,17 @@ int main( )
     def_allocator.allocate   = my_alloc_call;
     def_allocator.deallocate = my_free_call;
 
-    aat = cnt_aa_tree_new( &inttrait, &def_allocator );
+    aat = cnt_aa_tree_new( &cnt_object_ptr_traits, &def_allocator );
 
     for( i=0; i<MAX_ITERATION; ++i ) {
-        cnt_aa_tree_insert( aat, &i );
-        cnt_aa_tree_insert_update( aat, &i );
+        CntInt *ne = cnt_int_new_from_int_al( i, &def_allocator );
+        cnt_aa_tree_insert( aat, &ne );
+        CNT_DECREF( ne );
     }
 
-    for( i=0; i<MAX_ITERATION; ++i ) {
-        cnt_aa_tree_delete( aat, &i );
-    }
+//    for( i=0; i<MAX_ITERATION; ++i ) {
+//        cnt_aa_tree_delete( aat, &i );
+//    }
 
     printf( "array size: %lu\n", cnt_aa_tree_size( aat ) );
     cnt_aa_tree_free( aat );
