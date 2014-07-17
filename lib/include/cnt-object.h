@@ -5,6 +5,7 @@
 #include <assert.h>
 
 #include "cnt-common.h"
+#include "cnt-hash.h"
 #include "cnt-allocator.h"
 
 typedef enum {
