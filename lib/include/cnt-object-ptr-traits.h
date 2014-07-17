@@ -11,7 +11,7 @@ static void cnt_opt_init( void *obj_ptr, size_t count, size_t element_size )
 {
     assert( obj_ptr != NULL );
     assert( element_size == sizeof( sizeof(CntObject*) ));
-    memset( obj_ptr, count, element_size );
+    memset( obj_ptr, 0, count * element_size );
 }
 
 static void  cnt_opt_destroy( void *obj_ptr, size_t element_size )

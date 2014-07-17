@@ -112,7 +112,7 @@ typedef struct test_list {
     int b;
 } test_list;
 
-#define MAX_ITERATION 2
+#define MAX_ITERATION 30000000UL
 
 int main( )
 {
@@ -133,29 +133,35 @@ int main( )
         CNT_DECREF( ne );
     }
 
-//    for( i=0; i<MAX_ITERATION; ++i ) {
-//        cnt_aa_tree_delete( aat, &i );
-//    }
+    for( i=0; i<MAX_ITERATION; ++i ) {
+        CntInt *ne = cnt_int_new_from_int_al( i, &def_allocator );
+        cnt_aa_tree_delete( aat, &ne );
+        CNT_DECREF( ne );
+    }
 
     printf( "array size: %lu\n", cnt_aa_tree_size( aat ) );
     cnt_aa_tree_free( aat );
 
-    goto tstop;
+//    goto tstop;
 
 
 //    cnt_deque_impl_init( &deq, &inttrait, &def_allocator );
-    cnt_deque_impl_init( &deq, &inttrait_def, &def_allocator );
+    cnt_deque_impl_init( &deq, &cnt_object_ptr_traits, &def_allocator );
 
     printf( "start\n" );
 
     for( i=0; i<MAX_ITERATION; ++i ) {
-        cnt_deque_impl_push_front( &deq, &i );
+        CntInt *ne = cnt_int_new_from_int_al( i, &def_allocator );
+        cnt_deque_impl_push_front( &deq, &ne );
+        CNT_DECREF( ne );
     }
 
     printf( "start back\n" );
 
     for( i=0; i<MAX_ITERATION; ++i ) {
-        cnt_deque_impl_push_back( &deq, &i );
+        CntInt *ne = cnt_int_new_from_int_al( i, &def_allocator );
+        cnt_deque_impl_push_back( &deq, &ne );
+        CNT_DECREF( ne );
     }
 
     printf( "start pop 1\n" );
@@ -166,30 +172,35 @@ int main( )
 
     printf( "start push-pop\n" );
 
-    cnt_deque_impl_push_front( &deq, &i );
+    CntInt *ne = cnt_int_new_from_int_al( i, &def_allocator );
+    cnt_deque_impl_push_front( &deq, &ne );
     for( i=0; i<MAX_ITERATION; ++i ) {
-        cnt_deque_impl_push_back( &deq, &i );
+        cnt_deque_impl_push_back( &deq, &ne );
         cnt_deque_impl_pop_front( &deq );
     }
 
     printf( "start push-pop 2\n" );
 
     for( i=0; i<MAX_ITERATION; ++i ) {
-        cnt_deque_impl_push_back( &deq, &i );
+        cnt_deque_impl_push_back( &deq, &ne );
         cnt_deque_impl_pop_front( &deq );
     }
+
+    CNT_DECREF( ne );
 
     printf( "start deinit %lu\n", cnt_deque_impl_size( &deq ) );
 
     cnt_deque_impl_deinit( &deq );
 
 tstop:
-    printf( "alloc  : %lu\n"
-            "free   : %lu\n"
-            "init   : %lu\n"
-            "copy   : %lu\n"
-            "delete : %lu\n"
+    printf( "MAX OBJECTS: %lu\n"
+            "alloc      : %lu\n"
+            "free       : %lu\n"
+            "init       : %lu\n"
+            "copy       : %lu\n"
+            "delete     : %lu\n"
             ,
+            MAX_ITERATION,
             alloc_calls, free_calls, init_calls, copy_calls, destroy_calls);
 
     return 0;
