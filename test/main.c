@@ -112,7 +112,7 @@ typedef struct test_list {
     int b;
 } test_list;
 
-#define MAX_ITERATION 30000000UL
+#define MAX_ITERATION 3000000UL
 
 int main( )
 {

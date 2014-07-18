@@ -1,8 +1,6 @@
 #ifndef CNT_AA_TREE_H
 #define CNT_AA_TREE_H
 
-//#define AA_BOTTOM_LEVEL_VALUE 1
-
 #include <stdlib.h>
 
 #include "include/cnt-element-traits.h"
